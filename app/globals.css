@@ -237,9 +237,16 @@ img {
 /* The rule above already separates the masthead from this section. Bottom
    padding is sized to sit under the portrait rather than the headline —
    the portrait is the taller element now, so the old 11rem left a canyon
-   above the divider. */
+   above the divider.
+   Horizontal padding is 3x the page's own --pad, on purpose: at full width
+   the headline and portrait sat 826px apart while framed by only 56px of
+   margin on either side — the pair read as two things pinned to opposite
+   edges, not one composition. The wider inset pulls both in and shrinks the
+   gap between them; the divider below stays at the page's normal --pad, so
+   the hero reads as a deliberately framed moment rather than the standard
+   grid, and everything below it returns to that grid unchanged. */
 .hero {
-  padding: 3.5rem var(--pad) 4rem;
+  padding: 3.5rem calc(var(--pad) * 3) 4rem;
 }
 
 /* Headline and portrait as a centred pair. The headline's lines are set with
