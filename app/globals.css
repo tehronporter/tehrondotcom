@@ -13,8 +13,12 @@
   --fill-hover: rgba(255, 255, 255, 0.13);
   --edge-hover: rgba(255, 255, 255, 0.55);
 
-  /* Horizontal page gutter. Everything aligns to this. */
-  --pad: 2.5rem;
+  /* Horizontal page gutter. Every section aligns to this — it is the grid. */
+  --pad: 3.5rem;
+
+  /* Ceiling on line length for very wide displays. Above this the page stays
+     composed instead of stretching; at 1440–1700 it changes nothing. */
+  --content-max: 1720px;
 
   /* Secondary label opacity. 0.75 is the floor that still clears WCAG AA
      (5.1:1) against the blue — anything lighter fails on 10px labels. */
@@ -106,6 +110,8 @@ img {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
+  max-width: var(--content-max);
+  margin-inline: auto;
 }
 
 .shell main {
@@ -182,7 +188,7 @@ img {
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 1.25rem var(--pad);
+  padding: 1.5rem var(--pad);
   border-bottom: 1px solid var(--rule);
 }
 
@@ -200,13 +206,14 @@ img {
   width: auto;
 }
 
+/* 12px reads at arm's length without adding bulk to the masthead. */
 .nav {
   display: flex;
   align-items: center;
   gap: 1.75rem;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .nav a {
@@ -232,7 +239,7 @@ img {
    the portrait is the taller element now, so the old 11rem left a canyon
    above the divider. */
 .hero {
-  padding: 2.8rem var(--pad) 4.4rem;
+  padding: 3.5rem var(--pad) 4rem;
 }
 
 /* Headline and portrait as a centred pair. The headline's lines are set with
@@ -246,11 +253,11 @@ img {
   gap: 2.5rem 3rem;
 }
 
-/* Sized against the headline so the two read as a matched pair: three lines
-   of .headline's clamp() plus a margin of presence. Portrait is 4:5, so its
-   width stays well inside the row at every step. */
+/* A counterweight to the slogan rather than an image floating beside it —
+   ~14% taller than before. Portrait is 4:5, so its width stays well inside
+   the row at every step. */
 .hero-portrait {
-  height: clamp(230px, 30vw, 380px);
+  height: clamp(260px, 34vw, 435px);
   width: auto;
   flex: none;
 }
@@ -264,7 +271,7 @@ img {
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 2.4rem var(--pad) 0.6rem;
+  padding: 2.5rem var(--pad) 0.75rem;
 }
 
 .row-link {
@@ -290,13 +297,13 @@ img {
    -------------------------------------------------------------------------- */
 
 .stage {
-  padding: 2rem var(--pad) 3.6rem;
+  padding: 2.5rem var(--pad) 4.5rem;
 }
 
 .space {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2.4rem;
+  gap: 3rem;
 }
 
 .card {
@@ -304,19 +311,23 @@ img {
   display: block;
 }
 
+/* Height follows the folder instead of a fixed box with 46px of slack in it,
+   and the folder starts on the column's left edge rather than centred over
+   left-aligned text — it was the one element in this section off the grid,
+   which is what made each card read as two pieces instead of one unit. */
 .folder-wrap {
   position: relative;
-  height: 138px;
+  height: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 0.6rem;
+  justify-content: flex-start;
+  margin-bottom: 1.75rem;
 }
 
 .folder {
   position: relative;
   width: 100%;
-  max-width: 110px;
+  max-width: 124px;
   aspect-ratio: 6 / 5;
   background: var(--fill);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -324,7 +335,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: 0;
   transition: background var(--speed) ease, border-color var(--speed) ease;
 }
 
@@ -363,19 +374,19 @@ img {
 .card-num {
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .card-title-row {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin-bottom: 0.9rem;
-  min-height: 2.4em;
+  margin-bottom: 1rem;
+  min-height: 2.3em;
 }
 
 .card-title {
-  font-size: clamp(17px, 2.2vw, 21px);
+  font-size: clamp(18px, 2.4vw, 24px);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -393,10 +404,12 @@ img {
   transform: translateX(0);
 }
 
+/* 11px with tighter leading: more legible than 10px without the list
+   sprawling the card taller. */
 .card-tags {
-  font-size: 10px;
-  line-height: 2;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  line-height: 1.9;
+  letter-spacing: 0.05em;
 }
 
 /* --------------------------------------------------------------------------
@@ -804,26 +817,37 @@ a.contact-link:hover {
    -------------------------------------------------------------------------- */
 
 .footer {
-  padding: 4rem var(--pad) 2.8rem;
+  padding: 3.5rem var(--pad) 2.5rem;
   border-top: 1px solid var(--rule);
   margin-top: 0.4rem;
 }
 
+/* Slightly more presence against the bottom row, and more air beneath it so
+   the statement and the email read as two steps rather than one clump. */
 .footer h2 {
-  font-size: clamp(1.8rem, 5.4vw, 2.3rem);
+  font-size: clamp(1.8rem, 5.4vw, 2.5rem);
   line-height: 1.08;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.75rem;
 }
 
+/* The rule sits closer to a baseline than a box now, and the letter-spacing
+   keeps it from reading as a solid bar at this weight. */
 .footer-email {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 16px;
   font-weight: 700;
-  border-bottom: 1px solid var(--fg);
-  padding-bottom: 4px;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 6px;
   word-break: break-word;
+  transition: border-color var(--speed) var(--ease);
+}
+
+.footer-email:hover,
+.footer-email:focus-visible {
+  border-bottom-color: var(--fg);
 }
 
 .footer-email .icon {
@@ -840,10 +864,10 @@ a.contact-link:hover {
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 1.6rem var(--pad);
+  padding: 1.5rem var(--pad);
   border-top: 1px solid var(--rule);
-  font-size: 10px;
-  letter-spacing: 0.03em;
+  font-size: 11px;
+  letter-spacing: 0.04em;
 }
 
 .socials {
