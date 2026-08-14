@@ -20,6 +20,14 @@
      (5.1:1) against the blue — anything lighter fails on 10px labels. */
   --dim: 0.75;
 
+  /* Mobile vertical rhythm. Every gap below 760px comes from this ladder
+     rather than being picked per-element, which is what let the page drift
+     to 150–200px voids between blocks. */
+  --sp-sm: 1.5rem; /* 24px — inside a component */
+  --sp-md: 2.5rem; /* 40px — between related blocks */
+  --sp-lg: 4rem; /*   64px — between content groups */
+  --sp-xl: 6rem; /*   96px — between full sections, ceiling */
+
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --speed: 200ms;
 
@@ -879,54 +887,125 @@ a.contact-link:hover {
     --pad: 1.5rem;
   }
 
+  /* One compact composition: signature left, nav right. flex-wrap is the
+     fallback rather than a hard breakpoint — the nav drops to its own line
+     only on viewports too narrow to hold both, and the small row-gap keeps
+     that from becoming its own section. */
   .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.9rem;
-    padding: 1.5rem var(--pad);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    padding: 1.25rem var(--pad);
   }
 
+  /* Specified by width here — it's the dimension that reads on a phone. */
   .wordmark-signature {
-    height: 44px;
+    width: 80px;
+    height: auto;
   }
 
   .nav {
-    gap: 1.6rem;
+    font-size: 13px;
+    gap: 1.25rem;
   }
 
   .hero {
-    padding: 2rem var(--pad) 3.4rem;
+    padding: var(--sp-md) var(--pad) var(--sp-lg);
   }
 
-  /* Not enough width for headline + portrait side by side; the portrait
-     wraps below instead of squeezing the headline's line length. */
   .hero-row {
-    gap: 2rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-md);
+  }
+
+  /* Sized to own the column rather than float in it, and centred so it
+     breaks the left-aligned grid deliberately instead of by accident. */
+  .hero-portrait {
+    width: 85%;
+    height: auto;
+    align-self: center;
   }
 
   .page-head,
   .cat-head.top {
-    padding-top: 2rem;
+    padding-top: var(--sp-sm);
+  }
+
+  .stage {
+    padding: var(--sp-sm) var(--pad) var(--sp-lg);
   }
 
   .space {
     grid-template-columns: 1fr;
-    gap: 2.6rem;
+    gap: 0;
+  }
+
+  /* Categories become compact rows instead of stacked desktop columns:
+     number and title on the left with the folder beside them, tags beneath,
+     arrow closing the row. Halves the section's height while keeping the
+     folder language intact. */
+  .card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--sp-sm);
+    align-items: start;
+    grid-template-areas:
+      "num    folder"
+      "title  folder"
+      "tags   arrow";
+    padding: var(--sp-sm) 0;
+  }
+
+  .card + .card {
+    border-top: 1px solid var(--rule);
+  }
+
+  .card-num {
+    grid-area: num;
+  }
+
+  /* Lifts .card-title and .card-arrow into .card's own grid so they can be
+     placed independently — they're siblings in the markup for desktop. */
+  .card-title-row {
+    display: contents;
+  }
+
+  .card-title {
+    grid-area: title;
+    margin-bottom: 0.9rem;
+  }
+
+  /* One line on mobile; the hard break is desktop's two-line lockup. */
+  .card-title br {
+    display: none;
+  }
+
+  .card-tags {
+    grid-area: tags;
+  }
+
+  /* No hover on touch, so the affordance is always visible. */
+  .card-arrow {
+    grid-area: arrow;
+    align-self: end;
+    justify-self: end;
+    opacity: 1;
+    transform: none;
   }
 
   .folder-wrap {
+    grid-area: folder;
     height: auto;
-    justify-content: flex-start;
-    margin-bottom: 1.1rem;
+    width: 84px;
+    margin: 0;
   }
 
   .folder {
+    width: 84px;
+    max-width: none;
     margin: 0;
-    max-width: 92px;
-  }
-
-  .card-title-row {
-    min-height: 0;
   }
 
   /* Index rows stack: name on its own line, then meta left / year right. */
@@ -948,14 +1027,21 @@ a.contact-link:hover {
     grid-column: auto;
   }
 
+  /* ~28% off the previous vertical padding. */
   .footer {
-    padding: 3rem var(--pad) 2.2rem;
+    padding: var(--sp-md) var(--pad) var(--sp-sm);
+  }
+
+  /* Was running edge to edge at 375px. */
+  .footer-email {
+    font-size: 14px;
   }
 
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.85rem;
+    padding: var(--sp-sm) var(--pad);
   }
 
   .socials {

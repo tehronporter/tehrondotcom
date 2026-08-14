@@ -163,7 +163,7 @@ export const categories: Category[] = [
     slug: "creative-technology",
     titleLines: ["CREATIVE", "TECHNOLOGY."],
     icon: "world",
-    tags: ["WEB EXPERIENCES", "AI & AUTOMATION", "INTERACTIVE", "PROTOTYPES"],
+    tags: ["SOFTWARE", "WEB EXPERIENCES", "AI & AUTOMATION", "INTERACTIVE SYSTEMS"],
     summary:
       "Where the design brief needs code to exist — web experiences, AI tooling, and things that only work once you build them.",
     projects: [
@@ -211,7 +211,7 @@ export const categories: Category[] = [
     slug: "product-development",
     titleLines: ["PRODUCT", "DEVELOPMENT."],
     icon: "cube",
-    tags: ["DIGITAL PRODUCTS", "UX / UI DESIGN", "SYSTEMS", "DEVELOPMENT"],
+    tags: ["PRODUCT DESIGN", "CONCEPT DEVELOPMENT", "PROTOTYPING", "EXECUTION"],
     summary:
       "Digital products taken from a rough idea to something people can use — interface, system, and build.",
     projects: [
