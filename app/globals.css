@@ -164,19 +164,17 @@ img {
    Header
    -------------------------------------------------------------------------- */
 
-/* No bottom rule and no bottom padding: the masthead and the page's opening
-   block read as one unit, and the first rule on any page belongs to content.
-   max-width caps how far the nav drifts from the wordmark on wide screens —
-   at 1440px this was a 1037px gap. The header stays block-level (not
-   centered), so the brand block still sits flush at --pad, matching the
-   headline directly below it. */
+/* Full width, no max-width: nav's right edge lines up with the hero content
+   below it (the signature, and every other page's content) at the same
+   --pad inset the wordmark and headline use on the left. The rule marks
+   where the masthead ends and the page's own content begins. */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 1.5rem;
-  max-width: 54rem;
-  padding: 1.75rem var(--pad) 0;
+  padding: 1.75rem var(--pad);
+  border-bottom: 1px solid var(--rule);
 }
 
 .wordmark {
@@ -212,10 +210,12 @@ img {
    Hero
    -------------------------------------------------------------------------- */
 
-/* The masthead sits tight above the headline; the page's negative space is
-   spent below it, between the statement and the divider. */
+/* The rule above already separates the masthead from this section, so the
+   top padding just needs to echo how .row-head follows .divider elsewhere —
+   the page's negative space is spent below the headline instead, between it
+   and the divider before SELECTED WORK. */
 .hero {
-  padding: 3.2rem var(--pad) 11rem;
+  padding: 2.4rem var(--pad) 11rem;
 }
 
 .hero-row {
@@ -409,7 +409,7 @@ img {
 
 /* Matches .hero's top padding so every page opens on the same baseline. */
 .page-head {
-  padding: 3.2rem var(--pad) 0;
+  padding: 2.4rem var(--pad) 0;
 }
 
 .cat-head {
@@ -418,7 +418,7 @@ img {
 
 /* Pages with no back link above them open on the same baseline as .hero. */
 .cat-head.top {
-  padding-top: 3.2rem;
+  padding-top: 2.4rem;
 }
 
 .cat-title {
@@ -852,10 +852,6 @@ a.contact-link:hover {
 /* Tablet: brand-to-nav gap narrows along with the viewport instead of
    holding the desktop cap. */
 @media (max-width: 1024px) {
-  .header {
-    max-width: 40rem;
-  }
-
   .nav {
     gap: 1.4rem;
   }
@@ -881,8 +877,7 @@ a.contact-link:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.1rem;
-    padding: 1.8rem var(--pad) 0;
-    max-width: none;
+    padding: 1.8rem var(--pad);
   }
 
   .nav {
@@ -890,7 +885,7 @@ a.contact-link:hover {
   }
 
   .hero {
-    padding: 2.4rem var(--pad) 8rem;
+    padding: 2rem var(--pad) 8rem;
   }
 
   /* Not enough width for headline + signature side by side; the signature
@@ -901,7 +896,7 @@ a.contact-link:hover {
 
   .page-head,
   .cat-head.top {
-    padding-top: 2.4rem;
+    padding-top: 2rem;
   }
 
   .space {
