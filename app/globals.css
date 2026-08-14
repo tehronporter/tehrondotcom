@@ -146,7 +146,7 @@ img {
 /* The headline is the whole hero message — the space beneath it is carried by
    .hero's bottom padding, not a margin here. */
 .headline {
-  font-size: clamp(2.1rem, 7.2vw, 3.5rem);
+  font-size: clamp(2.2rem, 6.6vw, 4.15rem);
 }
 
 .eyebrow {
@@ -165,22 +165,31 @@ img {
    -------------------------------------------------------------------------- */
 
 /* Full width, no max-width: nav's right edge lines up with the hero content
-   below it (the signature, and every other page's content) at the same
-   --pad inset the wordmark and headline use on the left. The rule marks
-   where the masthead ends and the page's own content begins. */
+   below it at the same --pad inset the wordmark and headline use on the
+   left. The rule marks where the masthead ends and content begins.
+   Centered rather than baseline-aligned now that the left item is an image,
+   which would otherwise baseline-align on its bottom edge. */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 1.5rem;
-  padding: 1.75rem var(--pad);
+  padding: 1.25rem var(--pad);
   border-bottom: 1px solid var(--rule);
 }
 
-.wordmark {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+/* The signature standing in for the name. Its crop is already vertically
+   symmetric — 12px of clear space above the ink, 12px below — so centring
+   the box centres the mark; no optical nudge needed. Sized so the mark is
+   at least as wide as the text wordmark it replaced. */
+.wordmark-signature {
+  height: 56px;
+  width: auto;
 }
 
 .nav {
@@ -210,35 +219,32 @@ img {
    Hero
    -------------------------------------------------------------------------- */
 
-/* The rule above already separates the masthead from this section, so the
-   top padding just needs to echo how .row-head follows .divider elsewhere —
-   the page's negative space is spent below the headline instead, between it
-   and the divider before SELECTED WORK. */
+/* The rule above already separates the masthead from this section. Bottom
+   padding is sized to sit under the portrait rather than the headline —
+   the portrait is the taller element now, so the old 11rem left a canyon
+   above the divider. */
 .hero {
-  padding: 2.4rem var(--pad) 11rem;
+  padding: 2.8rem var(--pad) 4.4rem;
 }
 
+/* Headline and portrait as a centred pair. The headline's lines are set with
+   hard breaks, so it can't reflow — it sizes to its longest line and the row
+   wraps only when the two genuinely stop fitting side by side. */
 .hero-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 2.5rem;
+  gap: 2.5rem 3rem;
 }
 
-/* The signature as a prominent mark facing the headline, not a masthead
-   flourish — scaled to track the headline's own responsive height (three
-   lines at the same clamp() driving .headline's font-size) so the two keep
-   reading as a matched pair from mobile through wide desktop.
-   The crop includes the signature's trailing flourish below the letters, so
-   its bottom edge sits well below where the writing visually sits — the top
-   offset corrects for that so it reads as level with the headline rather
-   than floating above it. */
-.hero-signature {
-  height: clamp(100px, 21.6vw, 168px);
+/* Sized against the headline so the two read as a matched pair: three lines
+   of .headline's clamp() plus a margin of presence. Portrait is 4:5, so its
+   width stays well inside the row at every step. */
+.hero-portrait {
+  height: clamp(230px, 30vw, 380px);
   width: auto;
-  position: relative;
-  top: clamp(4px, 1vw, 7px);
+  flex: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -876,8 +882,12 @@ a.contact-link:hover {
   .header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.1rem;
-    padding: 1.8rem var(--pad);
+    gap: 0.9rem;
+    padding: 1.5rem var(--pad);
+  }
+
+  .wordmark-signature {
+    height: 44px;
   }
 
   .nav {
@@ -885,11 +895,11 @@ a.contact-link:hover {
   }
 
   .hero {
-    padding: 2rem var(--pad) 8rem;
+    padding: 2rem var(--pad) 3.4rem;
   }
 
-  /* Not enough width for headline + signature side by side; the signature
-     wraps below instead of competing with the headline's line length. */
+  /* Not enough width for headline + portrait side by side; the portrait
+     wraps below instead of squeezing the headline's line length. */
   .hero-row {
     gap: 2rem;
   }

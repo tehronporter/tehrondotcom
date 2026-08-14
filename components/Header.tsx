@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
@@ -15,11 +16,17 @@ export function Header() {
 
   return (
     <header className="header">
-      {/* The wordmark is a logo, not a heading — each page owns its own <h1>.
-          The role line is not shown; it rides along in the label so screen
-          reader users still get it. */}
+      {/* The signature is the wordmark. It's an image, so the accessible name
+          lives on the link and the img stays alt="" to avoid announcing twice. */}
       <Link href="/" className="header-left" aria-label={`${site.name}, ${site.role}, home`}>
-        <p className="wordmark">{site.name}</p>
+        <Image
+          src="/brand/signature-white.png"
+          alt=""
+          width={348}
+          height={260}
+          className="wordmark-signature"
+          priority
+        />
       </Link>
 
       <nav className="nav" aria-label="Primary">

@@ -14,15 +14,14 @@ export default function HomePage() {
             <Lines lines={hero.headline} />
           </h1>
 
-          {/* Personal mark facing the headline — decorative, so it stays out
-              of the accessibility tree; the headline already reads fine
-              without it. */}
+          {/* Carries real meaning rather than decoration, so it gets a real
+              alt rather than being hidden from screen readers. */}
           <Image
-            src="/brand/signature-white.png"
-            alt=""
-            width={348}
-            height={260}
-            className="hero-signature"
+            src="/brand/portrait.jpg"
+            alt="Painted portrait of Tehron Porter grappling a bull"
+            width={1100}
+            height={1366}
+            className="hero-portrait"
             priority
           />
         </div>
