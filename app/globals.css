@@ -164,25 +164,20 @@ img {
    Header
    -------------------------------------------------------------------------- */
 
+/* No bottom rule and no bottom padding: the masthead and the page's opening
+   block read as one unit, and the first rule on any page belongs to content. */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 1.5rem;
-  padding: 2.4rem var(--pad);
-  border-bottom: 1px solid var(--rule);
+  padding: 2rem var(--pad) 0;
 }
 
 .wordmark {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.04em;
-}
-
-.wordmark-sub {
-  font-size: 10px;
-  letter-spacing: 0.03em;
-  margin-top: 4px;
 }
 
 .nav {
@@ -212,10 +207,10 @@ img {
    Hero
    -------------------------------------------------------------------------- */
 
-/* 9.4rem bottom = the 2rem headline margin + paragraph + 4.4rem padding it
-   replaces, so the headline-to-divider gap and the hero's height are unchanged. */
+/* The masthead sits tight above the headline; the page's negative space is
+   spent below it, between the statement and the divider. */
 .hero {
-  padding: 4.4rem var(--pad) 9.4rem;
+  padding: 3.2rem var(--pad) 11rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -384,17 +379,18 @@ img {
   transform: translateX(-3px);
 }
 
+/* Matches .hero's top padding so every page opens on the same baseline. */
 .page-head {
-  padding: 2.6rem var(--pad) 0;
+  padding: 3.2rem var(--pad) 0;
 }
 
 .cat-head {
   padding: 1.6rem var(--pad) 2.6rem;
 }
 
-/* Pages with no back link above them need their own top breathing room. */
+/* Pages with no back link above them open on the same baseline as .hero. */
 .cat-head.top {
-  padding-top: 2.6rem;
+  padding-top: 3.2rem;
 }
 
 .cat-title {
@@ -844,8 +840,8 @@ a.contact-link:hover {
   .header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.4rem;
-    padding: 1.8rem var(--pad);
+    gap: 1.1rem;
+    padding: 1.8rem var(--pad) 0;
   }
 
   .nav {
@@ -853,7 +849,12 @@ a.contact-link:hover {
   }
 
   .hero {
-    padding: 3rem var(--pad) 8rem;
+    padding: 2.4rem var(--pad) 8rem;
+  }
+
+  .page-head,
+  .cat-head.top {
+    padding-top: 2.4rem;
   }
 
   .space {

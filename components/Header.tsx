@@ -15,10 +15,11 @@ export function Header() {
 
   return (
     <header className="header">
-      {/* The wordmark is a logo, not a heading — each page owns its own <h1>. */}
-      <Link href="/" className="header-left" aria-label={`${site.name}, home`}>
+      {/* The wordmark is a logo, not a heading — each page owns its own <h1>.
+          The role line is not shown; it rides along in the label so screen
+          reader users still get it. */}
+      <Link href="/" className="header-left" aria-label={`${site.name}, ${site.role}, home`}>
         <p className="wordmark">{site.name}</p>
-        <p className="wordmark-sub">{site.role}</p>
       </Link>
 
       <nav className="nav" aria-label="Primary">
