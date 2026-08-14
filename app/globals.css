@@ -185,15 +185,6 @@ img {
   letter-spacing: 0.04em;
 }
 
-/* Groups nav + signature as one flex item, so .header's space-between puts
-   the wordmark on the left and this whole block on the right — the 24–36px
-   signature gap stays fixed regardless of how much room the wordmark leaves. */
-.header-right {
-  display: flex;
-  align-items: baseline;
-  gap: 1.75rem;
-}
-
 .nav {
   display: flex;
   align-items: center;
@@ -217,20 +208,6 @@ img {
   border-bottom-color: var(--fg);
 }
 
-/* A personal mark, not a logo — sized to read as a flourish next to the nav
-   text, well under the hero's scale. Width is unset so the browser derives it
-   from the image's intrinsic ratio; never stretched or cropped.
-   The crop includes the signature's own trailing flourish beneath the
-   letters, so the image's bottom edge sits well below where the writing
-   visually sits — top:6px corrects for that so it reads as sharing the
-   nav's baseline instead of floating above it. */
-.signature {
-  height: 32px;
-  width: auto;
-  position: relative;
-  top: 6px;
-}
-
 /* --------------------------------------------------------------------------
    Hero
    -------------------------------------------------------------------------- */
@@ -239,6 +216,29 @@ img {
    spent below it, between the statement and the divider. */
 .hero {
   padding: 3.2rem var(--pad) 11rem;
+}
+
+.hero-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+/* The signature as a prominent mark facing the headline, not a masthead
+   flourish — scaled to track the headline's own responsive height (three
+   lines at the same clamp() driving .headline's font-size) so the two keep
+   reading as a matched pair from mobile through wide desktop.
+   The crop includes the signature's trailing flourish below the letters, so
+   its bottom edge sits well below where the writing visually sits — the top
+   offset corrects for that so it reads as level with the headline rather
+   than floating above it. */
+.hero-signature {
+  height: clamp(100px, 21.6vw, 168px);
+  width: auto;
+  position: relative;
+  top: clamp(4px, 1vw, 7px);
 }
 
 /* --------------------------------------------------------------------------
@@ -849,21 +849,15 @@ a.contact-link:hover {
    Responsive
    -------------------------------------------------------------------------- */
 
-/* Tablet: nav and signature scale down together; brand-to-nav gap narrows
-   along with the viewport instead of holding the desktop cap. */
+/* Tablet: brand-to-nav gap narrows along with the viewport instead of
+   holding the desktop cap. */
 @media (max-width: 1024px) {
   .header {
     max-width: 40rem;
   }
 
-  .header-right,
   .nav {
     gap: 1.4rem;
-  }
-
-  .signature {
-    height: 26px;
-    top: 5px;
   }
 }
 
@@ -895,14 +889,14 @@ a.contact-link:hover {
     gap: 1.6rem;
   }
 
-  /* Mobile prioritizes the wordmark and nav; the signature would either
-     crowd the stacked header or shrink past legibility, so it's dropped. */
-  .signature {
-    display: none;
-  }
-
   .hero {
     padding: 2.4rem var(--pad) 8rem;
+  }
+
+  /* Not enough width for headline + signature side by side; the signature
+     wraps below instead of competing with the headline's line length. */
+  .hero-row {
+    gap: 2rem;
   }
 
   .page-head,

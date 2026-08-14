@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { Lines } from "@/components/Lines";
@@ -8,9 +9,23 @@ export default function HomePage() {
   return (
     <div className="page">
       <section className="hero">
-        <h1 className="display headline">
-          <Lines lines={hero.headline} />
-        </h1>
+        <div className="hero-row">
+          <h1 className="display headline">
+            <Lines lines={hero.headline} />
+          </h1>
+
+          {/* Personal mark facing the headline — decorative, so it stays out
+              of the accessibility tree; the headline already reads fine
+              without it. */}
+          <Image
+            src="/brand/signature-white.png"
+            alt=""
+            width={348}
+            height={260}
+            className="hero-signature"
+            priority
+          />
+        </div>
       </section>
 
       <div className="divider" />
