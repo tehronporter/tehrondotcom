@@ -22,8 +22,8 @@ export function ProjectRow({
         <span className="project-name">{project.name}</span>
       </span>
       <span className="project-meta">{meta ?? project.meta}</span>
-      <span className="project-year">
-        {project.year} <Icon name="arrow-right" size={14} />
+      <span className="project-arrow">
+        <Icon name="arrow-right" size={14} />
       </span>
     </Link>
   );

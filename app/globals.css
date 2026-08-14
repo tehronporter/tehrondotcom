@@ -527,23 +527,18 @@ img {
   letter-spacing: 0.03em;
 }
 
-.project-year {
+.project-arrow {
   display: flex;
   align-items: center;
   justify-self: end;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
 }
 
-.project-row:hover .project-year .icon,
-.project-row:focus-visible .project-year .icon {
+.project-row:hover .project-arrow .icon,
+.project-row:focus-visible .project-arrow .icon {
   transform: translateX(3px);
 }
 
-.project-year .icon {
+.project-arrow .icon {
   transition: transform var(--speed) var(--ease);
 }
 
@@ -581,7 +576,7 @@ img {
 
 .facts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2rem;
   padding: 2rem var(--pad);
   border-top: 1px solid var(--rule);

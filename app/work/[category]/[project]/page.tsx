@@ -93,10 +93,6 @@ export default async function ProjectPage({ params }: Params) {
             ))}
           </dd>
         </div>
-        <div className="fact">
-          <dt>YEAR</dt>
-          <dd>{project.year}</dd>
-        </div>
       </dl>
 
       <section className="case-body">

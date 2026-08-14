@@ -24,7 +24,6 @@ export type Project = {
   name: string;
   /** Right-hand label on the category index row. */
   meta: string;
-  year: string;
   /** Lead paragraph on the case study page. */
   intro: string;
   client?: string;
@@ -61,7 +60,6 @@ export const categories: Category[] = [
         slug: "blue-t-shirt",
         name: "BLUE T-SHIRT",
         meta: "Brand Identity / Creative Direction",
-        year: "2025",
         intro:
           "A full identity system for an apparel label built around a single garment. The mark, the type, and the packaging all had to survive being screen-printed, folded, shipped, and photographed on a phone.",
         role: ["Creative Direction", "Identity Design", "Art Direction"],
@@ -91,7 +89,6 @@ export const categories: Category[] = [
         slug: "not-for-sale",
         name: "NOT FOR SALE",
         meta: "Brand Identity / Apparel",
-        year: "2025",
         intro:
           "An apparel identity for a label that releases in closed drops. The system had to feel scarce without feeling precious.",
         role: ["Identity Design", "Art Direction"],
@@ -116,7 +113,6 @@ export const categories: Category[] = [
         slug: "g-perico",
         name: "G. PERICO",
         meta: "Creative Direction / Music",
-        year: "2024",
         intro:
           "Creative direction across a release cycle — cover art, campaign visuals, and the visual language tying the rollout together.",
         role: ["Creative Direction", "Art Direction"],
@@ -139,7 +135,6 @@ export const categories: Category[] = [
         slug: "selected-client-work",
         name: "SELECTED CLIENT WORK",
         meta: "Identity / Campaigns",
-        year: "2023–26",
         intro:
           "An ongoing set of identity and campaign engagements across apparel, music, and small business — shorter runs, same standard.",
         role: ["Identity Design", "Campaign Design"],
@@ -171,7 +166,6 @@ export const categories: Category[] = [
         slug: "portfolio-system",
         name: "PORTFOLIO SYSTEM",
         meta: "Web Experience / Design System",
-        year: "2026",
         intro:
           "This site. A content-driven portfolio where the entire design system is one CSS file and every page generates from a single typed content file.",
         role: ["Design", "Development"],
@@ -190,7 +184,6 @@ export const categories: Category[] = [
         slug: "ai-workflow-tools",
         name: "AI WORKFLOW TOOLS",
         meta: "AI & Automation / Internal Tooling",
-        year: "2025",
         intro:
           "Internal tooling that puts AI where it actually removes work — asset generation, copy variation, and the parts of a campaign build that are mechanical.",
         role: ["Product Design", "Development"],
@@ -219,7 +212,6 @@ export const categories: Category[] = [
         slug: "product-one",
         name: "PRODUCT ONE",
         meta: "Digital Product / UX & UI",
-        year: "2025",
         intro:
           "End-to-end product design and front-end build — information architecture, interface system, and the shipped application.",
         role: ["Product Design", "UX / UI", "Front-end"],
