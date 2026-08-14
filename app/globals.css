@@ -303,8 +303,14 @@ img {
    Folder cards
    -------------------------------------------------------------------------- */
 
+/* Same framing move as .hero: horizontal padding is 3x the page's own
+   --pad, so the three-card block sits centred on the page rather than
+   spanning near edge-to-edge. Text inside each card stays left-aligned to
+   its own column — only the block's outer margin changes, not the card's
+   internal alignment. SELECTED WORK / ALL WORK above stays on the normal
+   grid, same as the divider under the hero. */
 .stage {
-  padding: 2.5rem var(--pad) 4.5rem;
+  padding: 2.5rem calc(var(--pad) * 3) 4.5rem;
 }
 
 .space {
