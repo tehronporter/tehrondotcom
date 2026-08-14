@@ -143,9 +143,10 @@ img {
   text-transform: uppercase;
 }
 
+/* The headline is the whole hero message — the space beneath it is carried by
+   .hero's bottom padding, not a margin here. */
 .headline {
   font-size: clamp(2.1rem, 7.2vw, 3.5rem);
-  margin-bottom: 2rem;
 }
 
 .eyebrow {
@@ -211,12 +212,10 @@ img {
    Hero
    -------------------------------------------------------------------------- */
 
+/* 9.4rem bottom = the 2rem headline margin + paragraph + 4.4rem padding it
+   replaces, so the headline-to-divider gap and the hero's height are unchanged. */
 .hero {
-  padding: 4.4rem var(--pad);
-}
-
-.hero p {
-  max-width: 340px;
+  padding: 4.4rem var(--pad) 9.4rem;
 }
 
 /* --------------------------------------------------------------------------
@@ -421,10 +420,12 @@ img {
   margin-top: 2rem;
 }
 
+/* Fixed tracks, not flex min-width — a name longer than the left column has to
+   wrap inside its own cell rather than shoving the meta column out of line. */
 .project-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1.5rem;
   padding: 1.6rem var(--pad);
   border-top: 1px solid var(--rule);
@@ -443,7 +444,7 @@ img {
   display: flex;
   align-items: baseline;
   gap: 1.4rem;
-  min-width: 240px;
+  min-width: 0;
 }
 
 .project-num {
@@ -460,12 +461,12 @@ img {
 .project-meta {
   font-size: 11px;
   letter-spacing: 0.03em;
-  flex: 1;
 }
 
 .project-year {
   display: flex;
   align-items: center;
+  justify-self: end;
   gap: 8px;
   font-size: 12px;
   font-weight: 600;
@@ -625,7 +626,9 @@ img {
   opacity: 0.75;
 }
 
+/* Both are spans inside a flex item, so they need blockifying to stack. */
 .next-project .label {
+  display: block;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -634,6 +637,7 @@ img {
 }
 
 .next-project .name {
+  display: block;
   font-size: clamp(20px, 3.4vw, 28px);
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -722,12 +726,9 @@ img {
   letter-spacing: 0.04em;
 }
 
+/* Same rhythm as .project-row: full-bleed rows, rules edge to edge. */
 .contact-links {
-  display: grid;
-  gap: 1px;
-  background: var(--rule);
   border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
 }
 
 .contact-link {
@@ -735,8 +736,8 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  background: var(--blue);
-  padding: 1.4rem 0;
+  padding: 1.4rem var(--pad);
+  border-bottom: 1px solid var(--rule);
   transition: opacity var(--speed) ease;
 }
 
@@ -852,7 +853,7 @@ a.contact-link:hover {
   }
 
   .hero {
-    padding: 3rem var(--pad);
+    padding: 3rem var(--pad) 8rem;
   }
 
   .space {
@@ -875,20 +876,15 @@ a.contact-link:hover {
     min-height: 0;
   }
 
-  /* Index rows stack instead of squeezing */
+  /* Index rows stack: name on its own line, then meta left / year right. */
   .project-row {
-    flex-wrap: wrap;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 0.5rem 1rem;
     padding: 1.3rem var(--pad);
   }
 
   .project-left {
-    min-width: 0;
-    flex: 1 1 100%;
-  }
-
-  .project-meta {
-    flex: 1 1 auto;
+    grid-column: 1 / -1;
   }
 
   .media {

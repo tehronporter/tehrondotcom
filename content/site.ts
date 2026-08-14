@@ -38,8 +38,7 @@ export const site = {
   ],
 } as const;
 
-/** Home page hero. */
+/** Home page hero. The headline stands alone — there is no supporting line. */
 export const hero = {
   headline: ["I BUILD", "WHAT'S NEXT,", "NOT WHAT'S SAFE."],
-  body: ["Design, technology, and culture.", "Brands, products, and digital experiences."],
 };

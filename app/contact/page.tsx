@@ -25,34 +25,35 @@ export default function ContactPage() {
             <p key={i}>{p}</p>
           ))}
         </div>
+      </section>
 
-        <div className="contact-links">
-          <a className="contact-link" href={`mailto:${site.email}`}>
-            <span className="k">EMAIL</span>
+      {/* Full-bleed, matching the project index rows. */}
+      <section className="contact-links">
+        <a className="contact-link" href={`mailto:${site.email}`}>
+          <span className="k">EMAIL</span>
+          <span className="v">
+            {site.email} <Icon name="arrow-right" size={16} />
+          </span>
+        </a>
+
+        {site.socials.map((social) => (
+          <a
+            key={social.label}
+            className="contact-link"
+            href={social.href}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <span className="k">{social.label}</span>
             <span className="v">
-              {site.email} <Icon name="arrow-right" size={16} />
+              {social.handle} <Icon name="arrow-up-right" size={16} />
             </span>
           </a>
+        ))}
 
-          {site.socials.map((social) => (
-            <a
-              key={social.label}
-              className="contact-link"
-              href={social.href}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <span className="k">{social.label}</span>
-              <span className="v">
-                {social.handle} <Icon name="arrow-up-right" size={16} />
-              </span>
-            </a>
-          ))}
-
-          <div className="contact-link">
-            <span className="k">BASED</span>
-            <span className="v">{site.location}</span>
-          </div>
+        <div className="contact-link">
+          <span className="k">BASED</span>
+          <span className="v">{site.location}</span>
         </div>
       </section>
     </div>

@@ -11,9 +11,6 @@ export default function HomePage() {
         <h1 className="display headline">
           <Lines lines={hero.headline} />
         </h1>
-        <p className="body-copy">
-          <Lines lines={hero.body} />
-        </p>
       </section>
 
       <div className="divider" />
