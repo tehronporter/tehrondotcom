@@ -165,13 +165,18 @@ img {
    -------------------------------------------------------------------------- */
 
 /* No bottom rule and no bottom padding: the masthead and the page's opening
-   block read as one unit, and the first rule on any page belongs to content. */
+   block read as one unit, and the first rule on any page belongs to content.
+   max-width caps how far the nav drifts from the wordmark on wide screens —
+   at 1440px this was a 1037px gap. The header stays block-level (not
+   centered), so the brand block still sits flush at --pad, matching the
+   headline directly below it. */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 1.5rem;
-  padding: 2rem var(--pad) 0;
+  max-width: 54rem;
+  padding: 1.75rem var(--pad) 0;
 }
 
 .wordmark {
@@ -180,10 +185,19 @@ img {
   letter-spacing: 0.04em;
 }
 
+/* Groups nav + signature as one flex item, so .header's space-between puts
+   the wordmark on the left and this whole block on the right — the 24–36px
+   signature gap stays fixed regardless of how much room the wordmark leaves. */
+.header-right {
+  display: flex;
+  align-items: baseline;
+  gap: 1.75rem;
+}
+
 .nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.75rem;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -201,6 +215,20 @@ img {
 
 .nav a.active {
   border-bottom-color: var(--fg);
+}
+
+/* A personal mark, not a logo — sized to read as a flourish next to the nav
+   text, well under the hero's scale. Width is unset so the browser derives it
+   from the image's intrinsic ratio; never stretched or cropped.
+   The crop includes the signature's own trailing flourish beneath the
+   letters, so the image's bottom edge sits well below where the writing
+   visually sits — top:6px corrects for that so it reads as sharing the
+   nav's baseline instead of floating above it. */
+.signature {
+  height: 32px;
+  width: auto;
+  position: relative;
+  top: 6px;
 }
 
 /* --------------------------------------------------------------------------
@@ -821,6 +849,24 @@ a.contact-link:hover {
    Responsive
    -------------------------------------------------------------------------- */
 
+/* Tablet: nav and signature scale down together; brand-to-nav gap narrows
+   along with the viewport instead of holding the desktop cap. */
+@media (max-width: 1024px) {
+  .header {
+    max-width: 40rem;
+  }
+
+  .header-right,
+  .nav {
+    gap: 1.4rem;
+  }
+
+  .signature {
+    height: 26px;
+    top: 5px;
+  }
+}
+
 @media (max-width: 900px) {
   .facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -842,10 +888,17 @@ a.contact-link:hover {
     align-items: flex-start;
     gap: 1.1rem;
     padding: 1.8rem var(--pad) 0;
+    max-width: none;
   }
 
   .nav {
     gap: 1.6rem;
+  }
+
+  /* Mobile prioritizes the wordmark and nav; the signature would either
+     crowd the stacked header or shrink past legibility, so it's dropped. */
+  .signature {
+    display: none;
   }
 
   .hero {

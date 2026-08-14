@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
@@ -22,18 +23,31 @@ export function Header() {
         <p className="wordmark">{site.name}</p>
       </Link>
 
-      <nav className="nav" aria-label="Primary">
-        {site.nav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={isActive(item.href, pathname) ? "active" : undefined}
-            aria-current={isActive(item.href, pathname) ? "page" : undefined}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <div className="header-right">
+        <nav className="nav" aria-label="Primary">
+          {site.nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={isActive(item.href, pathname) ? "active" : undefined}
+              aria-current={isActive(item.href, pathname) ? "page" : undefined}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Personal mark, not a link — the wordmark above already carries the
+            name and the home link, so this stays out of the accessibility tree. */}
+        <Image
+          src="/brand/signature-white.png"
+          alt=""
+          width={348}
+          height={260}
+          className="signature"
+          priority
+        />
+      </div>
     </header>
   );
 }
