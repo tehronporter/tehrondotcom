@@ -123,9 +123,14 @@ img {
   padding-right: var(--pad);
 }
 
+/* Full-bleed on purpose: the hero above sits at 4x --pad and the row/cards
+   below sit at 3x, so matching the rule to either one would only line it up
+   with one side and mismatch the other. Edge to edge, it reads as a
+   deliberate architectural break between masthead and body instead of a
+   fragment of either grid. */
 .divider {
   border-top: 1px solid var(--rule);
-  margin: 0 var(--pad);
+  margin: 0;
 }
 
 /* Page-enter transition — the fade-up from the original prototype, applied on
@@ -238,15 +243,14 @@ img {
    padding is sized to sit under the portrait rather than the headline —
    the portrait is the taller element now, so the old 11rem left a canyon
    above the divider.
-   Horizontal padding is 3x the page's own --pad, on purpose: at full width
-   the headline and portrait sat 826px apart while framed by only 56px of
-   margin on either side — the pair read as two things pinned to opposite
-   edges, not one composition. The wider inset pulls both in and shrinks the
-   gap between them; the divider below stays at the page's normal --pad, so
-   the hero reads as a deliberately framed moment rather than the standard
-   grid, and everything below it returns to that grid unchanged. */
+   Horizontal padding is 4x the page's own --pad, on purpose: the headline
+   and portrait need to read as one composed pair, not two things pinned to
+   opposite edges. The wider inset pulls both in and shrinks the gap between
+   them; the divider below stays at the page's normal --pad, so the hero
+   reads as a deliberately framed moment rather than the standard grid, and
+   everything below it returns to that grid unchanged. */
 .hero {
-  padding: 3.5rem calc(var(--pad) * 3) 4rem;
+  padding: 3.5rem calc(var(--pad) * 4) 4rem;
 }
 
 /* Headline and portrait as a centred pair. The headline's lines are set with
@@ -273,12 +277,15 @@ img {
    Section header row (label left, link right)
    -------------------------------------------------------------------------- */
 
+/* Horizontal padding matches .stage below it (3x --pad) so the SELECTED WORK /
+   ALL WORK label sits directly above the card grid it belongs to, instead of
+   sitting out on the page's normal grid while its own content is inset. */
 .row-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
-  padding: 2.5rem var(--pad) 0.75rem;
+  padding: 2.5rem calc(var(--pad) * 3) 0.75rem;
 }
 
 .row-link {
@@ -307,15 +314,21 @@ img {
    --pad, so the three-card block sits centred on the page rather than
    spanning near edge-to-edge. Text inside each card stays left-aligned to
    its own column — only the block's outer margin changes, not the card's
-   internal alignment. SELECTED WORK / ALL WORK above stays on the normal
-   grid, same as the divider under the hero. */
+   internal alignment. .row-head above shares this same inset so the label
+   lines up with the grid it's labeling. */
 .stage {
   padding: 2.5rem calc(var(--pad) * 3) 4.5rem;
 }
 
+/* auto-fit with a real floor, not a hard repeat(3): with three items and no
+   minimum, the columns had no reason to stop shrinking, so tablet widths
+   squeezed each card down to ~130px. 200px is enough room for the folder
+   icon and a wrapped two-line title without feeling pinched. Below three
+   columns' worth of room this drops to two, then one, on its own — no
+   manual breakpoint to keep in sync with the hero's. */
 .space {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 3rem;
 }
 
@@ -925,6 +938,26 @@ a.contact-link:hover {
    Responsive
    -------------------------------------------------------------------------- */
 
+/* Tablet: the headline/portrait pair doesn't have room to sit side by side
+   between here and the mobile breakpoint below, so this range gets the same
+   deliberate centred stack as mobile instead of the bare flex-wrap fallback
+   (which left the portrait pinned to the headline's left edge instead of
+   reading as composed). The sub-760px block further down refines the width
+   and gap for phones specifically. */
+@media (max-width: 1320px) {
+  .hero-row {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-lg);
+  }
+
+  .hero-portrait {
+    width: min(60%, 380px);
+    height: auto;
+    align-self: center;
+  }
+}
+
 /* Tablet: brand-to-nav gap narrows along with the viewport instead of
    holding the desktop cap. */
 @media (max-width: 1024px) {
@@ -993,6 +1026,10 @@ a.contact-link:hover {
   .page-head,
   .cat-head.top {
     padding-top: var(--sp-sm);
+  }
+
+  .row-head {
+    padding: var(--sp-md) var(--pad) var(--sp-sm);
   }
 
   .stage {
