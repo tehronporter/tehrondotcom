@@ -283,6 +283,159 @@ export const categories: Category[] = [
         ],
       },
       {
+        slug: "indivisual-threads",
+        name: "INDIVISUAL THREADS",
+        meta: "Brand Identity / Apparel",
+        intro:
+          "A full apparel identity for Indivisual Threads, designed from scratch for a client: a spray-can icon and a graffiti-bubble wordmark built to run across a five-colorway capsule of tees, hoodies, and shorts.",
+        role: ["Creative Direction", "Identity Design", "Apparel Design"],
+        deliverables: ["Wordmark", "Icon Mark", "Type System", "Apparel Mockups"],
+        published: true,
+        tags: ["BRAND IDENTITY", "APPAREL", "ART DIRECTION"],
+        shortDescription:
+          "A graffiti-rooted apparel identity, from a spray-can mark to a full five-colorway capsule.",
+        /* Can't Buy Respect already holds the default "wide" frame for a square
+           piece — "plain" keeps this one from doubling it and suits the flat
+           graphic-tee artwork better than a heavier carved moulding would. */
+        frameStyle: "plain",
+        featured: {
+          src: "/work/brand-identity/indivisual-threads/01-red-tee-front.png",
+          alt: "Indivisual Threads spray-can icon on a red tee",
+          width: 2048,
+          height: 2048,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "The brief was a streetwear label that needed to look handmade and mass-producible at once. The spray-can icon carries the brand on its own — small enough for a chest hit, bold enough to read from across a room — while the bubble-letter wordmark does the heavy lifting on back prints.",
+              "Everything was built to survive a real production run: one mark, one wordmark, and a system for dropping both onto tees, hoodies, and shorts across five colorways without redesigning a thing each time.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "A capsule the client could put into production immediately — consistent across every garment and colorway, with room to keep adding pieces without touching the identity.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        mediaColumns: 3,
+        media: [
+          {
+            src: "/work/brand-identity/indivisual-threads/01-red-tee-front.png",
+            alt: "Indivisual Threads spray-can icon on a red tee",
+            caption: "Red tee, front",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/02-red-tee-back.png",
+            alt: "Indivisual Threads wordmark on the back of a red tee",
+            caption: "Red tee, back",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/03-tee-colorways-blue-black.png",
+            alt: "Indivisual Threads tee mockups in blue and black",
+            caption: "Blue & black colorways",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/04-tee-colorways-white-red.png",
+            alt: "Indivisual Threads tee mockups in white and red",
+            caption: "White & red colorways",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/05-shorts-colorways.png",
+            alt: "Indivisual Threads shorts mockups across four colorways",
+            caption: "Shorts, four colorways",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/06-hoodie-front.png",
+            alt: "Indivisual Threads wordmark on a white hoodie",
+            caption: "Hoodie, front",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/07-hoodie-back.png",
+            alt: "Indivisual Threads spray-can icon on the back of a white hoodie",
+            caption: "Hoodie, back",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/08-logo-lockup.png",
+            alt: "Indivisual Threads wordmark lockup",
+            caption: "Wordmark lockup",
+          },
+          {
+            src: "/work/brand-identity/indivisual-threads/09-mascot-illustration.png",
+            alt: "Illustrated mascot character spray-painting the Indivisual Threads mark",
+            caption: "Mascot illustration",
+          },
+        ],
+      },
+      {
+        slug: "westside-gunn-saucony",
+        name: "WESTSIDE GUNN X SAUCONY",
+        meta: "Art Direction / Flyer Design",
+        intro:
+          "A concept flyer series pairing Westside Gunn's Griselda with a Saucony sneaker collab, styled after vintage lucha libre posters and lotería ephemera.",
+        role: ["Art Direction", "Graphic Design"],
+        deliverables: ["Campaign Flyers", "Poster Series"],
+        published: true,
+        tags: ["ART DIRECTION", "CONCEPTS"],
+        shortDescription:
+          "A Griselda x Saucony flyer series art-directed like a stack of vintage lucha libre posters.",
+        /* The only portrait piece on the wall so far. Karl Kani already holds
+           "vintage" for its landscape sheet — "ornate" instead, which also
+           suits the maximalist poster style better than a slim gilt would. */
+        frameStyle: "ornate",
+        featured: {
+          src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.jpg",
+          alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
+          width: 1611,
+          height: 2000,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "Griselda's whole visual world already runs on grime and grit, so the flyers lean into it: sun-faded stock, halftone shading, and the ornate type of a wrestling poster tacked up outside an arena for weeks. Each piece pairs the sneaker with a different piece of lucha libre iconography — the champion's ring walk, the title belt, the final battle.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "A poster series that could hang on a wall or run as a drop announcement without losing the bootleg-poster energy that makes it feel real.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        mediaColumns: 3,
+        media: [
+          {
+            src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.jpg",
+            alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
+            caption: "Super Flygod",
+          },
+          {
+            src: "/work/brand-identity/westside-gunn-saucony/02-campeon-sin-limite.jpg",
+            alt: "Campeón Sin Límite lucha libre flyer for the Griselda x Saucony collab",
+            caption: "Campeón sin límite",
+          },
+          {
+            src: "/work/brand-identity/westside-gunn-saucony/03-los-tenis-del-campeon.jpg",
+            alt: "Los Tenis del Campeón vintage poster for the Griselda x Saucony collab",
+            caption: "Los tenis del campeón",
+          },
+          {
+            src: "/work/brand-identity/westside-gunn-saucony/04-batalla-final.jpg",
+            alt: "Batalla Final vintage poster for the Griselda x Saucony collab",
+            caption: "Batalla final",
+          },
+          {
+            src: "/work/brand-identity/westside-gunn-saucony/05-el-ritual-del-campeon.jpg",
+            alt: "El Ritual del Campeón vintage poster for the Griselda x Saucony collab",
+            caption: "El ritual del campeón",
+          },
+        ],
+      },
+      {
         slug: "selected-client-work",
         name: "SELECTED CLIENT WORK",
         meta: "Identity / Campaigns",
