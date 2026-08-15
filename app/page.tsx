@@ -1,65 +1,28 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Icon } from "@/components/Icon";
-import { Lines } from "@/components/Lines";
-import { hero } from "@/content/site";
-import { categories, num } from "@/content/projects";
+import { Gallery } from "@/components/Gallery";
+import { frameVars } from "@/components/frames";
+import { site } from "@/content/site";
+import { galleryProjects, galleryTags, wallDensity } from "@/content/projects";
 
 export default function HomePage() {
+  const pieces = galleryProjects();
+  const tags = galleryTags();
+
   return (
-    <div className="page">
-      <section className="hero">
-        <div className="hero-row">
-          <h1 className="display headline">
-            <Lines lines={hero.headline} />
-          </h1>
-
-          {/* Carries real meaning rather than decoration, so it gets a real
-              alt rather than being hidden from screen readers. */}
-          <Image
-            src="/brand/portrait.jpg"
-            alt="Painted portrait of Tehron Porter grappling a bull"
-            width={1100}
-            height={1366}
-            className="hero-portrait"
-            priority
-          />
+    /* The frame SVGs are set here as custom properties so their source is
+       inlined once for the whole page rather than once per piece — custom
+       properties inherit, so every .frame below can reach them. The density
+       tier is what lets the wall re-compose itself as the portfolio grows:
+       publish more projects and the frames tighten, with no layout change. */
+    <div className="page home" style={frameVars()} data-density={wallDensity(pieces.length)}>
+      {/* One grid holds the masthead, the filters, and the wall so the name and
+          the keywords share a baseline row and the artwork spans beneath them. */}
+      <section className="home-grid" aria-label="Selected work">
+        <div className="masthead">
+          <h1 className="display masthead-name">{site.name}</h1>
+          <p className="masthead-role">{site.disciplines.join("  ·  ")}</p>
         </div>
-      </section>
 
-      <div className="divider" />
-
-      <div className="row-head">
-        <h2 className="eyebrow">SELECTED WORK</h2>
-        <Link href="/work" className="row-link">
-          VIEW ALL <Icon name="arrow-right" size={14} />
-        </Link>
-      </div>
-
-      <section className="stage">
-        <div className="space">
-          {categories.map((category, i) => (
-            <Link key={category.slug} href={`/work/${category.slug}`} className="card">
-              <div className="folder-wrap">
-                <div className="folder">
-                  <Icon name={category.icon} size={25} />
-                </div>
-              </div>
-              <div className="card-num">{num(i)}</div>
-              <div className="card-title-row">
-                <h3 className="card-title">
-                  <Lines lines={category.titleLines} />
-                </h3>
-                <span className="card-arrow">
-                  <Icon name="arrow-right" size={14} />
-                </span>
-              </div>
-              <div className="card-tags">
-                <Lines lines={category.tags} />
-              </div>
-            </Link>
-          ))}
-        </div>
+        <Gallery pieces={pieces} tags={tags} />
       </section>
     </div>
   );

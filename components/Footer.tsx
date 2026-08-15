@@ -33,6 +33,7 @@ export function Footer() {
               {s.label}
             </a>
           ))}
+          <a href={`mailto:${site.email}`}>EMAIL</a>
         </nav>
       </div>
     </footer>

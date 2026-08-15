@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
-import { hero, site } from "@/content/site";
+import { site } from "@/content/site";
 
-/* Share card for links to the site. Generated at build time — same blue, same
-   structure as the header/hero.
+/* Share card for links to the site. Generated at build time — same blue, and
+   the same name-led lockup as the home masthead.
    Note: the renderer only ships one font weight, so the fontWeight values below
    have no effect today. Register a font with weights here to make them apply. */
 
@@ -26,26 +26,18 @@ export default function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: 1.5 }}>{site.name}</div>
-          <div style={{ fontSize: 18, letterSpacing: 1.2, marginTop: 8, opacity: 0.8 }}>
-            {site.role}
-          </div>
+        <div style={{ display: "flex", fontSize: 18, letterSpacing: 1.2, opacity: 0.8 }}>
+          {site.role}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            fontSize: 82,
-            fontWeight: 800,
-            lineHeight: 1.02,
-            letterSpacing: -1,
-          }}
-        >
-          {hero.headline.map((line) => (
-            <div key={line}>{line}</div>
-          ))}
+        {/* Same lockup as the home masthead: the name is the message. */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", fontSize: 104, lineHeight: 1, letterSpacing: -2 }}>
+            {site.name}
+          </div>
+          <div style={{ display: "flex", fontSize: 24, letterSpacing: 1.4, marginTop: 22, opacity: 0.85 }}>
+            {site.disciplines.join("  ·  ")}
+          </div>
         </div>
 
         <div

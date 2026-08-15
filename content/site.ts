@@ -9,6 +9,9 @@ export const site = {
   email: "tehronporter@gmail.com",
   location: "LAS VEGAS / REMOTE",
 
+  /** The line under the name on the home masthead. */
+  disciplines: ["Brand Identity", "Creative Technology", "Product Development"],
+
   /**
    * Canonical origin — drives Open Graph URLs, canonical tags, and the sitemap.
    * Set NEXT_PUBLIC_SITE_URL in Vercel to override (e.g. while on a *.vercel.app
@@ -26,20 +29,16 @@ export const site = {
 
   /** TODO: swap in your real profile URLs and handles. */
   socials: [
-    { label: "INSTAGRAM", handle: "@tehronporter", href: "https://instagram.com/tehronporter" },
+    { label: "IG", handle: "@tehronporter", href: "https://instagram.com/tehronporter" },
     { label: "LINKEDIN", handle: "Tehron Porter", href: "https://linkedin.com/in/tehronporter" },
-    { label: "TWITTER", handle: "@tehronporter", href: "https://x.com/tehronporter" },
+    { label: "X", handle: "@tehronporter", href: "https://x.com/tehronporter" },
   ],
 
+  /* HOME is gone: the wordmark in the header is the way back, and on the home
+     page itself the name is already the masthead. */
   nav: [
-    { label: "HOME", href: "/" },
     { label: "WORK", href: "/work" },
     { label: "ABOUT", href: "/about" },
     { label: "CONTACT", href: "/contact" },
   ],
 } as const;
-
-/** Home page hero. The headline stands alone — there is no supporting line. */
-export const hero = {
-  headline: ["I BUILD", "WHAT'S NEXT,", "NOT WHAT'S SAFE."],
-};

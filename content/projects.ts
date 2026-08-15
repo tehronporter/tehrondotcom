@@ -9,6 +9,25 @@
  */
 
 import type { IconName } from "@/components/Icon";
+import type { FrameStyle } from "@/components/frames";
+
+/**
+ * The single image that represents a project on the home gallery wall.
+ * Always one of that project's own images — never borrowed from elsewhere.
+ * Intrinsic pixel dimensions are required: they give next/image the right
+ * aspect ratio and they are what `orientation` is derived from, so the frame
+ * never has to be told which way up the piece is.
+ */
+export type Featured = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  /** object-position for the crop, e.g. "50% 30%". Defaults to centre. */
+  focus?: string;
+};
+
+export type Orientation = "portrait" | "square" | "landscape";
 
 export type Media = {
   /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.jpg". Omit for an empty frame. */
@@ -37,6 +56,22 @@ export type Project = {
   mediaColumns?: 3 | 4;
   /** Optional live link shown under the title. */
   link?: { label: string; href: string };
+
+  /* ---- home gallery wall ---------------------------------------------------
+     A project hangs on the wall only when `published` is true AND `featured`
+     is set. Both are deliberate acts. Nothing reaches the homepage because a
+     file happens to sit in a folder or a name appears in this file. */
+
+  /** Keyword filters. A project can belong to several. Stored ALL CAPS, like `Category.tags`. */
+  tags?: string[];
+  /** One sentence, shown on hover. Falls back to `intro` if absent. */
+  shortDescription?: string;
+  /** The piece hung on the wall. No featured image, no wall slot. */
+  featured?: Featured;
+  /** Overrides the frame otherwise chosen from the artwork's orientation. */
+  frameStyle?: FrameStyle;
+  /** Opt-in. Absent or false keeps the project off the homepage. */
+  published?: boolean;
 };
 
 export type Category = {
@@ -68,6 +103,16 @@ export const categories: Category[] = [
           "A full identity system for an apparel label built around a single garment. The mark, the type, and the packaging all had to survive being screen-printed, folded, shipped, and photographed on a phone.",
         role: ["Creative Direction", "Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Packaging", "Campaign Imagery"],
+        published: true,
+        tags: ["BRAND IDENTITY", "APPAREL", "ART DIRECTION"],
+        shortDescription:
+          "A complete identity system for an apparel label built around a single garment.",
+        featured: {
+          src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.jpg",
+          alt: "Campaign photo in front of a hand-painted BLUE mural",
+          width: 2652,
+          height: 1687,
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -135,6 +180,16 @@ export const categories: Category[] = [
           "Can't Buy Respect is a small apparel line built on one line of type per piece. Its first viral product, a tee that just says Not For Sale, moved before any campaign pushed it.",
         role: ["Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Capsule Apparel"],
+        published: true,
+        tags: ["BRAND IDENTITY", "APPAREL"],
+        shortDescription:
+          "An apparel line built on one line of type per piece — and a tee that travelled on its own.",
+        featured: {
+          src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.png",
+          alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
+          width: 1266,
+          height: 1243,
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -181,6 +236,20 @@ export const categories: Category[] = [
           "Apparel and graphic design for Karl Kani, working inside a brand with decades of history already on the label.",
         role: ["Apparel Design", "Graphic Design"],
         deliverables: ["Apparel Design", "Graphic Design", "Print Graphics"],
+        published: true,
+        tags: ["APPAREL", "ART DIRECTION"],
+        shortDescription:
+          "Apparel and graphic design inside a label with decades of history already on the tag.",
+        /* Blue T-Shirt is the other landscape on the wall and takes the default
+           heavy ornate moulding — a slim vintage gilt keeps these two apart, and
+           suits a white design sheet better than a wide carved frame would. */
+        frameStyle: "vintage",
+        featured: {
+          src: "/work/brand-identity/karl-kani/01-design-sheet.png",
+          alt: "Karl Kani apparel design sheet, navy and red colorway",
+          width: 1427,
+          height: 1102,
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -331,3 +400,88 @@ export const getProject = (categorySlug: string, projectSlug: string) => {
 
 /** Zero-padded display number, e.g. 0 -> "01". */
 export const num = (i: number) => String(i + 1).padStart(2, "0");
+
+/* ---------- home gallery wall ---------- */
+
+/** A project flattened out of its category and ready to hang. */
+export type GalleryPiece = {
+  slug: string;
+  name: string;
+  href: string;
+  tags: string[];
+  shortDescription: string;
+  featured: Featured;
+  orientation: Orientation;
+  frameStyle: FrameStyle;
+};
+
+/* Squares get a band rather than an exact 1:1 so that a 1266x1243 photo isn't
+   treated as a landscape over 23 pixels. */
+const orientationOf = ({ width, height }: Featured): Orientation => {
+  const ratio = width / height;
+  if (ratio > 1.15) return "landscape";
+  if (ratio < 0.87) return "portrait";
+  return "square";
+};
+
+/**
+ * The frame a project gets when it doesn't name one. Orientation is the sensible
+ * default — a heavy classical moulding suits a wide piece, a slim vintage one
+ * suits a tall piece — and it means a newly published project always arrives
+ * framed without a decision being required.
+ *
+ * Set `frameStyle` on a project to overrule it. That is the knob for keeping the
+ * wall varied: two landscapes side by side both default to `ornate`, so give one
+ * of them a different moulding when you want them to read apart.
+ */
+const FRAME_FOR: Record<Orientation, FrameStyle> = {
+  landscape: "ornate",
+  portrait: "vintage",
+  square: "wide",
+};
+
+/**
+ * Every project cleared to hang, in the order it appears in this file.
+ * The two gates are independent on purpose: `published` is your decision that
+ * the work is public, `featured` is the existence of an image to hang.
+ */
+export const galleryProjects = (): GalleryPiece[] =>
+  categories.flatMap((category) =>
+    category.projects
+      .filter((project) => project.published === true && project.featured?.src)
+      .map((project) => {
+        const featured = project.featured as Featured;
+        const orientation = orientationOf(featured);
+        return {
+          slug: project.slug,
+          name: project.name,
+          href: `/work/${category.slug}/${project.slug}`,
+          tags: project.tags ?? [],
+          shortDescription: project.shortDescription ?? project.intro,
+          featured,
+          orientation,
+          frameStyle: project.frameStyle ?? FRAME_FOR[orientation],
+        };
+      }),
+  );
+
+/**
+ * Filter keywords, computed from what is actually on the wall rather than
+ * declared separately — which is why a filter can never appear with nothing
+ * behind it, and why a new tag on a new project becomes a filter on its own.
+ */
+export const galleryTags = (): string[] => {
+  const seen: string[] = [];
+  for (const piece of galleryProjects()) {
+    for (const tag of piece.tags) if (!seen.includes(tag)) seen.push(tag);
+  }
+  return seen;
+};
+
+/**
+ * How busy the wall is. Drives frame size and spacing so a handful of pieces
+ * hang large and deliberate while a full portfolio tightens into a salon wall —
+ * without the layout ever being rewritten.
+ */
+export const wallDensity = (count: number): "sparse" | "medium" | "dense" =>
+  count <= 4 ? "sparse" : count <= 9 ? "medium" : "dense";

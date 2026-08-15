@@ -108,6 +108,18 @@ img {
   left: 0;
 }
 
+/* Available to assistive tech, absent from the layout. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* --------------------------------------------------------------------------
    Layout primitives
    -------------------------------------------------------------------------- */
@@ -127,16 +139,6 @@ img {
 .pad {
   padding-left: var(--pad);
   padding-right: var(--pad);
-}
-
-/* Full-bleed on purpose: the hero above sits at 4x --pad and the row/cards
-   below sit at 3x, so matching the rule to either one would only line it up
-   with one side and mismatch the other. Edge to edge, it reads as a
-   deliberate architectural break between masthead and body instead of a
-   fragment of either grid. */
-.divider {
-  border-top: 1px solid var(--rule);
-  margin: 0;
 }
 
 /* Page-enter transition — the fade-up from the original prototype, applied on
@@ -168,19 +170,6 @@ img {
   text-transform: uppercase;
 }
 
-/* The headline is the whole hero message — the space beneath it is carried by
-   .hero's bottom padding, not a margin here.
-   Sized to stand as tall as the portrait beside it: three lines at
-   line-height 1 means the block's height is 3x this value, and
-   .hero-portrait's height clamp is set to exactly that (3 x 8.5vw = 25.5vw,
-   3 x 8rem = 384px), so the pair matches at every width they share a row.
-   The vw step is capped by what actually fits: the longest line sets at
-   6.54x the font-size, so above ~8.5vw the headline and portrait stop
-   fitting side by side at 1320px, where the row is still horizontal. */
-.headline {
-  font-size: clamp(2.2rem, 8.5vw, 8rem);
-}
-
 .eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -196,9 +185,9 @@ img {
    Header
    -------------------------------------------------------------------------- */
 
-/* Full width, no max-width: nav's right edge lines up with the hero content
-   below it at the same --pad inset the wordmark and headline use on the
-   left. The rule marks where the masthead ends and content begins.
+/* Full width, no max-width: nav's right edge lines up with the page content
+   below it at the same --pad inset the wordmark uses on the left. The rule
+   marks where the masthead ends and content begins.
    Centered rather than baseline-aligned now that the left item is an image,
    which would otherwise baseline-align on its bottom edge. */
 .header {
@@ -248,213 +237,345 @@ img {
   border-bottom-color: var(--fg);
 }
 
-/* --------------------------------------------------------------------------
-   Hero
-   -------------------------------------------------------------------------- */
-
-/* The rule above already separates the masthead from this section. Bottom
-   padding is sized to sit under the portrait rather than the headline —
-   the portrait is the taller element now, so the old 11rem left a canyon
-   above the divider.
-   Horizontal padding is 2x the page's own --pad: enough inset that the hero
-   still reads as a deliberately framed moment rather than the standard grid,
-   but not so much that it starves the headline. The 4x inset that used to be
-   here existed to close a gap between headline and portrait — display type
-   this size closes that gap on its own, and 4x would cap the headline about
-   35% smaller than the portrait it is meant to match. The divider below
-   stays full-bleed and everything under it returns to the normal grid. */
-.hero {
-  padding: 3.5rem calc(var(--pad) * 2) 4rem;
+/* On the home page the name is already the masthead, so the signature is left
+   off and the nav has the row to itself. */
+.header[data-bare] {
+  justify-content: flex-end;
 }
 
-/* Headline and portrait as a centred pair. The headline's lines are set with
-   hard breaks, so it can't reflow — it sizes to its longest line and the row
-   wraps only when the two genuinely stop fitting side by side. */
-.hero-row {
+/* --------------------------------------------------------------------------
+   Home — masthead
+   -------------------------------------------------------------------------- */
+
+/* Masthead, filters, and wall share one grid so the name and the keyword list
+   hold the same row and the artwork spans the full width beneath them. The
+   filters and the wall come out of <Gallery>, so they arrive as siblings of
+   .masthead rather than nested inside it — placing all three explicitly is what
+   lets that component own its own state without owning the page layout. */
+.home-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 3rem;
+  padding: 3.5rem var(--pad) 5rem;
+}
+
+.masthead {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+/* The name is the hero now. It sizes off the viewport so it fills the measure
+   at every width; the ceiling stops it outgrowing --content-max on a very wide
+   display. */
+.masthead-name {
+  font-size: clamp(2.4rem, 9vw, 8.5rem);
+  line-height: 0.92;
+}
+
+.masthead-role {
+  font-size: clamp(12px, 1.05vw, 15px);
+  letter-spacing: 0.02em;
+  opacity: var(--dim);
+  margin-top: 1.1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Keyword filters
+   -------------------------------------------------------------------------- */
+
+/* Generated from the tags actually present on the wall, so the row can never
+   offer a filter with nothing behind it. Deliberately low-chrome — these
+   organise the work, they don't compete with it. */
+.filters {
+  grid-column: 2;
+  grid-row: 1;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 2.5rem 3rem;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  max-width: 26rem;
+  padding-top: 0.9rem;
 }
 
-/* Height tracks .headline exactly — 3 lines x 8.5vw = 25.5vw, 3 lines x 8rem
-   = 384px — so the slogan and the portrait stand the same height wherever
-   they share a row. Portrait is 4:5, so its width stays well inside the row
-   at every step. */
-.hero-portrait {
-  height: clamp(260px, 25.5vw, 384px);
-  width: auto;
-  flex: none;
+.filter {
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  transition: background var(--speed) ease, border-color var(--speed) ease, color var(--speed) ease;
+}
+
+.filter:hover {
+  border-color: var(--edge-hover);
+  background: var(--fill);
+}
+
+/* Inverted rather than merely brighter: at 10px a border change on its own is
+   not a reliable read of "this one is on". */
+.filter[aria-pressed="true"] {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--blue);
 }
 
 /* --------------------------------------------------------------------------
-   Section header row (label left, link right)
+   The wall
    -------------------------------------------------------------------------- */
 
-/* Padding and max-width both match .stage below it, so the label row and the
-   card grid share one set of edges: the left label sits over card 01, and the
-   right link ends where card 03's column ends. */
-.row-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2.5rem calc(var(--pad) * 3) 0.75rem;
-  max-width: var(--stage-max);
-  margin-inline: auto;
+/* Responsive on two axes. Columns come from auto-fit against --col-min, so the
+   wall reflows with the viewport. --col-min itself comes from the density tier
+   below, so the wall also reflows as the portfolio grows — a few pieces hang
+   large and deliberate, a full portfolio tightens into a salon wall. Neither
+   ever needs the layout rewritten.
+
+   align-items: start is what makes this a wall rather than a grid: each piece
+   keeps its own aspect ratio and hangs from a common line instead of being
+   padded out to a shared row height. */
+.wall {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr));
+  justify-items: start;
+  align-items: start;
+  column-gap: var(--wall-gap);
+  row-gap: calc(var(--wall-gap) * 1.3);
+  margin-top: 4.5rem;
 }
 
-.row-link {
+.home[data-density="sparse"] {
+  --col-min: 380px;
+  --col-max: 520px;
+  --wall-gap: 4rem;
+  --rail-base: clamp(18px, 2.4vw, 34px);
+  --drop-step: 2.5rem;
+}
+
+.home[data-density="medium"] {
+  --col-min: 300px;
+  --col-max: 420px;
+  --wall-gap: 3rem;
+  --rail-base: clamp(15px, 1.9vw, 26px);
+  --drop-step: 2rem;
+}
+
+.home[data-density="dense"] {
+  --col-min: 240px;
+  --col-max: 340px;
+  --wall-gap: 2.25rem;
+  --rail-base: clamp(12px, 1.5vw, 20px);
+  --drop-step: 1.5rem;
+}
+
+.piece {
+  min-width: 0;
+  /* A ceiling, not a width. auto-fit collapses the tracks it cannot fill, so
+     filtering down to one project hands that piece the whole wall — capping the
+     piece rather than the track keeps it at gallery scale while still letting
+     auto-fit count columns off --col-min. */
+  max-width: var(--col-max);
+  transition: opacity 200ms var(--ease);
+}
+
+/* Curated irregularity, not randomness: a fixed three-step cycle taken from
+   each project's position in the data rather than its position on screen. The
+   hang therefore stays put when the wall is filtered, and there is nothing
+   random for the server and the client to disagree about. */
+.piece[data-drop="1"] {
+  margin-top: var(--drop-step);
+}
+
+.piece[data-drop="2"] {
+  margin-top: calc(var(--drop-step) * 0.45);
+}
+
+/* Stated explicitly — .piece sets its own display, which would otherwise beat
+   the user-agent rule for [hidden]. */
+.piece[hidden] {
+  display: none;
+}
+
+/* The fade that runs just before the wall closes the gap. */
+.piece[data-out] {
+  opacity: 0;
+}
+
+.piece-link {
+  display: block;
+}
+
+/* Shrink-wraps the frame so the hover veil can cover the artwork exactly,
+   without reaching down over the caption.
+
+   It also resolves --rail, because depth is part of a moulding's character: a
+   thin vintage gilt that stands as proud as a heavy classical frame stops
+   reading as thin. The density tier sets the base; each style takes its share.
+   Both .piece-frame and .piece-veil inherit the result, which is what keeps the
+   veil landing exactly inside the moulding rather than over it. */
+.piece-plate {
+  position: relative;
+  --rail: var(--rail-base);
+}
+
+.piece-plate[data-frame="wide"] {
+  --rail: calc(var(--rail-base) * 1.14);
+}
+
+.piece-plate[data-frame="vintage"] {
+  --rail: calc(var(--rail-base) * 0.58);
+}
+
+.piece-plate[data-frame="plain"] {
+  --rail: calc(var(--rail-base) * 0.72);
+}
+
+/* --------------------------------------------------------------------------
+   Gold frames — home page only
+   -------------------------------------------------------------------------- */
+
+/* Case study galleries stay unframed; gilding belongs to the wall. That is why
+   these are .piece-frame and not the .frame used on the project pages.
+
+   The moulding is a 9-slice border-image: the carved corners hold their drawn
+   size while the ornament along the rails repeats to whatever length it needs,
+   so one asset frames any aspect ratio without stretching a bead. Sources and
+   slice values are set as custom properties on .home by frames.ts. */
+.piece-frame {
+  border-style: solid;
+  border-width: var(--rail);
+  /* Fallback band if the SVG source is ever unavailable. */
+  border-color: #b8891f;
+  border-image-repeat: round;
+  /* The rabbet — artwork sits recessed and casts into the moulding. */
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.45),
+    inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  /* Hangs off the wall rather than lying flat on it. */
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.34));
+  transition: transform var(--speed) var(--ease), filter var(--speed) var(--ease);
+}
+
+.piece-plate[data-frame="ornate"] .piece-frame {
+  border-image-source: var(--frame-ornate);
+  border-image-slice: var(--slice-ornate);
+}
+
+.piece-plate[data-frame="wide"] .piece-frame {
+  border-image-source: var(--frame-wide);
+  border-image-slice: var(--slice-wide);
+}
+
+.piece-plate[data-frame="vintage"] .piece-frame {
+  border-image-source: var(--frame-vintage);
+  border-image-slice: var(--slice-vintage);
+}
+
+.piece-plate[data-frame="plain"] .piece-frame {
+  border-image-source: var(--frame-plain);
+  border-image-slice: var(--slice-plain);
+}
+
+/* Width fills the column, height follows the image's own ratio — artwork is
+   never stretched, and the varied heights are what give the wall its hang.
+   object-fit is a safety net for a mis-stated dimension, not the mechanism. */
+.piece-art {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Hover reveal + caption
+   -------------------------------------------------------------------------- */
+
+/* Sits inside the moulding, over the artwork only. The gradient keeps the top
+   of the image legible — the point is to add a sentence, not to hide the work. */
+.piece-veil {
+  position: absolute;
+  inset: var(--rail);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  padding: 1.4rem;
+  background: linear-gradient(
+    to top,
+    rgba(8, 20, 110, 0.94),
+    rgba(8, 20, 110, 0.4) 62%,
+    rgba(8, 20, 110, 0) 100%
+  );
+  opacity: 0;
+  transition: opacity 240ms var(--ease);
+  pointer-events: none;
+}
+
+.piece-note {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.piece-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.piece-label {
+  margin-top: 1.15rem;
+}
+
+.piece-title {
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 700;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.row-link .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.row-link:hover .icon,
-.row-link:focus-visible .icon {
-  transform: translateX(3px);
-}
-
-/* --------------------------------------------------------------------------
-   Folder cards
-   -------------------------------------------------------------------------- */
-
-/* Same framing move as .hero: horizontal padding is 3x the page's own
-   --pad, so the three-card block sits centred on the page rather than
-   spanning near edge-to-edge. Text inside each card stays left-aligned to
-   its own column — only the block's outer margin changes, not the card's
-   internal alignment. .row-head above shares this inset and this max-width
-   so the label row lines up with the grid it's labeling. */
-.stage {
-  padding: 2.5rem calc(var(--pad) * 3) 4.5rem;
-  max-width: var(--stage-max);
-  margin-inline: auto;
-}
-
-/* auto-fit with a real floor, not a hard repeat(3): with three items and no
-   minimum, the columns had no reason to stop shrinking, so tablet widths
-   squeezed each card down to ~130px. 200px is enough room for the folder
-   icon and a wrapped two-line title without feeling pinched. Below three
-   columns' worth of room this drops to two, then one, on its own — no
-   manual breakpoint to keep in sync with the hero's. */
-.space {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 3rem;
-}
-
-.card {
-  min-width: 0;
-  display: block;
-}
-
-/* Height follows the folder instead of a fixed box with 46px of slack in it,
-   and the folder starts on the column's left edge rather than centred over
-   left-aligned text — it was the one element in this section off the grid,
-   which is what made each card read as two pieces instead of one unit. */
-.folder-wrap {
-  position: relative;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 1.75rem;
-}
-
-.folder {
-  position: relative;
-  width: 100%;
-  max-width: 124px;
-  aspect-ratio: 6 / 5;
-  background: var(--fill);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  transition: background var(--speed) ease, border-color var(--speed) ease;
-}
-
-/* The folder tab */
-.folder::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  left: 10%;
-  width: 36%;
-  height: 11px;
-  background: var(--fill);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-bottom: none;
-  border-radius: 6px 6px 0 0;
-  transition: background var(--speed) ease, border-color var(--speed) ease;
-}
-
-.card:hover .folder,
-.card:focus-visible .folder,
-.card:hover .folder::before,
-.card:focus-visible .folder::before {
-  background: var(--fill-hover);
-  border-color: var(--edge-hover);
-}
-
-.folder .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.card:hover .folder .icon,
-.card:focus-visible .folder .icon {
-  transform: translateY(-2px);
-}
-
-.card-num {
+.piece-tags {
   font-size: 11px;
-  font-weight: 700;
-  margin-bottom: 0.6rem;
-}
-
-.card-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 1rem;
-  min-height: 2.3em;
-}
-
-.card-title {
-  font-size: clamp(18px, 2.4vw, 24px);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-.card-arrow {
-  opacity: 0;
-  transform: translateX(-4px);
-  transition: opacity var(--speed) var(--ease), transform var(--speed) var(--ease);
-}
-
-.card:hover .card-arrow,
-.card:focus-visible .card-arrow {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* 11px with tighter leading: more legible than 10px without the list
-   sprawling the card taller. */
-.card-tags {
-  font-size: 11px;
-  line-height: 1.9;
   letter-spacing: 0.05em;
+  opacity: var(--dim);
+  margin-top: 0.35rem;
+}
+
+/* The sentence is in the caption at every width so assistive tech always
+   reaches it — the hover veil is decorative and aria-hidden. On a pointer
+   device it stays visually hidden here because the veil shows it; on touch,
+   where there is no hover, it becomes a real visible caption. */
+.piece-note-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .piece-link:hover .piece-veil,
+  .piece-link:focus-visible .piece-veil {
+    opacity: 1;
+  }
+
+  .piece-link:hover .piece-frame,
+  .piece-link:focus-visible .piece-frame {
+    transform: translateY(-4px);
+    filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.42));
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -479,7 +600,7 @@ img {
   transform: translateX(-3px);
 }
 
-/* Matches .hero's top padding so every page opens on the same baseline. */
+/* Every inner page opens on this baseline. */
 .page-head {
   padding: 2.4rem var(--pad) 0;
 }
@@ -488,7 +609,7 @@ img {
   padding: 1.6rem var(--pad) 2.6rem;
 }
 
-/* Pages with no back link above them open on the same baseline as .hero. */
+/* Pages with no back link above them open on that same baseline. */
 .cat-head.top {
   padding-top: 2.4rem;
 }
@@ -957,26 +1078,6 @@ a.contact-link:hover {
    Responsive
    -------------------------------------------------------------------------- */
 
-/* Tablet: the headline/portrait pair doesn't have room to sit side by side
-   between here and the mobile breakpoint below, so this range gets the same
-   deliberate centred stack as mobile instead of the bare flex-wrap fallback
-   (which left the portrait pinned to the headline's left edge instead of
-   reading as composed). The sub-760px block further down refines the width
-   and gap for phones specifically. */
-@media (max-width: 1320px) {
-  .hero-row {
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sp-lg);
-  }
-
-  .hero-portrait {
-    width: min(60%, 380px);
-    height: auto;
-    align-self: center;
-  }
-}
-
 /* Tablet: brand-to-nav gap narrows along with the viewport instead of
    holding the desktop cap. */
 @media (max-width: 1024px) {
@@ -993,6 +1094,43 @@ a.contact-link:hover {
   .capabilities {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  /* The name and the keyword list stop sharing a row: at this width the name
+     needs the full measure, and right-aligned filters under it would read as
+     detached from the wall they control. */
+  .home-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .masthead,
+  .filters,
+  .wall {
+    grid-column: 1;
+  }
+
+  .filters {
+    grid-row: 2;
+    justify-content: flex-start;
+    max-width: none;
+    padding-top: 0;
+    margin-top: 2.5rem;
+  }
+
+  .wall {
+    grid-row: 3;
+    margin-top: 3.5rem;
+  }
+
+  /* Tablet keeps two columns rather than falling to one: the desktop floor
+     needs more room than this viewport has, and a single 380px column in a
+     656px measure leaves the wall stranded against a wide empty margin.
+     The width ceiling comes off here too — with the tracks this narrow the
+     pieces should fill them, and it only exists to stop a filtered-down
+     desktop wall from stretching one piece across the page. */
+  .home[data-density] {
+    --col-min: 280px;
+    --col-max: 100%;
   }
 }
 
@@ -1024,106 +1162,54 @@ a.contact-link:hover {
     gap: 1.25rem;
   }
 
-  .hero {
-    padding: var(--sp-md) var(--pad) var(--sp-lg);
+  .home-grid {
+    padding: var(--sp-md) var(--pad) var(--sp-xl);
   }
 
-  .hero-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--sp-md);
+  .filters {
+    margin-top: var(--sp-md);
   }
 
-  /* Sized to own the column rather than float in it, and centred so it
-     breaks the left-aligned grid deliberately instead of by accident. */
-  .hero-portrait {
-    width: 85%;
+  .wall {
+    margin-top: var(--sp-lg);
+  }
+
+  /* One column at every density tier — a phone has room for one piece at a
+     time, and the artwork is the point. The moulding scales with the viewport
+     rather than the tier so the gold stays substantial rather than shrinking
+     to a hairline, and the stagger switches off since there is no second
+     column to stagger against. */
+  .home[data-density] {
+    --col-min: 100%;
+    --col-max: 100%;
+    --wall-gap: var(--sp-md);
+    --rail-base: clamp(14px, 4.5vw, 26px);
+    --drop-step: 0rem;
+  }
+
+  /* A comfortable tap target — 10px pills are a desktop-pointer size. */
+  .filter {
+    font-size: 11px;
+    padding: 0.6rem 1rem;
+  }
+
+  /* No hover to reveal it, so the sentence becomes a real caption instead. */
+  .piece-note-caption {
+    position: static;
+    width: auto;
     height: auto;
-    align-self: center;
+    margin: 0.55rem 0 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: var(--dim);
   }
 
   .page-head,
   .cat-head.top {
     padding-top: var(--sp-sm);
-  }
-
-  .row-head {
-    padding: var(--sp-md) var(--pad) var(--sp-sm);
-  }
-
-  .stage {
-    padding: var(--sp-sm) var(--pad) var(--sp-lg);
-  }
-
-  .space {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  /* Categories become compact rows instead of stacked desktop columns:
-     number and title on the left with the folder beside them, tags beneath,
-     arrow closing the row. Halves the section's height while keeping the
-     folder language intact. */
-  .card {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: var(--sp-sm);
-    align-items: start;
-    grid-template-areas:
-      "num    folder"
-      "title  folder"
-      "tags   arrow";
-    padding: var(--sp-sm) 0;
-  }
-
-  .card + .card {
-    border-top: 1px solid var(--rule);
-  }
-
-  .card-num {
-    grid-area: num;
-  }
-
-  /* Lifts .card-title and .card-arrow into .card's own grid so they can be
-     placed independently — they're siblings in the markup for desktop. */
-  .card-title-row {
-    display: contents;
-  }
-
-  .card-title {
-    grid-area: title;
-    margin-bottom: 0.9rem;
-  }
-
-  /* One line on mobile; the hard break is desktop's two-line lockup. */
-  .card-title br {
-    display: none;
-  }
-
-  .card-tags {
-    grid-area: tags;
-  }
-
-  /* No hover on touch, so the affordance is always visible. */
-  .card-arrow {
-    grid-area: arrow;
-    align-self: end;
-    justify-self: end;
-    opacity: 1;
-    transform: none;
-  }
-
-  .folder-wrap {
-    grid-area: folder;
-    height: auto;
-    width: 84px;
-    margin: 0;
-  }
-
-  .folder {
-    width: 84px;
-    max-width: none;
-    margin: 0;
   }
 
   /* Index rows stack: name on its own line, then meta left / year right. */
