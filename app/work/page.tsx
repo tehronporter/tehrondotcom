@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { categories, num } from "@/content/projects";
+import { ProjectRow } from "@/components/ProjectRow";
+import { categories } from "@/content/projects";
 import { tagLine } from "@/lib/text";
 
 export const metadata: Metadata = {
@@ -23,37 +24,23 @@ export default function AllWorkPage() {
         </Link>
       </div>
 
-      <section className="archive-hero">
-        <div className="archive-list">
-          <div className="archive-list-head">
-            <span>NUMBER</span>
-            <span>PROJECT</span>
-          </div>
-          {all.map(({ category, project }, i) => (
-            <Link
-              key={`${category.slug}/${project.slug}`}
-              href={`/work/${category.slug}/${project.slug}`}
-              className="archive-row"
-            >
-              <span className="archive-num">{num(i)}</span>
-              <span className="archive-name">{project.name}</span>
-            </Link>
-          ))}
-        </div>
-
-        <div className="archive-text">
-          <h1 className="display headline">ALL WORK.</h1>
-          <p className="cat-meta">
-            {tagLine(categories.map((c) => c.titleLines.join(" ").replace(".", "")))}
-          </p>
-        </div>
-      </section>
-
-      <div className="archive-image">
-        <div className="frame">
-          <span>Studio image</span>
-        </div>
+      <div className="cat-head">
+        <h1 className="display cat-title">ALL WORK.</h1>
+        <p className="cat-meta">
+          {tagLine(categories.map((c) => c.titleLines.join(" ").replace(".", "")))}
+        </p>
       </div>
+
+      <section>
+        {all.map(({ category, project }, i) => (
+          <ProjectRow
+            key={`${category.slug}/${project.slug}`}
+            project={project}
+            index={i}
+            categorySlug={category.slug}
+          />
+        ))}
+      </section>
     </div>
   );
 }
