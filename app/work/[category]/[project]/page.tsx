@@ -72,7 +72,13 @@ export default async function ProjectPage({ params }: Params) {
 
       {project.media.length > 0 && (
         <section
-          className={project.mediaLayout === "grid" ? "media media-grid" : "media"}
+          className={[
+            "media",
+            project.mediaLayout === "grid" && "media-grid",
+            project.mediaLayout === "grid" && project.mediaColumns === 3 && "media-grid-3",
+          ]
+            .filter(Boolean)
+            .join(" ")}
         >
           {project.media.map((item, i) => (
             <Frame key={i} item={item} />

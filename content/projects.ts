@@ -11,7 +11,7 @@
 import type { IconName } from "@/components/Icon";
 
 export type Media = {
-  /** Path under /public, e.g. "/work/blue-t-shirt/01.jpg". Omit for an empty frame. */
+  /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.jpg". Omit for an empty frame. */
   src?: string;
   alt: string;
   caption?: string;
@@ -33,6 +33,8 @@ export type Project = {
   media: Media[];
   /** "grid" renders media as a small uniform feed instead of the full/half editorial layout. */
   mediaLayout?: "grid";
+  /** Columns for the grid feed. Defaults to 4. */
+  mediaColumns?: 3 | 4;
   /** Optional live link shown under the title. */
   link?: { label: string; href: string };
 };
@@ -84,42 +86,42 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/blue-t-shirt/01-mockup-white.png",
+            src: "/work/brand-identity/blue-t-shirt/01-mockup-white.png",
             alt: "Type system applied to a white garment mockup",
             caption: "Type system on garment",
           },
           {
-            src: "/work/blue-t-shirt/02-mockup-red.png",
+            src: "/work/brand-identity/blue-t-shirt/02-mockup-red.png",
             alt: "Type system applied to a red garment mockup",
             caption: "Alternate colorway",
           },
           {
-            src: "/work/blue-t-shirt/03-wordmark.png",
+            src: "/work/brand-identity/blue-t-shirt/03-wordmark.png",
             alt: "TSHIRT / BLUE wordmark lockup",
             caption: "Wordmark lockup",
           },
           {
-            src: "/work/blue-t-shirt/04-tagline.jpg",
+            src: "/work/brand-identity/blue-t-shirt/04-tagline.jpg",
             alt: "“this is a blue t-shirt.” tagline graphic",
             caption: "Tagline graphic",
           },
           {
-            src: "/work/blue-t-shirt/05-campaign-mural.jpg",
+            src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.jpg",
             alt: "Campaign photo in front of a hand-painted BLUE mural",
             caption: "Campaign imagery",
           },
           {
-            src: "/work/blue-t-shirt/06-campaign-portrait.jpg",
+            src: "/work/brand-identity/blue-t-shirt/06-campaign-portrait.jpg",
             alt: "Campaign portrait wearing the type system",
             caption: "Campaign portrait",
           },
           {
-            src: "/work/blue-t-shirt/07-on-set.jpg",
+            src: "/work/brand-identity/blue-t-shirt/07-on-set.jpg",
             alt: "Behind the scenes on the campaign shoot",
             caption: "On set",
           },
           {
-            src: "/work/blue-t-shirt/08-in-the-wild.jpg",
+            src: "/work/brand-identity/blue-t-shirt/08-in-the-wild.jpg",
             alt: "The shirt worn out in the world",
             caption: "In the wild",
           },
@@ -150,48 +152,66 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/cant-buy-respect/01-not-for-sale-mockup.png",
+            src: "/work/brand-identity/cant-buy-respect/01-not-for-sale-mockup.png",
             alt: "Not For Sale green tee mockup",
             caption: "Not For Sale tee",
           },
           {
-            src: "/work/cant-buy-respect/02-kendrick-not-for-sale.png",
+            src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.png",
             alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
             caption: "Worn backstage",
           },
           {
-            src: "/work/cant-buy-respect/03-cant-buy-respect-mockup.png",
+            src: "/work/brand-identity/cant-buy-respect/03-cant-buy-respect-mockup.png",
             alt: "Can't Buy Respect yellow hoodie mockup",
             caption: "Can't Buy Respect hoodie",
           },
           {
-            src: "/work/cant-buy-respect/04-lil-wayne-cant-buy-respect.png",
+            src: "/work/brand-identity/cant-buy-respect/04-lil-wayne-cant-buy-respect.png",
             alt: "Lil Wayne wearing the Can't Buy Respect hoodie",
             caption: "Worn out",
           },
         ],
       },
       {
-        slug: "g-perico",
-        name: "G. PERICO",
-        meta: "Creative Direction / Music",
+        slug: "karl-kani",
+        name: "KARL KANI",
+        meta: "Apparel Design / Graphic Design",
         intro:
-          "Creative direction across a release cycle — cover art, campaign visuals, and the visual language tying the rollout together.",
-        role: ["Creative Direction", "Art Direction"],
-        deliverables: ["Cover Art", "Campaign Visuals", "Rollout System"],
+          "Apparel and graphic design for Karl Kani, working inside a brand with decades of history already on the label.",
+        role: ["Apparel Design", "Graphic Design"],
+        deliverables: ["Apparel Design", "Graphic Design", "Print Graphics"],
         sections: [
           {
             heading: "APPROACH",
             body: [
-              "Music rollouts fall apart when every asset is designed separately. The work here was setting a single visual grammar early, then holding it across every drop in the cycle.",
+              "Working inside an established label means the identity is already set. The job was applying it well: graphics that hold up printed on fabric, layouts that read at hangtag size and at poster size.",
             ],
           },
           {
             heading: "OUTCOME",
-            body: ["A rollout that reads as one body of work rather than a folder of singles."],
+            body: ["A body of apparel and graphic work that fits the brand's history instead of just repeating it."],
           },
         ],
-        media: [{ alt: "Cover art" }, { alt: "Campaign visuals", span: "half" }, { alt: "Rollout assets", span: "half" }],
+        mediaLayout: "grid",
+        mediaColumns: 3,
+        media: [
+          {
+            src: "/work/brand-identity/karl-kani/01-design-sheet.png",
+            alt: "Karl Kani apparel design sheet, navy and red colorway",
+            caption: "Design sheet",
+          },
+          {
+            src: "/work/brand-identity/karl-kani/02-design-sheet.png",
+            alt: "Karl Kani apparel design sheet, olive and black colorway",
+            caption: "Design sheet",
+          },
+          {
+            src: "/work/brand-identity/karl-kani/03-design-sheet.png",
+            alt: "Karl Kani apparel design sheet, blue and red colorway",
+            caption: "Design sheet",
+          },
+        ],
       },
       {
         slug: "selected-client-work",
