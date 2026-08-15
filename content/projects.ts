@@ -436,6 +436,58 @@ export const categories: Category[] = [
         ],
       },
       {
+        slug: "amine-club-banana",
+        name: "AMINE CLUB BANANA",
+        meta: "Graphic Design / Apparel",
+        intro:
+          "An all-over banana print and a companion smiley-mascot graphic, built out across a five-piece apparel capsule in three colorways.",
+        role: ["Graphic Design", "Apparel Design"],
+        deliverables: ["Pattern Design", "Mascot Graphic", "Apparel Mockups", "Colorway System"],
+        published: true,
+        tags: ["APPAREL", "ART DIRECTION"],
+        shortDescription:
+          "A playful all-over banana print and mascot graphic, built out across three colorways.",
+        featured: {
+          src: "/work/brand-identity/amine-club-banana/01-black-colorway.png",
+          alt: "Amine Club banana-print apparel capsule, black colorway",
+          width: 1493,
+          height: 2000,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "One repeat pattern and one mascot mark had to carry a full capsule — beanie, crewneck, tie, track jacket, slides — without the print reading as noise at any of those scales, and the smiley banana graphic doing the job a wordmark usually would.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "The same system holds up across three colorways, pink, blue, and black, so the capsule reads as one drop instead of three unrelated ones.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        mediaColumns: 3,
+        media: [
+          {
+            src: "/work/brand-identity/amine-club-banana/01-black-colorway.png",
+            alt: "Amine Club banana-print apparel capsule, black colorway",
+            caption: "Black colorway",
+          },
+          {
+            src: "/work/brand-identity/amine-club-banana/02-pink-colorway.png",
+            alt: "Amine Club banana-print apparel capsule, pink colorway",
+            caption: "Pink colorway",
+          },
+          {
+            src: "/work/brand-identity/amine-club-banana/03-blue-colorway.png",
+            alt: "Amine Club banana-print apparel capsule, blue colorway",
+            caption: "Blue colorway",
+          },
+        ],
+      },
+      {
         slug: "selected-client-work",
         name: "SELECTED CLIENT WORK",
         meta: "Identity / Campaigns",
