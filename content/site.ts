@@ -32,7 +32,8 @@ export const site = {
   ],
 
   nav: [
-    { label: "WORK", href: "/" },
+    { label: "HOME", href: "/" },
+    { label: "WORK", href: "/work" },
     { label: "ABOUT", href: "/about" },
     { label: "CONTACT", href: "/contact" },
   ],

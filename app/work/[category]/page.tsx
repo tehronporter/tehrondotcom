@@ -31,8 +31,8 @@ export default async function CategoryPage({ params }: Params) {
   return (
     <div className="page">
       <div className="page-head">
-        <Link href="/" className="back-link">
-          <Icon name="arrow-left" size={14} /> WORK
+        <Link href="/work" className="back-link">
+          <Icon name="arrow-left" size={14} /> ALL WORK
         </Link>
       </div>
 

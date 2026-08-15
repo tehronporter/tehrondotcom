@@ -20,7 +20,7 @@ export default function AllWorkPage() {
     <div className="page">
       <div className="page-head">
         <Link href="/" className="back-link">
-          <Icon name="arrow-left" size={14} /> INDEX
+          <Icon name="arrow-left" size={14} /> HOME
         </Link>
       </div>
 

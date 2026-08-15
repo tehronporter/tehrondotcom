@@ -32,7 +32,7 @@ export default function HomePage() {
       <div className="row-head">
         <h2 className="eyebrow">SELECTED WORK</h2>
         <Link href="/work" className="row-link">
-          ALL WORK <Icon name="arrow-right" size={14} />
+          VIEW ALL <Icon name="arrow-right" size={14} />
         </Link>
       </div>
 

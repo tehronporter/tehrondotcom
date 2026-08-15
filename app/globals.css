@@ -20,6 +20,12 @@
      composed instead of stretching; at 1440–1700 it changes nothing. */
   --content-max: 1720px;
 
+  /* Ceiling on the Selected Work block (label row + card grid share it, so
+     they keep the same edges). Border-box, so this includes the 3x --pad
+     inset — the cards themselves get what's left, which keeps each column
+     close to the width of its own content instead of stretching to the page. */
+  --stage-max: 1240px;
+
   /* Secondary label opacity. 0.75 is the floor that still clears WCAG AA
      (5.1:1) against the blue — anything lighter fails on 10px labels. */
   --dim: 0.75;
@@ -163,9 +169,16 @@ img {
 }
 
 /* The headline is the whole hero message — the space beneath it is carried by
-   .hero's bottom padding, not a margin here. */
+   .hero's bottom padding, not a margin here.
+   Sized to stand as tall as the portrait beside it: three lines at
+   line-height 1 means the block's height is 3x this value, and
+   .hero-portrait's height clamp is set to exactly that (3 x 8.5vw = 25.5vw,
+   3 x 8rem = 384px), so the pair matches at every width they share a row.
+   The vw step is capped by what actually fits: the longest line sets at
+   6.54x the font-size, so above ~8.5vw the headline and portrait stop
+   fitting side by side at 1320px, where the row is still horizontal. */
 .headline {
-  font-size: clamp(2.2rem, 6.6vw, 4.15rem);
+  font-size: clamp(2.2rem, 8.5vw, 8rem);
 }
 
 .eyebrow {
@@ -243,14 +256,15 @@ img {
    padding is sized to sit under the portrait rather than the headline —
    the portrait is the taller element now, so the old 11rem left a canyon
    above the divider.
-   Horizontal padding is 4x the page's own --pad, on purpose: the headline
-   and portrait need to read as one composed pair, not two things pinned to
-   opposite edges. The wider inset pulls both in and shrinks the gap between
-   them; the divider below stays at the page's normal --pad, so the hero
-   reads as a deliberately framed moment rather than the standard grid, and
-   everything below it returns to that grid unchanged. */
+   Horizontal padding is 2x the page's own --pad: enough inset that the hero
+   still reads as a deliberately framed moment rather than the standard grid,
+   but not so much that it starves the headline. The 4x inset that used to be
+   here existed to close a gap between headline and portrait — display type
+   this size closes that gap on its own, and 4x would cap the headline about
+   35% smaller than the portrait it is meant to match. The divider below
+   stays full-bleed and everything under it returns to the normal grid. */
 .hero {
-  padding: 3.5rem calc(var(--pad) * 4) 4rem;
+  padding: 3.5rem calc(var(--pad) * 2) 4rem;
 }
 
 /* Headline and portrait as a centred pair. The headline's lines are set with
@@ -264,11 +278,12 @@ img {
   gap: 2.5rem 3rem;
 }
 
-/* A counterweight to the slogan rather than an image floating beside it —
-   ~14% taller than before. Portrait is 4:5, so its width stays well inside
-   the row at every step. */
+/* Height tracks .headline exactly — 3 lines x 8.5vw = 25.5vw, 3 lines x 8rem
+   = 384px — so the slogan and the portrait stand the same height wherever
+   they share a row. Portrait is 4:5, so its width stays well inside the row
+   at every step. */
 .hero-portrait {
-  height: clamp(260px, 34vw, 435px);
+  height: clamp(260px, 25.5vw, 384px);
   width: auto;
   flex: none;
 }
@@ -277,15 +292,17 @@ img {
    Section header row (label left, link right)
    -------------------------------------------------------------------------- */
 
-/* Horizontal padding matches .stage below it (3x --pad) so the SELECTED WORK /
-   ALL WORK label sits directly above the card grid it belongs to, instead of
-   sitting out on the page's normal grid while its own content is inset. */
+/* Padding and max-width both match .stage below it, so the label row and the
+   card grid share one set of edges: the left label sits over card 01, and the
+   right link ends where card 03's column ends. */
 .row-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1.5rem;
   padding: 2.5rem calc(var(--pad) * 3) 0.75rem;
+  max-width: var(--stage-max);
+  margin-inline: auto;
 }
 
 .row-link {
@@ -314,10 +331,12 @@ img {
    --pad, so the three-card block sits centred on the page rather than
    spanning near edge-to-edge. Text inside each card stays left-aligned to
    its own column — only the block's outer margin changes, not the card's
-   internal alignment. .row-head above shares this same inset so the label
-   lines up with the grid it's labeling. */
+   internal alignment. .row-head above shares this inset and this max-width
+   so the label row lines up with the grid it's labeling. */
 .stage {
   padding: 2.5rem calc(var(--pad) * 3) 4.5rem;
+  max-width: var(--stage-max);
+  margin-inline: auto;
 }
 
 /* auto-fit with a real floor, not a hard repeat(3): with three items and no

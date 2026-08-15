@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
 
-/** WORK stays lit for the home page and everything under /work. */
+/** HOME is an exact match; WORK stays lit across every page under /work. */
 function isActive(href: string, pathname: string) {
-  if (href === "/") return pathname === "/" || pathname.startsWith("/work");
+  if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
