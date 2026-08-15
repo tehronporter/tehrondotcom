@@ -84,64 +84,44 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/blue-t-shirt/01-wordmark.png",
-            alt: "TSHIRT / BLUE wordmark lockup",
-            caption: "Wordmark lockup",
-          },
-          {
-            src: "/work/blue-t-shirt/02-campaign-mural.jpg",
-            alt: "Campaign photo in front of a hand-painted BLUE mural",
-            caption: "Campaign imagery",
-          },
-          {
-            src: "/work/blue-t-shirt/03-tagline.jpg",
-            alt: "“this is a blue t-shirt.” tagline graphic",
-            caption: "Tagline graphic",
-          },
-          {
-            src: "/work/blue-t-shirt/04-campaign-portrait.jpg",
-            alt: "Campaign portrait wearing the type system",
-            caption: "Campaign portrait",
-          },
-          {
-            src: "/work/blue-t-shirt/05-mockup-white.png",
+            src: "/work/blue-t-shirt/01-mockup-white.png",
             alt: "Type system applied to a white garment mockup",
             caption: "Type system on garment",
           },
           {
-            src: "/work/blue-t-shirt/06-on-set.jpg",
-            alt: "Behind the scenes on the campaign shoot",
-            caption: "On set",
+            src: "/work/blue-t-shirt/02-mockup-red.png",
+            alt: "Type system applied to a red garment mockup",
+            caption: "Alternate colorway",
           },
           {
-            src: "/work/blue-t-shirt/07-color-of-blue.jpg",
-            alt: "“the color of this t-shirt is BLUE” graphic",
-            caption: "Type system",
+            src: "/work/blue-t-shirt/03-wordmark.png",
+            alt: "TSHIRT / BLUE wordmark lockup",
+            caption: "Wordmark lockup",
+          },
+          {
+            src: "/work/blue-t-shirt/04-tagline.jpg",
+            alt: "“this is a blue t-shirt.” tagline graphic",
+            caption: "Tagline graphic",
+          },
+          {
+            src: "/work/blue-t-shirt/05-campaign-mural.jpg",
+            alt: "Campaign photo in front of a hand-painted BLUE mural",
+            caption: "Campaign imagery",
+          },
+          {
+            src: "/work/blue-t-shirt/06-campaign-portrait.jpg",
+            alt: "Campaign portrait wearing the type system",
+            caption: "Campaign portrait",
+          },
+          {
+            src: "/work/blue-t-shirt/07-on-set.jpg",
+            alt: "Behind the scenes on the campaign shoot",
+            caption: "On set",
           },
           {
             src: "/work/blue-t-shirt/08-in-the-wild.jpg",
             alt: "The shirt worn out in the world",
             caption: "In the wild",
-          },
-          {
-            src: "/work/blue-t-shirt/09-mockup-red.png",
-            alt: "Type system applied to a red garment mockup",
-            caption: "Alternate colorway",
-          },
-          {
-            src: "/work/blue-t-shirt/10-social-proof.png",
-            alt: "Fan wearing the shirt, shared to social media",
-            caption: "Social proof",
-          },
-          {
-            src: "/work/blue-t-shirt/11-hangtag-techpack.jpg",
-            alt: "Hangtag technical specification",
-            caption: "Hangtag tech pack",
-          },
-          {
-            src: "/work/blue-t-shirt/12-icon-mockup.png",
-            alt: "Flat wordmark-on-garment icon",
-            caption: "Icon mockup",
           },
         ],
       },
