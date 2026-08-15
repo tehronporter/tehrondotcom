@@ -70,6 +70,16 @@ export default async function ProjectPage({ params }: Params) {
         )}
       </div>
 
+      {project.media.length > 0 && (
+        <section
+          className={project.mediaLayout === "grid" ? "media media-grid" : "media"}
+        >
+          {project.media.map((item, i) => (
+            <Frame key={i} item={item} />
+          ))}
+        </section>
+      )}
+
       <dl className="facts">
         {project.client && (
           <div className="fact">
@@ -105,14 +115,6 @@ export default async function ProjectPage({ params }: Params) {
           </div>
         ))}
       </section>
-
-      {project.media.length > 0 && (
-        <section className="media">
-          {project.media.map((item, i) => (
-            <Frame key={i} item={item} />
-          ))}
-        </section>
-      )}
 
       {next.slug !== project.slug && (
         <Link href={`/work/${category.slug}/${next.slug}`} className="next-project">
