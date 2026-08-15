@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Icon } from "@/components/Icon";
-import { categories, getProject } from "@/content/projects";
+import { categories, categoryLabel, getProject } from "@/content/projects";
 import type { Media } from "@/content/projects";
 import { titleCase } from "@/lib/text";
 
@@ -50,9 +51,14 @@ export default async function ProjectPage({ params }: Params) {
   return (
     <div className="page">
       <div className="page-head">
-        <Link href={`/work/${category.slug}`} className="back-link">
-          <Icon name="arrow-left" size={14} /> {category.titleLines.join(" ").replace(".", "")}
-        </Link>
+        <Breadcrumbs
+          trail={[
+            { label: "HOME", href: "/" },
+            { label: "ALL WORK", href: "/work" },
+            { label: categoryLabel(category), href: `/work/${category.slug}` },
+            { label: project.name },
+          ]}
+        />
       </div>
 
       <div className="case-head">

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Icon } from "@/components/Icon";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ProjectRow } from "@/components/ProjectRow";
-import { categories } from "@/content/projects";
+import { categories, categoryLabel } from "@/content/projects";
 import { tagLine } from "@/lib/text";
 
 export const metadata: Metadata = {
@@ -19,16 +18,12 @@ export default function AllWorkPage() {
   return (
     <div className="page">
       <div className="page-head">
-        <Link href="/" className="back-link">
-          <Icon name="arrow-left" size={14} /> HOME
-        </Link>
+        <Breadcrumbs trail={[{ label: "HOME", href: "/" }, { label: "ALL WORK" }]} />
       </div>
 
       <div className="cat-head">
         <h1 className="display cat-title">ALL WORK.</h1>
-        <p className="cat-meta">
-          {tagLine(categories.map((c) => c.titleLines.join(" ").replace(".", "")))}
-        </p>
+        <p className="cat-meta">{tagLine(categories.map(categoryLabel))}</p>
       </div>
 
       <section>

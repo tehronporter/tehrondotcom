@@ -385,6 +385,9 @@ export const categories: Category[] = [
 
 export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
 
+/** A category's stacked title lines flattened to one label, e.g. "BRAND IDENTITY". */
+export const categoryLabel = (category: Category) => category.titleLines.join(" ").replace(".", "");
+
 export const getProject = (categorySlug: string, projectSlug: string) => {
   const category = getCategory(categorySlug);
   if (!category) return undefined;

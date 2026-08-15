@@ -600,6 +600,59 @@ img {
   transform: translateX(-3px);
 }
 
+/* Every /work page's full position in one row, each level a click away —
+   replaces the old stepped back-link chain (project -> category -> all work
+   -> home), which took three clicks to get home from a project even though
+   most visitors now land on one straight from the home gallery. */
+.crumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.crumb-list li {
+  display: flex;
+  align-items: center;
+}
+
+/* Divider drawn on the item rather than as its own element — one less node
+   per crumb, and it never needs an aria-hidden span kept in sync with it. */
+.crumb-list li:not(:first-child)::before {
+  content: "/";
+  margin: 0 0.6rem;
+  opacity: var(--dim);
+}
+
+.crumb-list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crumb-list a:hover,
+.crumb-list a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.crumb-list .icon {
+  transition: transform var(--speed) var(--ease);
+}
+
+.crumb-list a:hover .icon,
+.crumb-list a:focus-visible .icon {
+  transform: translateX(-3px);
+}
+
+/* The page you're already on — not a link, dimmed to read as inactive. */
+.crumb-current {
+  opacity: var(--dim);
+}
+
 /* Every inner page opens on this baseline. */
 .page-head {
   padding: 2.4rem var(--pad) 0;
