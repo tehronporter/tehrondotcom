@@ -556,6 +556,77 @@ img {
 }
 
 /* --------------------------------------------------------------------------
+   All-work archive (list left, statement right, image beneath)
+   -------------------------------------------------------------------------- */
+
+.archive-hero {
+  display: grid;
+  grid-template-columns: minmax(220px, 340px) minmax(0, 1fr);
+  gap: 2.5rem 4rem;
+  padding: 1.6rem var(--pad) 3.5rem;
+}
+
+/* A short, fixed gap — not space-between, which flung PROJECT out to the
+   column's far edge, well past where the names underneath actually start. */
+.archive-list-head {
+  display: flex;
+  gap: 1.6rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: var(--dim);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.archive-row {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+  transition: opacity var(--speed) ease;
+}
+
+.archive-row:hover,
+.archive-row:focus-visible {
+  opacity: 0.6;
+}
+
+.archive-num {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: var(--dim);
+  flex: none;
+  width: 1.7rem;
+}
+
+.archive-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+/* Right column carries the same headline weight as the home hero — one
+   consistent voice for the site's biggest statement type, not a one-off
+   size invented for this page. */
+.archive-text {
+  padding-top: 0.4rem;
+}
+
+.archive-text .cat-meta {
+  margin-top: 1.4rem;
+}
+
+.archive-image {
+  padding: 0 var(--pad) 4.5rem;
+}
+
+.archive-image .frame {
+  aspect-ratio: 21 / 9;
+}
+
+/* --------------------------------------------------------------------------
    Case study
    -------------------------------------------------------------------------- */
 
@@ -1116,6 +1187,26 @@ a.contact-link:hover {
 
   .project-left {
     grid-column: 1 / -1;
+  }
+
+  /* Statement first, list second — the list is easiest to scan once the
+     page has said what it is. */
+  .archive-hero {
+    grid-template-columns: 1fr;
+    gap: var(--sp-lg);
+    padding: var(--sp-sm) var(--pad) var(--sp-lg);
+  }
+
+  .archive-text {
+    order: -1;
+  }
+
+  .archive-image {
+    padding: 0 var(--pad) var(--sp-lg);
+  }
+
+  .archive-image .frame {
+    aspect-ratio: 4 / 3;
   }
 
   .media {
