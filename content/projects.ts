@@ -126,28 +126,50 @@ export const categories: Category[] = [
         ],
       },
       {
-        slug: "not-for-sale",
-        name: "NOT FOR SALE",
+        slug: "cant-buy-respect",
+        name: "CAN'T BUY RESPECT",
         meta: "Brand Identity / Apparel",
         intro:
-          "An apparel identity for a label that releases in closed drops. The system had to feel scarce without feeling precious.",
+          "Can't Buy Respect is a small apparel line built on one line of type per piece. Its first viral product, a tee that just says Not For Sale, moved before any campaign pushed it.",
         role: ["Identity Design", "Art Direction"],
-        deliverables: ["Identity System", "Drop Campaigns", "Lookbook"],
+        deliverables: ["Wordmark", "Type System", "Capsule Apparel"],
         sections: [
           {
             heading: "APPROACH",
             body: [
-              "Scarcity is a design constraint, not a marketing line. The system leans on stamped type, fixed edition numbering, and a palette that never expands.",
+              "The hoodie says the brand name straight. The tee took the other route: instead of the full phrase, it just says Not For Sale, a slogan sharp enough to travel on its own. Neither piece needed more than one line of type.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "Each release reads as part of one run rather than a new campaign, which is what a drop model actually needs.",
+              "The tee found its way onto real people, Kendrick Lamar backstage among them, before any campaign pushed it. That is the only proof a slogan like that needs.",
             ],
           },
         ],
-        media: [{ alt: "Not For Sale identity" }, { alt: "Drop campaign" }],
+        mediaLayout: "grid",
+        media: [
+          {
+            src: "/work/cant-buy-respect/01-not-for-sale-mockup.png",
+            alt: "Not For Sale green tee mockup",
+            caption: "Not For Sale tee",
+          },
+          {
+            src: "/work/cant-buy-respect/02-kendrick-not-for-sale.png",
+            alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
+            caption: "Worn backstage",
+          },
+          {
+            src: "/work/cant-buy-respect/03-cant-buy-respect-mockup.png",
+            alt: "Can't Buy Respect yellow hoodie mockup",
+            caption: "Can't Buy Respect hoodie",
+          },
+          {
+            src: "/work/cant-buy-respect/04-lil-wayne-cant-buy-respect.png",
+            alt: "Lil Wayne wearing the Can't Buy Respect hoodie",
+            caption: "Worn out",
+          },
+        ],
       },
       {
         slug: "g-perico",
