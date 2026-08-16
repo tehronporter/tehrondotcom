@@ -26,12 +26,24 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-function Frame({ item }: { item: Media }) {
+/* `heroName` matches whichever media item is the project's `featured` image to
+   the same view-transition-name Frame.tsx puts on that image on the home wall
+   (see Gallery.tsx) — so the piece the visitor clicked morphs into place here
+   instead of the page just cross-fading under it. Keyed off the project slug
+   both sides already have, so a new project gets this for free the moment it
+   sets `featured` to one of its own media entries. */
+function Frame({ item, heroName }: { item: Media; heroName?: string }) {
   return (
     <figure className={item.span === "half" ? undefined : "full"}>
       <div className="frame">
         {item.src ? (
-          <Image src={item.src} alt={item.alt} width={1600} height={1000} />
+          <Image
+            src={item.src}
+            alt={item.alt}
+            width={1600}
+            height={1000}
+            style={heroName ? { viewTransitionName: heroName } : undefined}
+          />
         ) : (
           <span>{item.alt}</span>
         )}
@@ -87,7 +99,11 @@ export default async function ProjectPage({ params }: Params) {
             .join(" ")}
         >
           {project.media.map((item, i) => (
-            <Frame key={i} item={item} />
+            <Frame
+              key={i}
+              item={item}
+              heroName={item.src && item.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
+            />
           ))}
         </section>
       )}

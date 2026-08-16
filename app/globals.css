@@ -158,6 +158,35 @@ img {
   }
 }
 
+/* Native View Transitions for the wall -> case study hop (wired in Gallery.tsx,
+   which feature-detects document.startViewTransition and falls back to a plain
+   navigation — the .page-in fade above — everywhere it's unsupported or motion
+   is reduced). Nothing else on the site calls the API, so these rules are
+   otherwise inert. The piece's own image carries a matching view-transition-name
+   in Frame.tsx and on the case study hero, so that one image morphs in place
+   while the rest of the page cross-fades underneath it. */
+::view-transition-old(root) {
+  animation: piece-vt-out 420ms var(--ease) both;
+}
+
+::view-transition-new(root) {
+  animation: piece-vt-in 420ms var(--ease) both;
+}
+
+@keyframes piece-vt-out {
+  to {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@keyframes piece-vt-in {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+}
+
 /* --------------------------------------------------------------------------
    Type
    -------------------------------------------------------------------------- */
@@ -340,6 +369,7 @@ img {
    keeps its own aspect ratio and hangs from a common line instead of being
    padded out to a shared row height. */
 .wall {
+  position: relative;
   grid-column: 1 / -1;
   grid-row: 2;
   display: grid;
@@ -351,12 +381,42 @@ img {
   margin-top: 4.5rem;
 }
 
+/* Track lighting that follows the cursor. Absolutely positioned and last in
+   source order so it paints above the pieces (mix-blend-mode only sees what's
+   already behind it), out of grid flow so it never takes a column, and inert
+   until Gallery.tsx opts it in with data-spotlight on pointer entry. */
+.wall-spotlight {
+  display: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms var(--ease);
+  background: radial-gradient(
+    420px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(255, 244, 219, 0.16),
+    transparent 72%
+  );
+  mix-blend-mode: soft-light;
+}
+
+.wall[data-spotlight] .wall-spotlight {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .wall-spotlight {
+    display: block;
+  }
+}
+
 .home[data-density="sparse"] {
   --col-min: 380px;
   --col-max: 520px;
   --wall-gap: 4rem;
   --rail-base: clamp(18px, 2.4vw, 34px);
   --drop-step: 2.5rem;
+  --parallax-strength: 1.3;
 }
 
 .home[data-density="medium"] {
@@ -365,6 +425,7 @@ img {
   --wall-gap: 3rem;
   --rail-base: clamp(15px, 1.9vw, 26px);
   --drop-step: 2rem;
+  --parallax-strength: 1;
 }
 
 .home[data-density="dense"] {
@@ -373,6 +434,7 @@ img {
   --wall-gap: 2.25rem;
   --rail-base: clamp(12px, 1.5vw, 20px);
   --drop-step: 1.5rem;
+  --parallax-strength: 0.55;
 }
 
 .piece {
@@ -420,9 +482,59 @@ img {
    reading as thin. The density tier sets the base; each style takes its share.
    Both .piece-frame and .piece-veil inherit the result, which is what keeps the
    veil landing exactly inside the moulding rather than over it. */
+/* Hung into place on first paint, then left to hang: a finite drop-and-settle
+   handed off to a barely-there idle sway once it's done. The two are sequenced
+   rather than layered — sway's delay starts only after settle's last piece has
+   finished — so there's never a moment where both are steering `transform` at
+   once. --wall-i (set inline per piece in Gallery.tsx) staggers the drop across
+   the wall; data-drop, already used for the hang stagger, staggers the sway so
+   neighbouring pieces don't breathe in sync. */
 .piece-plate {
   position: relative;
   --rail: var(--rail-base);
+  transform-origin: 50% 0%;
+  animation-name: piece-settle, piece-sway;
+  animation-timing-function: var(--ease), ease-in-out;
+  animation-duration: 640ms, 8s;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: both, none;
+  animation-delay: calc(var(--wall-i, 0) * 70ms), calc(2.4s + var(--wall-i, 0) * 70ms);
+}
+
+.piece[data-drop="1"] .piece-plate {
+  animation-duration: 640ms, 8.8s;
+}
+
+.piece[data-drop="2"] .piece-plate {
+  animation-duration: 640ms, 9.6s;
+}
+
+@keyframes piece-settle {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) rotate(-2.2deg) scale(0.965);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(2px) rotate(0.5deg) scale(1.004);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes piece-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(0.55deg);
+  }
 }
 
 .piece-plate[data-frame="wide"] {
@@ -448,7 +560,17 @@ img {
    size while the ornament along the rails repeats to whatever length it needs,
    so one asset frames any aspect ratio without stretching a bead. Sources and
    slice values are set as custom properties on .home by frames.ts. */
+/* Every live motion on a piece — hover lift, cursor tilt, scroll parallax —
+   resolves into this one transform instead of each effect setting `transform`
+   outright. A hover rule and two independent scripts (Frame.tsx's pointermove,
+   Gallery.tsx's scroll listener) all just write one custom property apiece;
+   none of them can clobber the others because none of them owns the shorthand. */
 .piece-frame {
+  --lift: 0px;
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --parallax-y: 0px;
+  position: relative;
   border-style: solid;
   border-width: var(--rail);
   /* Fallback band if the SVG source is ever unavailable. */
@@ -461,7 +583,26 @@ img {
     inset 0 2px 10px rgba(0, 0, 0, 0.5);
   /* Hangs off the wall rather than lying flat on it. */
   filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.34));
+  transform: translateY(calc(var(--lift) + var(--parallax-y))) perspective(900px)
+    rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
   transition: transform var(--speed) var(--ease), filter var(--speed) var(--ease);
+  will-change: transform;
+}
+
+/* Diagonal sheen, like glass catching light as you pass. Sized larger than the
+   frame and swept via background-position rather than its own transform, so it
+   never has to fight the frame above it for the transform shorthand either —
+   and backgrounds clip to their own box for free, no overflow tricks needed. */
+.piece-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
+  background-size: 260% 100%;
+  background-position: -110% 0;
+  transition: background-position 700ms var(--ease);
 }
 
 .piece-plate[data-frame="ornate"] .piece-frame {
@@ -573,8 +714,13 @@ img {
 
   .piece-link:hover .piece-frame,
   .piece-link:focus-visible .piece-frame {
-    transform: translateY(-4px);
+    --lift: -4px;
     filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.42));
+  }
+
+  .piece-link:hover .piece-frame::after,
+  .piece-link:focus-visible .piece-frame::after {
+    background-position: 210% 0;
   }
 }
 
@@ -1238,6 +1384,10 @@ a.contact-link:hover {
     --wall-gap: var(--sp-md);
     --rail-base: clamp(14px, 4.5vw, 26px);
     --drop-step: 0rem;
+    /* Cursor-driven effects are already off on touch; scroll parallax stays,
+       just quieter, since a phone's scroll velocity makes a full-strength
+       offset feel like jitter rather than depth. */
+    --parallax-strength: 0.4;
   }
 
   /* A comfortable tap target — 10px pills are a desktop-pointer size. */
