@@ -88,6 +88,9 @@ export function Frame({
           }}
           sizes="(max-width: 760px) 92vw, (max-width: 1180px) 46vw, 34vw"
           priority={priority}
+          {...(featured.blurDataURL
+            ? { placeholder: "blur" as const, blurDataURL: featured.blurDataURL }
+            : {})}
         />
       </div>
       {children}

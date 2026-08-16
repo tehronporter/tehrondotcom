@@ -42,3 +42,6 @@ source-photos/
 
 # local tooling (launch.json is shared, settings.local.json is per-machine)
 .claude/settings.local.json
+
+# image pipeline hash cache (a rebuild costs time, never quality)
+.image-cache.json

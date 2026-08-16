@@ -10,21 +10,34 @@
 
 import type { IconName } from "@/components/Icon";
 import type { FrameStyle } from "@/components/frames";
+import { imageMeta } from "@/lib/images";
 
 /**
  * The single image that represents a project on the home gallery wall.
  * Always one of that project's own images — never borrowed from elsewhere.
- * Intrinsic pixel dimensions are required: they give next/image the right
- * aspect ratio and they are what `orientation` is derived from, so the frame
- * never has to be told which way up the piece is.
+ *
+ * Intrinsic pixel dimensions are measured from the file by `npm run images`
+ * and read out of the manifest, not declared here — they are what `orientation`
+ * is derived from, so the frame never has to be told which way up the piece is,
+ * and a number that drifts from the file would silently hang it in the wrong
+ * moulding. `width`/`height` below are a fallback for an image the pipeline has
+ * not seen yet; leaving them out is the normal case.
  */
 export type Featured = {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  /** @deprecated Measured from the file instead. Only read if the manifest has no entry. */
+  width?: number;
+  height?: number;
   /** object-position for the crop, e.g. "50% 30%". Defaults to centre. */
   focus?: string;
+};
+
+/** A `Featured` with its dimensions resolved — what the wall actually renders. */
+export type ResolvedFeatured = Omit<Featured, "width" | "height"> & {
+  width: number;
+  height: number;
+  blurDataURL?: string;
 };
 
 export type Orientation = "portrait" | "square" | "landscape";
@@ -929,18 +942,34 @@ export type GalleryPiece = {
   href: string;
   tags: string[];
   shortDescription: string;
-  featured: Featured;
+  featured: ResolvedFeatured;
   orientation: Orientation;
   frameStyle: FrameStyle;
 };
 
 /* Squares get a band rather than an exact 1:1 so that a 1266x1243 photo isn't
    treated as a landscape over 23 pixels. */
-const orientationOf = ({ width, height }: Featured): Orientation => {
+const orientationOf = ({ width, height }: ResolvedFeatured): Orientation => {
   const ratio = width / height;
   if (ratio > 1.15) return "landscape";
   if (ratio < 0.87) return "portrait";
   return "square";
+};
+
+/**
+ * Measured dimensions win over declared ones; a piece with neither is treated
+ * as square, which is the orientation that crops the least badly when we are
+ * guessing. Resizing preserves aspect ratio, so re-running the image pipeline
+ * can never move a piece into a different moulding.
+ */
+const resolveFeatured = (featured: Featured): ResolvedFeatured => {
+  const meta = imageMeta(featured.src);
+  return {
+    ...featured,
+    width: meta?.width ?? featured.width ?? 1000,
+    height: meta?.height ?? featured.height ?? 1000,
+    blurDataURL: meta?.blurDataURL,
+  };
 };
 
 /**
@@ -969,7 +998,7 @@ export const galleryProjects = (): GalleryPiece[] =>
     category.projects
       .filter((project) => project.published === true && project.featured?.src)
       .map((project) => {
-        const featured = project.featured as Featured;
+        const featured = resolveFeatured(project.featured as Featured);
         const orientation = orientationOf(featured);
         return {
           slug: project.slug,

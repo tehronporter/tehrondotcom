@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Icon } from "@/components/Icon";
 import { categories, categoryLabel, getProject } from "@/content/projects";
-import type { Media } from "@/content/projects";
+import type { Media, Project } from "@/content/projects";
+import { MEDIA_SIZES, imageProps } from "@/lib/images";
 import { titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string; project: string }> };
@@ -26,22 +27,48 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
+/**
+ * Which slot this image occupies, and therefore how wide it will ever be
+ * painted. The grid feed ignores `span` — every cell there is one column — so
+ * the layout has to be consulted before the item.
+ */
+function sizesFor(project: Project, item: Media): string {
+  if (project.mediaLayout === "grid")
+    return project.mediaColumns === 3 ? MEDIA_SIZES.grid3 : MEDIA_SIZES.grid4;
+  return item.span === "half" ? MEDIA_SIZES.half : MEDIA_SIZES.full;
+}
+
 /* `heroName` matches whichever media item is the project's `featured` image to
    the same view-transition-name Frame.tsx puts on that image on the home wall
    (see Gallery.tsx) — so the piece the visitor clicked morphs into place here
    instead of the page just cross-fading under it. Keyed off the project slug
    both sides already have, so a new project gets this for free the moment it
    sets `featured` to one of its own media entries. */
-function Frame({ item, heroName }: { item: Media; heroName?: string }) {
+function Frame({
+  item,
+  sizes,
+  priority,
+  heroName,
+}: {
+  item: Media;
+  sizes: string;
+  priority?: boolean;
+  heroName?: string;
+}) {
   return (
     <figure className={item.span === "half" ? undefined : "full"}>
       <div className="frame">
         {item.src ? (
+          /* Dimensions come from the file itself via the manifest. The 1600x1000
+             fallback is only reached for an image the pipeline has not measured
+             yet, and matches the .frame aspect ratio so it degrades to exactly
+             the framing this had before. */
           <Image
             src={item.src}
             alt={item.alt}
-            width={1600}
-            height={1000}
+            {...imageProps(item.src, { width: 1600, height: 1000 })}
+            sizes={sizes}
+            priority={priority}
             style={heroName ? { viewTransitionName: heroName } : undefined}
           />
         ) : (
@@ -102,6 +129,10 @@ export default async function ProjectPage({ params }: Params) {
             <Frame
               key={i}
               item={item}
+              sizes={sizesFor(project, item)}
+              /* The first figure is above the fold on every case study, so it is
+                 the LCP element. The rest stay lazy. */
+              priority={i === 0}
               heroName={item.src && item.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
             />
           ))}

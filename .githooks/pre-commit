@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# Keep unoptimized images out of git history.
+#
+# Runs only when the commit already touches an image under public/work. The
+# pipeline is idempotent, so this is a no-op on a commit whose images are
+# already web-ready.
+#
+# Staging rule: this hook only ever re-stages paths the commit had already
+# opted into — the images you staged, the .webp they became, and the manifest.
+# Unstaged work in progress is never swept into your commit.
+#
+# Enabled by `npm install` (see the "prepare" script). To disable for one
+# commit: git commit --no-verify
+
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+images=$(printf '%s\n' "$staged" | grep -E '^public/work/.*\.(jpe?g|png|webp|avif|tiff?)$' || true)
+
+[ -z "$images" ] && exit 0
+
+echo "pre-commit: checking $(printf '%s\n' "$images" | wc -l | tr -d ' ') image(s)…"
+
+if ! npm run --silent images; then
+  echo ""
+  echo "pre-commit: image pipeline failed — commit aborted."
+  echo "  Fix the error above, or run 'npm install' if sharp is missing."
+  echo "  To bypass: git commit --no-verify"
+  exit 1
+fi
+
+# Re-stage each staged image at whatever path it now lives at. A conversion
+# renames the file, so stage both the old path (recording the deletion) and
+# the .webp that replaced it.
+printf '%s\n' "$images" | while IFS= read -r file; do
+  [ -z "$file" ] && continue
+  git add -- "$file" 2>/dev/null || true
+  webp="${file%.*}.webp"
+  [ -e "$webp" ] && git add -- "$webp"
+done
+
+# The manifest and any content file this commit already touches — a rename
+# rewrites the src string in whichever content file declares it.
+[ -e content/image-manifest.json ] && git add -- content/image-manifest.json
+printf '%s\n' "$staged" | while IFS= read -r file; do
+  case "$file" in
+    content/*) [ -e "$file" ] && git add -- "$file" ;;
+  esac
+done
+
+exit 0
