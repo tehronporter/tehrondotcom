@@ -815,6 +815,21 @@ export const categories: Category[] = [
             alt: "222 ring render, blue colorway",
             caption: "Blue",
           },
+          {
+            src: "/work/product-development/222-rings/05-222-ring-yellow-face.webp",
+            alt: "222 ring render, yellow colorway, numeral face",
+            caption: "Yellow, numeral face",
+          },
+          {
+            src: "/work/product-development/222-rings/06-222-ring-red-face.webp",
+            alt: "222 ring render, red colorway, numeral face",
+            caption: "Red, numeral face",
+          },
+          {
+            src: "/work/product-development/222-rings/07-222-ring-blue-face.webp",
+            alt: "222 ring render, blue colorway, numeral face",
+            caption: "Blue, numeral face",
+          },
         ],
       },
       {
