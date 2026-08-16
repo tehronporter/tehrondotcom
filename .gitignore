@@ -37,5 +37,8 @@ yarn-error.log*
 # icloud
 .icloud
 
+# raw/unedited project photos — picking scratch space, never deployed
+source-photos/
+
 # local tooling (launch.json is shared, settings.local.json is per-machine)
 .claude/settings.local.json
