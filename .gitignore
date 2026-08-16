@@ -45,3 +45,11 @@ source-photos/
 
 # image pipeline hash cache (a rebuild costs time, never quality)
 .image-cache.json
+
+# icloud sync artifacts
+# This repo lives in iCloud Documents, which forks a conflicting file as
+# "name 2.ext" (or "name 2" when it has no extension). They are byte-identical
+# copies of tracked files and must never reach a commit — tsconfig already
+# excludes the .ts/.tsx variants from typechecking for the same reason.
+* [0-9].*
+* [0-9]
