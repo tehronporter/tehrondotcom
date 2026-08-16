@@ -488,6 +488,61 @@ export const categories: Category[] = [
         ],
       },
       {
+        slug: "red-panda-academy",
+        name: "RED PANDA ACADEMY",
+        meta: "Brand Identity / Mascot Design",
+        intro:
+          "A mascot and mark system for Red Panda Academy — a red panda in a suit, worked into a crest, a wordmark lockup, and a standalone geometric logo, built to cover a stock-club sub-brand without losing the parent identity.",
+        role: ["Brand Identity", "Mascot Design", "Logo Design"],
+        deliverables: ["Mascot Illustration", "Brand Seal", "Wordmark Lockup", "Logo System"],
+        published: true,
+        tags: ["BRAND IDENTITY", "ART DIRECTION"],
+        shortDescription:
+          "A suited red panda mascot built out across a crest, a wordmark lockup, and a standalone geometric mark.",
+        /* The other squares on the wall hold "wide" (Can't Buy Respect), "plain"
+           (Indivisual Threads), and "ornate" (222 Rings) — "vintage" completes
+           the set and suits a crest-and-seal mark better than the rest would. */
+        frameStyle: "vintage",
+        featured: {
+          src: "/work/brand-identity/red-panda-academy/01-logo-mark.jpg",
+          alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
+          width: 1024,
+          height: 1024,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "The mascot had to hold two registers at once — approachable enough for an academy, sharp enough for a stock club sitting under it. The same panda in a suit carries both: a dapper, walking figure for the parent brand, a seated one holding a money bag for the finance-focused wing.",
+              "The geometric mark strips it down further, folding a stock chart into the shape of the panda's own collar so the finance angle still reads at icon size, with no suit or money bag left to do the work.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        media: [
+          {
+            src: "/work/brand-identity/red-panda-academy/01-logo-mark.jpg",
+            alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
+            caption: "Logo mark",
+          },
+          {
+            src: "/work/brand-identity/red-panda-academy/02-brand-seal.jpg",
+            alt: "Red Panda Academy crest seal, mascot holding a money bag",
+            caption: "Brand seal",
+          },
+          {
+            src: "/work/brand-identity/red-panda-academy/03-stock-club-lockup.jpg",
+            alt: "Red Panda Stock Club wordmark lockup with a dapper walking mascot",
+            caption: "Wordmark lockup",
+          },
+          {
+            src: "/work/brand-identity/red-panda-academy/04-mascot-illustration.jpg",
+            alt: "Standalone vintage dapper red panda mascot illustration",
+            caption: "Mascot illustration",
+          },
+        ],
+      },
+      {
         slug: "selected-client-work",
         name: "SELECTED CLIENT WORK",
         meta: "Identity / Campaigns",
@@ -562,25 +617,281 @@ export const categories: Category[] = [
     icon: "cube",
     tags: ["PRODUCT DESIGN", "CONCEPT DEVELOPMENT", "PROTOTYPING", "EXECUTION"],
     summary:
-      "Digital products taken from a rough idea to something people can use — interface, system, and build.",
+      "Physical products taken from a sketch to something real — object, print, and a run you can hold.",
     projects: [
       {
-        slug: "product-one",
-        name: "PRODUCT ONE",
-        meta: "Digital Product / UX & UI",
+        slug: "tomorrow-is-yesterday",
+        name: "TOMORROW IS YESTERDAY",
+        meta: "Product Design / Concept Development",
         intro:
-          "End-to-end product design and front-end build — information architecture, interface system, and the shipped application.",
-        role: ["Product Design", "UX / UI", "Front-end"],
-        deliverables: ["Product Design", "Design System", "Front-end Build"],
+          "A product concept built around one idea — that tomorrow is yesterday — carried across two objects: a sun-and-moon pair of shades and a set of sky-and-flower umbrellas, taken from sketch to a real production run.",
+        role: ["Concept Development", "Product Design", "3D Design"],
+        deliverables: ["Sunglasses Design", "Umbrella Print Design", "Production Run"],
+        published: true,
+        tags: ["PRODUCT DESIGN", "CONCEPTS"],
+        shortDescription:
+          "One concept, two objects — sun-and-moon shades and sky-and-flower umbrellas, sketch to production.",
+        /* Blue T-Shirt already holds the default "ornate" for a landscape piece,
+           and Karl Kani holds "vintage" — plain keeps this one apart from both
+           and suits a product concept better than a heavier carved moulding. */
+        frameStyle: "plain",
+        featured: {
+          src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.jpg",
+          alt: "Sky and sunflower Tomorrow Is Yesterday umbrellas on a retail shop floor",
+          width: 1170,
+          height: 977,
+        },
         sections: [
           {
             heading: "APPROACH",
             body: [
-              "Start with the smallest version that is genuinely useful, ship it, then let real usage decide what gets built next.",
+              "The idea is the duality: a sun lens and a moon lens on one frame, a sky print and a flower print across a pair of umbrellas — the same day looked at from both ends. The umbrella canopy carries it literally, with TOMORROW spelled across its own panels.",
+              "Each object had to work on its own and as half of the pair, which is what kept the sketch, the render, and the finished print all pointing at the same shape.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "The umbrellas went further than a concept — a full production run, photographed on the shop floor next to the rest of the line. The shades are the same idea one step behind them.",
             ],
           },
         ],
-        media: [{ alt: "Product interface" }, { alt: "Design system", span: "half" }, { alt: "Components", span: "half" }],
+        mediaLayout: "grid",
+        media: [
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/01-tiy-sketch.jpg",
+            alt: "Hand-drawn sketch labeled Tomorrow is Yesterday shades",
+            caption: "Concept sketch",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/02-shades-render.jpg",
+            alt: "3D render of the sun-and-moon lens shades",
+            caption: "Shades render",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/03-shades-lifestyle.jpg",
+            alt: "Sun-and-moon shades worn, close portrait",
+            caption: "Worn",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/04-shades-lifestyle-alt.jpg",
+            alt: "Sun-and-moon shades worn, alternate angle",
+            caption: "Worn, alternate",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/09-shades-lifestyle-grad.jpg",
+            alt: "Sun-and-moon shades worn at a University of Michigan graduation shoot",
+            caption: "Graduation shoot",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/10-shades-lifestyle-grad-alt.jpg",
+            alt: "Sun-and-moon shades worn at a University of Michigan graduation shoot, alternate angle",
+            caption: "Graduation shoot, alternate",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.jpg",
+            alt: "Sky and sunflower umbrellas on a retail shop floor",
+            caption: "In store",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/06-umbrella-artwork.jpg",
+            alt: "Umbrella canopy print artwork, sky and sunflower panels with TOMORROW lettering",
+            caption: "Print artwork",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/07-umbrellas-production.jpg",
+            alt: "A full production run of sky and sunflower umbrellas",
+            caption: "Production run",
+          },
+          {
+            src: "/work/product-development/tomorrow-is-yesterday/08-umbrella-lifestyle.jpg",
+            alt: "Sky umbrella carried on the street",
+            caption: "Out in the world",
+          },
+        ],
+      },
+      {
+        slug: "thank-you-dilla",
+        name: "THANK YOU DILLA!",
+        meta: "Apparel Design / Tribute",
+        intro:
+          "A tribute to J Dilla built the same way he worked — start with what's in front of you. Thank You Dilla began as a phrase spelled out in real glazed donuts, a nod to Donuts, before it ever became a graphic.",
+        role: ["Concept Development", "Graphic Design", "Apparel Design"],
+        deliverables: ["Typography System", "Installation", "Apparel Design"],
+        published: true,
+        tags: ["APPAREL", "CONCEPTS"],
+        shortDescription:
+          "A J Dilla tribute spelled out in real donuts first, then carried onto apparel in two colorways.",
+        /* The other landscape pieces on the wall hold "ornate" (Blue T-Shirt),
+           "vintage" (Karl Kani), and "plain" (Tomorrow Is Yesterday) — "wide"
+           finishes the set and gives this one enough substance for a flat lay. */
+        frameStyle: "wide",
+        featured: {
+          src: "/work/product-development/thank-you-dilla/02-donut-typography.jpg",
+          alt: "THANK YOU DILLA! spelled out in glazed donuts",
+          width: 2739,
+          height: 2006,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "The type had to be made, not set — every letter is a donut, arranged and shot before it ever became a file. That physical first draft is what gives the final graphic its texture; nothing about it reads as a font.",
+              "From there it dropped straight onto apparel in both colorways, on white and on black, with the same donut-built lettering doing all the work.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        media: [
+          {
+            src: "/work/product-development/thank-you-dilla/01-thank-you-dilla-lifestyle.jpg",
+            alt: "Thank You Dilla donut lettering next to J Dilla and Slum Village vinyl",
+            caption: "With the records that inspired it",
+          },
+          {
+            src: "/work/product-development/thank-you-dilla/02-donut-typography.jpg",
+            alt: "THANK YOU DILLA! spelled out in glazed donuts",
+            caption: "Donut typography",
+          },
+          {
+            src: "/work/product-development/thank-you-dilla/03-tee-white.jpg",
+            alt: "Thank You Dilla graphic on a white tee",
+            caption: "White tee",
+          },
+          {
+            src: "/work/product-development/thank-you-dilla/04-tee-black.jpg",
+            alt: "Thank You Dilla graphic on a black tee",
+            caption: "Black tee",
+          },
+        ],
+      },
+      {
+        slug: "222-rings",
+        name: "222 RINGS",
+        meta: "Product Design / 3D Design",
+        intro:
+          "A two-finger ring where the numerals are the band — 222, the angel number, printed as three linked rings that read as the digits themselves rather than a design stamped onto them.",
+        role: ["Product Design", "3D Design"],
+        deliverables: ["3D Model", "Prototype", "Colorway System"],
+        published: true,
+        tags: ["PRODUCT DESIGN", "CONCEPTS"],
+        shortDescription:
+          "A two-finger ring where the numerals themselves are the band — 222, printed in three colorways.",
+        /* The other square piece on the wall, Can't Buy Respect, holds the
+           default "wide"; Indivisual Threads already took "plain" — "ornate"
+           suits the jewelry scale better than either would. */
+        frameStyle: "ornate",
+        featured: {
+          src: "/work/product-development/222-rings/01-222-rings-worn.jpg",
+          alt: "222 rings in red, yellow, and blue worn across three fingers",
+          width: 2340,
+          height: 2474,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "The number had to be the structure, not a stamp on top of one — each ‘2’ is its own ring, fused to the next, so the piece only reads correctly worn across three fingers at once.",
+              "Modeled and printed across three colorways to test how the form held up in each: whether the curves stayed legible at ring scale once the render became something you could actually put on.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        media: [
+          {
+            src: "/work/product-development/222-rings/01-222-rings-worn.jpg",
+            alt: "222 rings in red, yellow, and blue worn across three fingers",
+            caption: "Worn, three colorways",
+          },
+          {
+            src: "/work/product-development/222-rings/02-222-ring-yellow.jpg",
+            alt: "222 ring render, yellow colorway",
+            caption: "Yellow",
+          },
+          {
+            src: "/work/product-development/222-rings/03-222-ring-red.jpg",
+            alt: "222 ring render, red colorway",
+            caption: "Red",
+          },
+          {
+            src: "/work/product-development/222-rings/04-222-ring-blue.jpg",
+            alt: "222 ring render, blue colorway",
+            caption: "Blue",
+          },
+        ],
+      },
+      {
+        slug: "apple-retail-merch",
+        name: "APPLE RETAIL MERCH",
+        meta: "Product Design / Employee-Led Redesign",
+        client: "Apple Inc.",
+        intro:
+          "While working at Apple as a Technical Expert, a color complaint turned into a proposal that shipped. The store shirts ran what staff called skittle green and Christmas red — an internal post pitched two calmer replacements, and Apple produced and shipped exactly what got posted.",
+        role: ["Concept Development", "Color & Product Design"],
+        deliverables: ["Colorway Proposal", "Product Mockups", "Company-Wide Production"],
+        published: true,
+        tags: ["PRODUCT DESIGN", "CONCEPTS"],
+        shortDescription:
+          "An employee color-palette pitch for Apple retail merch that Apple actually produced and shipped.",
+        /* The other portrait piece, Amine Club Banana, already holds the
+           default "vintage"; Westside Gunn x Saucony holds "ornate" — "plain"
+           keeps this one apart and suits a corporate colorway pitch better
+           than either would. */
+        frameStyle: "plain",
+        featured: {
+          src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.jpg",
+          alt: "Forest green Apple retail shirt, one of the two new colorways proposed to replace the old palette",
+          width: 1122,
+          height: 1402,
+        },
+        sections: [
+          {
+            heading: "APPROACH",
+            body: [
+              "The existing shirts ran a green and a red loud enough that staff had nicknamed them skittle green and Christmas red. The proposal was two calmer replacements — a forest green and a maroon — mocked up next to the navy everyone already liked, and posted to Apple's internal system the same way any employee's idea gets posted: no design team, no review cycle, just the case for it.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "The post went viral inside the company, and Apple produced the colorways as designed — shipped to stores and worn by the people who'd been asking for the change. One of the few projects here where the client is the company you clocked into.",
+            ],
+          },
+        ],
+        mediaLayout: "grid",
+        mediaColumns: 3,
+        media: [
+          {
+            src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.jpg",
+            alt: "Forest green Apple retail shirt mockup, the proposed replacement colorway",
+            caption: "Forest green",
+          },
+          {
+            src: "/work/product-development/apple-retail-merch/02-shirt-maroon.jpg",
+            alt: "Maroon Apple retail shirt mockup, the proposed replacement colorway",
+            caption: "Maroon",
+          },
+          {
+            src: "/work/product-development/apple-retail-merch/03-shirt-navy.jpg",
+            alt: "Navy Apple retail shirt, the colorway kept from the original lineup",
+            caption: "Navy, kept as-is",
+          },
+          {
+            src: "/work/product-development/apple-retail-merch/04-hat-black.jpg",
+            alt: "Black Apple retail hat mockup with rainbow logo embroidery",
+            caption: "Black hat",
+          },
+          {
+            src: "/work/product-development/apple-retail-merch/05-hat-navy.jpg",
+            alt: "Navy Apple retail hat mockup",
+            caption: "Navy hat",
+          },
+          {
+            src: "/work/product-development/apple-retail-merch/06-hat-white.jpg",
+            alt: "White Apple retail hat mockup",
+            caption: "White hat",
+          },
+        ],
       },
     ],
   },
