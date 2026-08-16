@@ -72,6 +72,21 @@ export function Frame({
     el.style.setProperty("--tilt-ry", "0deg");
   }, []);
 
+  /* Applied via ref rather than the `style` prop so it never lands in the
+     server-rendered HTML. Chrome has a real, if intermittent, bug where an
+     element carrying `view-transition-name` on its very first painted frame —
+     with no view transition actually in flight, which is every direct load —
+     can fail to paint at all until something else forces a repaint. Setting it
+     a tick later, once the element exists, sidesteps that while still landing
+     long before the one place the name is read: Gallery.tsx's
+     `document.startViewTransition`, which only fires on an in-app click. */
+  const setHeroName = useCallback(
+    (el: HTMLImageElement | null) => {
+      if (el) el.style.viewTransitionName = `piece-hero-${piece.slug}`;
+    },
+    [piece.slug],
+  );
+
   return (
     <div className="piece-plate" data-frame={frameStyle}>
       <div className="piece-frame" ref={frameRef} onPointerMove={onMove} onPointerLeave={onLeave}>
@@ -81,14 +96,8 @@ export function Frame({
           width={featured.width}
           height={featured.height}
           className="piece-art"
-          style={{
-            ...(featured.focus ? { objectPosition: featured.focus } : undefined),
-            /* Matched on the case study page against whichever media item is
-               this same file, keyed off the project slug both sides already
-               have — so a new project needs no wiring to get the wall -> case
-               study morph, it falls out of `featured` existing at all. */
-            viewTransitionName: `piece-hero-${piece.slug}`,
-          }}
+          style={featured.focus ? { objectPosition: featured.focus } : undefined}
+          ref={setHeroName}
           /* The density tier sets --col-max, which is the hard ceiling on how
              wide a piece is ever painted — so it, not a vw fraction, is what
              the browser should be told. See WALL_SIZES. */
