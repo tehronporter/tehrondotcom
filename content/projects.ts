@@ -11,6 +11,7 @@
 import type { IconName } from "@/components/Icon";
 import type { FrameStyle } from "@/components/frames";
 import { imageMeta } from "@/lib/images";
+import type { WallDensity } from "@/lib/sizes";
 
 /**
  * The single image that represents a project on the home gallery wall.
@@ -1012,5 +1013,5 @@ export const galleryTags = (): string[] => {
  * hang large and deliberate while a full portfolio tightens into a salon wall —
  * without the layout ever being rewritten.
  */
-export const wallDensity = (count: number): "sparse" | "medium" | "dense" =>
+export const wallDensity = (count: number): WallDensity =>
   count <= 4 ? "sparse" : count <= 9 ? "medium" : "dense";

@@ -7,6 +7,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { Frame } from "@/components/Frame";
 import { Icon } from "@/components/Icon";
 import type { GalleryPiece } from "@/content/projects";
+import type { WallDensity } from "@/lib/sizes";
 
 const ALL = "ALL";
 
@@ -41,7 +42,18 @@ const silence = (transition: ViewTransition) => {
   transition.finished.catch(() => {});
 };
 
-export function Gallery({ pieces, tags }: { pieces: GalleryPiece[]; tags: string[] }) {
+export function Gallery({
+  pieces,
+  tags,
+  density,
+}: {
+  pieces: GalleryPiece[];
+  tags: string[];
+  /* Passed down rather than derived from pieces.length: the wall's density is
+     fixed by the full published set, not by whatever a filter has left on
+     screen, and it decides how wide a piece can be painted. */
+  density: WallDensity;
+}) {
   /* Two filters, one step apart. `pending` is what the user just clicked and it
      drives the fade; `active` commits a moment later and is what actually takes
      pieces out of the layout. Splitting them is what buys the fade-out — a piece
@@ -290,7 +302,7 @@ export function Gallery({ pieces, tags }: { pieces: GalleryPiece[]; tags: string
             style={{ "--wall-i": i } as CSSProperties}
           >
             <Link href={piece.href} className="piece-link" onClick={onPieceClick(piece.href)}>
-              <Frame piece={piece} priority={i < 3}>
+              <Frame piece={piece} density={density} priority={i < 3}>
                 {/* Decorative restatement of the caption below, so it is not
                     announced twice. The title is already an inch away — the
                     veil only adds the sentence and the affordance. */}

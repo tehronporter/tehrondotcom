@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { PointerEvent, ReactNode } from "react";
 import { useCallback, useRef } from "react";
 import type { GalleryPiece } from "@/content/projects";
+import { WALL_SIZES, type WallDensity } from "@/lib/sizes";
 
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -35,10 +36,12 @@ const reducedMotion = () =>
  */
 export function Frame({
   piece,
+  density,
   priority,
   children,
 }: {
   piece: GalleryPiece;
+  density: WallDensity;
   priority?: boolean;
   children?: ReactNode;
 }) {
@@ -86,7 +89,10 @@ export function Frame({
                study morph, it falls out of `featured` existing at all. */
             viewTransitionName: `piece-hero-${piece.slug}`,
           }}
-          sizes="(max-width: 760px) 92vw, (max-width: 1180px) 46vw, 34vw"
+          /* The density tier sets --col-max, which is the hard ceiling on how
+             wide a piece is ever painted — so it, not a vw fraction, is what
+             the browser should be told. See WALL_SIZES. */
+          sizes={WALL_SIZES[density]}
           priority={priority}
           {...(featured.blurDataURL
             ? { placeholder: "blur" as const, blurDataURL: featured.blurDataURL }

@@ -6,6 +6,7 @@ import { galleryProjects, galleryTags, wallDensity } from "@/content/projects";
 export default function HomePage() {
   const pieces = galleryProjects();
   const tags = galleryTags();
+  const density = wallDensity(pieces.length);
 
   return (
     /* The frame SVGs are set here as custom properties so their source is
@@ -13,7 +14,7 @@ export default function HomePage() {
        properties inherit, so every .frame below can reach them. The density
        tier is what lets the wall re-compose itself as the portfolio grows:
        publish more projects and the frames tighten, with no layout change. */
-    <div className="page home" style={frameVars()} data-density={wallDensity(pieces.length)}>
+    <div className="page home" style={frameVars()} data-density={density}>
       {/* One grid holds the masthead, the filters, and the wall so the name and
           the keywords share a baseline row and the artwork spans beneath them. */}
       <section className="home-grid" aria-label="Selected work">
@@ -22,7 +23,7 @@ export default function HomePage() {
           <p className="masthead-role">{site.disciplines.join("  ·  ")}</p>
         </div>
 
-        <Gallery pieces={pieces} tags={tags} />
+        <Gallery pieces={pieces} tags={tags} density={density} />
       </section>
     </div>
   );

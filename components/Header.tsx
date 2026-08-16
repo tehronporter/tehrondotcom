@@ -31,6 +31,11 @@ export function Header() {
             width={348}
             height={260}
             className="wordmark-signature"
+            /* Painted at 75px wide (56px tall, width auto) and 80px below the
+               760px breakpoint — never larger. Without this the browser assumes
+               the declared 348 and reserves a candidate ten times the mark's
+               actual size, on a priority request that sits on every page. */
+            sizes="80px"
             priority
           />
         </Link>

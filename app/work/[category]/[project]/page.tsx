@@ -6,7 +6,8 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Icon } from "@/components/Icon";
 import { categories, categoryLabel, getProject } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
-import { MEDIA_SIZES, imageProps } from "@/lib/images";
+import { imageProps } from "@/lib/images";
+import { MEDIA_SIZES } from "@/lib/sizes";
 import { titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string; project: string }> };
