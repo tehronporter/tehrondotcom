@@ -26,7 +26,10 @@ import { imageMeta } from "@/lib/images";
 export type Featured = {
   src: string;
   alt: string;
-  /** @deprecated Measured from the file instead. Only read if the manifest has no entry. */
+  /**
+   * Escape hatch, normally omitted. Only read when the manifest has no entry
+   * for `src` — i.e. an image dropped in since the last `npm run images`.
+   */
   width?: number;
   height?: number;
   /** object-position for the crop, e.g. "50% 30%". Defaults to centre. */
@@ -43,7 +46,7 @@ export type ResolvedFeatured = Omit<Featured, "width" | "height"> & {
 export type Orientation = "portrait" | "square" | "landscape";
 
 export type Media = {
-  /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.jpg". Omit for an empty frame. */
+  /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.webp". Omit for an empty frame. */
   src?: string;
   alt: string;
   caption?: string;
@@ -121,10 +124,8 @@ export const categories: Category[] = [
         shortDescription:
           "A complete identity system for an apparel label built around a single garment.",
         featured: {
-          src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.jpg",
+          src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.webp",
           alt: "Campaign photo in front of a hand-painted BLUE mural",
-          width: 2652,
-          height: 1687,
         },
         sections: [
           {
@@ -144,42 +145,42 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/brand-identity/blue-t-shirt/01-mockup-white.png",
+            src: "/work/brand-identity/blue-t-shirt/01-mockup-white.webp",
             alt: "Type system applied to a white garment mockup",
             caption: "Type system on garment",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/02-mockup-red.png",
+            src: "/work/brand-identity/blue-t-shirt/02-mockup-red.webp",
             alt: "Type system applied to a red garment mockup",
             caption: "Alternate colorway",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/03-wordmark.png",
+            src: "/work/brand-identity/blue-t-shirt/03-wordmark.webp",
             alt: "TSHIRT / BLUE wordmark lockup",
             caption: "Wordmark lockup",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/04-tagline.jpg",
+            src: "/work/brand-identity/blue-t-shirt/04-tagline.webp",
             alt: "“this is a blue t-shirt.” tagline graphic",
             caption: "Tagline graphic",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.jpg",
+            src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.webp",
             alt: "Campaign photo in front of a hand-painted BLUE mural",
             caption: "Campaign imagery",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/06-campaign-portrait.jpg",
+            src: "/work/brand-identity/blue-t-shirt/06-campaign-portrait.webp",
             alt: "Campaign portrait wearing the type system",
             caption: "Campaign portrait",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/07-on-set.jpg",
+            src: "/work/brand-identity/blue-t-shirt/07-on-set.webp",
             alt: "Behind the scenes on the campaign shoot",
             caption: "On set",
           },
           {
-            src: "/work/brand-identity/blue-t-shirt/08-in-the-wild.jpg",
+            src: "/work/brand-identity/blue-t-shirt/08-in-the-wild.webp",
             alt: "The shirt worn out in the world",
             caption: "In the wild",
           },
@@ -198,10 +199,8 @@ export const categories: Category[] = [
         shortDescription:
           "An apparel line built on one line of type per piece — and a tee that travelled on its own.",
         featured: {
-          src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.png",
+          src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.webp",
           alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
-          width: 1266,
-          height: 1243,
         },
         sections: [
           {
@@ -220,22 +219,22 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/brand-identity/cant-buy-respect/01-not-for-sale-mockup.png",
+            src: "/work/brand-identity/cant-buy-respect/01-not-for-sale-mockup.webp",
             alt: "Not For Sale green tee mockup",
             caption: "Not For Sale tee",
           },
           {
-            src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.png",
+            src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.webp",
             alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
             caption: "Worn backstage",
           },
           {
-            src: "/work/brand-identity/cant-buy-respect/03-cant-buy-respect-mockup.png",
+            src: "/work/brand-identity/cant-buy-respect/03-cant-buy-respect-mockup.webp",
             alt: "Can't Buy Respect yellow hoodie mockup",
             caption: "Can't Buy Respect hoodie",
           },
           {
-            src: "/work/brand-identity/cant-buy-respect/04-lil-wayne-cant-buy-respect.png",
+            src: "/work/brand-identity/cant-buy-respect/04-lil-wayne-cant-buy-respect.webp",
             alt: "Lil Wayne wearing the Can't Buy Respect hoodie",
             caption: "Worn out",
           },
@@ -258,10 +257,8 @@ export const categories: Category[] = [
            suits a white design sheet better than a wide carved frame would. */
         frameStyle: "vintage",
         featured: {
-          src: "/work/brand-identity/karl-kani/01-design-sheet.png",
+          src: "/work/brand-identity/karl-kani/01-design-sheet.webp",
           alt: "Karl Kani apparel design sheet, navy and red colorway",
-          width: 1427,
-          height: 1102,
         },
         sections: [
           {
@@ -279,17 +276,17 @@ export const categories: Category[] = [
         mediaColumns: 3,
         media: [
           {
-            src: "/work/brand-identity/karl-kani/01-design-sheet.png",
+            src: "/work/brand-identity/karl-kani/01-design-sheet.webp",
             alt: "Karl Kani apparel design sheet, navy and red colorway",
             caption: "Design sheet",
           },
           {
-            src: "/work/brand-identity/karl-kani/02-design-sheet.png",
+            src: "/work/brand-identity/karl-kani/02-design-sheet.webp",
             alt: "Karl Kani apparel design sheet, olive and black colorway",
             caption: "Design sheet",
           },
           {
-            src: "/work/brand-identity/karl-kani/03-design-sheet.png",
+            src: "/work/brand-identity/karl-kani/03-design-sheet.webp",
             alt: "Karl Kani apparel design sheet, blue and red colorway",
             caption: "Design sheet",
           },
@@ -312,10 +309,8 @@ export const categories: Category[] = [
            graphic-tee artwork better than a heavier carved moulding would. */
         frameStyle: "plain",
         featured: {
-          src: "/work/brand-identity/indivisual-threads/01-red-tee-front.png",
+          src: "/work/brand-identity/indivisual-threads/01-red-tee-front.webp",
           alt: "Indivisual Threads spray-can icon on a red tee",
-          width: 2048,
-          height: 2048,
         },
         sections: [
           {
@@ -336,47 +331,47 @@ export const categories: Category[] = [
         mediaColumns: 3,
         media: [
           {
-            src: "/work/brand-identity/indivisual-threads/01-red-tee-front.png",
+            src: "/work/brand-identity/indivisual-threads/01-red-tee-front.webp",
             alt: "Indivisual Threads spray-can icon on a red tee",
             caption: "Red tee, front",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/02-red-tee-back.png",
+            src: "/work/brand-identity/indivisual-threads/02-red-tee-back.webp",
             alt: "Indivisual Threads wordmark on the back of a red tee",
             caption: "Red tee, back",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/03-tee-colorways-blue-black.png",
+            src: "/work/brand-identity/indivisual-threads/03-tee-colorways-blue-black.webp",
             alt: "Indivisual Threads tee mockups in blue and black",
             caption: "Blue & black colorways",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/04-tee-colorways-white-red.png",
+            src: "/work/brand-identity/indivisual-threads/04-tee-colorways-white-red.webp",
             alt: "Indivisual Threads tee mockups in white and red",
             caption: "White & red colorways",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/05-shorts-colorways.png",
+            src: "/work/brand-identity/indivisual-threads/05-shorts-colorways.webp",
             alt: "Indivisual Threads shorts mockups across four colorways",
             caption: "Shorts, four colorways",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/06-hoodie-front.png",
+            src: "/work/brand-identity/indivisual-threads/06-hoodie-front.webp",
             alt: "Indivisual Threads wordmark on a white hoodie",
             caption: "Hoodie, front",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/07-hoodie-back.png",
+            src: "/work/brand-identity/indivisual-threads/07-hoodie-back.webp",
             alt: "Indivisual Threads spray-can icon on the back of a white hoodie",
             caption: "Hoodie, back",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/08-logo-lockup.png",
+            src: "/work/brand-identity/indivisual-threads/08-logo-lockup.webp",
             alt: "Indivisual Threads wordmark lockup",
             caption: "Wordmark lockup",
           },
           {
-            src: "/work/brand-identity/indivisual-threads/09-mascot-illustration.png",
+            src: "/work/brand-identity/indivisual-threads/09-mascot-illustration.webp",
             alt: "Illustrated mascot character spray-painting the Indivisual Threads mark",
             caption: "Mascot illustration",
           },
@@ -399,10 +394,8 @@ export const categories: Category[] = [
            suits the maximalist poster style better than a slim gilt would. */
         frameStyle: "ornate",
         featured: {
-          src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.jpg",
+          src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.webp",
           alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
-          width: 1611,
-          height: 2000,
         },
         sections: [
           {
@@ -422,27 +415,27 @@ export const categories: Category[] = [
         mediaColumns: 3,
         media: [
           {
-            src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.jpg",
+            src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.webp",
             alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
             caption: "Super Flygod",
           },
           {
-            src: "/work/brand-identity/westside-gunn-saucony/02-campeon-sin-limite.jpg",
+            src: "/work/brand-identity/westside-gunn-saucony/02-campeon-sin-limite.webp",
             alt: "Campeón Sin Límite lucha libre flyer for the Griselda x Saucony collab",
             caption: "Campeón sin límite",
           },
           {
-            src: "/work/brand-identity/westside-gunn-saucony/03-los-tenis-del-campeon.jpg",
+            src: "/work/brand-identity/westside-gunn-saucony/03-los-tenis-del-campeon.webp",
             alt: "Los Tenis del Campeón vintage poster for the Griselda x Saucony collab",
             caption: "Los tenis del campeón",
           },
           {
-            src: "/work/brand-identity/westside-gunn-saucony/04-batalla-final.jpg",
+            src: "/work/brand-identity/westside-gunn-saucony/04-batalla-final.webp",
             alt: "Batalla Final vintage poster for the Griselda x Saucony collab",
             caption: "Batalla final",
           },
           {
-            src: "/work/brand-identity/westside-gunn-saucony/05-el-ritual-del-campeon.jpg",
+            src: "/work/brand-identity/westside-gunn-saucony/05-el-ritual-del-campeon.webp",
             alt: "El Ritual del Campeón vintage poster for the Griselda x Saucony collab",
             caption: "El ritual del campeón",
           },
@@ -461,10 +454,8 @@ export const categories: Category[] = [
         shortDescription:
           "A playful all-over banana print and mascot graphic, built out across three colorways.",
         featured: {
-          src: "/work/brand-identity/amine-club-banana/01-black-colorway.png",
+          src: "/work/brand-identity/amine-club-banana/01-black-colorway.webp",
           alt: "Amine Club banana-print apparel capsule, black colorway",
-          width: 1493,
-          height: 2000,
         },
         sections: [
           {
@@ -484,17 +475,17 @@ export const categories: Category[] = [
         mediaColumns: 3,
         media: [
           {
-            src: "/work/brand-identity/amine-club-banana/01-black-colorway.png",
+            src: "/work/brand-identity/amine-club-banana/01-black-colorway.webp",
             alt: "Amine Club banana-print apparel capsule, black colorway",
             caption: "Black colorway",
           },
           {
-            src: "/work/brand-identity/amine-club-banana/02-pink-colorway.png",
+            src: "/work/brand-identity/amine-club-banana/02-pink-colorway.webp",
             alt: "Amine Club banana-print apparel capsule, pink colorway",
             caption: "Pink colorway",
           },
           {
-            src: "/work/brand-identity/amine-club-banana/03-blue-colorway.png",
+            src: "/work/brand-identity/amine-club-banana/03-blue-colorway.webp",
             alt: "Amine Club banana-print apparel capsule, blue colorway",
             caption: "Blue colorway",
           },
@@ -517,10 +508,8 @@ export const categories: Category[] = [
            the set and suits a crest-and-seal mark better than the rest would. */
         frameStyle: "vintage",
         featured: {
-          src: "/work/brand-identity/red-panda-academy/01-logo-mark.jpg",
+          src: "/work/brand-identity/red-panda-academy/01-logo-mark.webp",
           alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
-          width: 1024,
-          height: 1024,
         },
         sections: [
           {
@@ -534,22 +523,22 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/brand-identity/red-panda-academy/01-logo-mark.jpg",
+            src: "/work/brand-identity/red-panda-academy/01-logo-mark.webp",
             alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
             caption: "Logo mark",
           },
           {
-            src: "/work/brand-identity/red-panda-academy/02-brand-seal.jpg",
+            src: "/work/brand-identity/red-panda-academy/02-brand-seal.webp",
             alt: "Red Panda Academy crest seal, mascot holding a money bag",
             caption: "Brand seal",
           },
           {
-            src: "/work/brand-identity/red-panda-academy/03-stock-club-lockup.jpg",
+            src: "/work/brand-identity/red-panda-academy/03-stock-club-lockup.webp",
             alt: "Red Panda Stock Club wordmark lockup with a dapper walking mascot",
             caption: "Wordmark lockup",
           },
           {
-            src: "/work/brand-identity/red-panda-academy/04-mascot-illustration.jpg",
+            src: "/work/brand-identity/red-panda-academy/04-mascot-illustration.webp",
             alt: "Standalone vintage dapper red panda mascot illustration",
             caption: "Mascot illustration",
           },
@@ -649,10 +638,8 @@ export const categories: Category[] = [
            and suits a product concept better than a heavier carved moulding. */
         frameStyle: "plain",
         featured: {
-          src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.jpg",
+          src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.webp",
           alt: "Sky and sunflower Tomorrow Is Yesterday umbrellas on a retail shop floor",
-          width: 1170,
-          height: 977,
         },
         sections: [
           {
@@ -672,52 +659,52 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/product-development/tomorrow-is-yesterday/01-tiy-sketch.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/01-tiy-sketch.webp",
             alt: "Hand-drawn sketch labeled Tomorrow is Yesterday shades",
             caption: "Concept sketch",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/02-shades-render.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/02-shades-render.webp",
             alt: "3D render of the sun-and-moon lens shades",
             caption: "Shades render",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/03-shades-lifestyle.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/03-shades-lifestyle.webp",
             alt: "Sun-and-moon shades worn, close portrait",
             caption: "Worn",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/04-shades-lifestyle-alt.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/04-shades-lifestyle-alt.webp",
             alt: "Sun-and-moon shades worn, alternate angle",
             caption: "Worn, alternate",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/09-shades-lifestyle-grad.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/09-shades-lifestyle-grad.webp",
             alt: "Sun-and-moon shades worn at a University of Michigan graduation shoot",
             caption: "Graduation shoot",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/10-shades-lifestyle-grad-alt.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/10-shades-lifestyle-grad-alt.webp",
             alt: "Sun-and-moon shades worn at a University of Michigan graduation shoot, alternate angle",
             caption: "Graduation shoot, alternate",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.webp",
             alt: "Sky and sunflower umbrellas on a retail shop floor",
             caption: "In store",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/06-umbrella-artwork.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/06-umbrella-artwork.webp",
             alt: "Umbrella canopy print artwork, sky and sunflower panels with TOMORROW lettering",
             caption: "Print artwork",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/07-umbrellas-production.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/07-umbrellas-production.webp",
             alt: "A full production run of sky and sunflower umbrellas",
             caption: "Production run",
           },
           {
-            src: "/work/product-development/tomorrow-is-yesterday/08-umbrella-lifestyle.jpg",
+            src: "/work/product-development/tomorrow-is-yesterday/08-umbrella-lifestyle.webp",
             alt: "Sky umbrella carried on the street",
             caption: "Out in the world",
           },
@@ -740,10 +727,8 @@ export const categories: Category[] = [
            finishes the set and gives this one enough substance for a flat lay. */
         frameStyle: "wide",
         featured: {
-          src: "/work/product-development/thank-you-dilla/02-donut-typography.jpg",
+          src: "/work/product-development/thank-you-dilla/02-donut-typography.webp",
           alt: "THANK YOU DILLA! spelled out in glazed donuts",
-          width: 2739,
-          height: 2006,
         },
         sections: [
           {
@@ -757,22 +742,22 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/product-development/thank-you-dilla/01-thank-you-dilla-lifestyle.jpg",
+            src: "/work/product-development/thank-you-dilla/01-thank-you-dilla-lifestyle.webp",
             alt: "Thank You Dilla donut lettering next to J Dilla and Slum Village vinyl",
             caption: "With the records that inspired it",
           },
           {
-            src: "/work/product-development/thank-you-dilla/02-donut-typography.jpg",
+            src: "/work/product-development/thank-you-dilla/02-donut-typography.webp",
             alt: "THANK YOU DILLA! spelled out in glazed donuts",
             caption: "Donut typography",
           },
           {
-            src: "/work/product-development/thank-you-dilla/03-tee-white.jpg",
+            src: "/work/product-development/thank-you-dilla/03-tee-white.webp",
             alt: "Thank You Dilla graphic on a white tee",
             caption: "White tee",
           },
           {
-            src: "/work/product-development/thank-you-dilla/04-tee-black.jpg",
+            src: "/work/product-development/thank-you-dilla/04-tee-black.webp",
             alt: "Thank You Dilla graphic on a black tee",
             caption: "Black tee",
           },
@@ -795,10 +780,8 @@ export const categories: Category[] = [
            suits the jewelry scale better than either would. */
         frameStyle: "ornate",
         featured: {
-          src: "/work/product-development/222-rings/01-222-rings-worn.jpg",
+          src: "/work/product-development/222-rings/01-222-rings-worn.webp",
           alt: "222 rings in red, yellow, and blue worn across three fingers",
-          width: 2340,
-          height: 2474,
         },
         sections: [
           {
@@ -812,22 +795,22 @@ export const categories: Category[] = [
         mediaLayout: "grid",
         media: [
           {
-            src: "/work/product-development/222-rings/01-222-rings-worn.jpg",
+            src: "/work/product-development/222-rings/01-222-rings-worn.webp",
             alt: "222 rings in red, yellow, and blue worn across three fingers",
             caption: "Worn, three colorways",
           },
           {
-            src: "/work/product-development/222-rings/02-222-ring-yellow.jpg",
+            src: "/work/product-development/222-rings/02-222-ring-yellow.webp",
             alt: "222 ring render, yellow colorway",
             caption: "Yellow",
           },
           {
-            src: "/work/product-development/222-rings/03-222-ring-red.jpg",
+            src: "/work/product-development/222-rings/03-222-ring-red.webp",
             alt: "222 ring render, red colorway",
             caption: "Red",
           },
           {
-            src: "/work/product-development/222-rings/04-222-ring-blue.jpg",
+            src: "/work/product-development/222-rings/04-222-ring-blue.webp",
             alt: "222 ring render, blue colorway",
             caption: "Blue",
           },
@@ -852,10 +835,8 @@ export const categories: Category[] = [
            than either would. */
         frameStyle: "plain",
         featured: {
-          src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.jpg",
+          src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.webp",
           alt: "Forest green Apple retail shirt, one of the two new colorways proposed to replace the old palette",
-          width: 1122,
-          height: 1402,
         },
         sections: [
           {
@@ -875,32 +856,32 @@ export const categories: Category[] = [
         mediaColumns: 3,
         media: [
           {
-            src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.jpg",
+            src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.webp",
             alt: "Forest green Apple retail shirt mockup, the proposed replacement colorway",
             caption: "Forest green",
           },
           {
-            src: "/work/product-development/apple-retail-merch/02-shirt-maroon.jpg",
+            src: "/work/product-development/apple-retail-merch/02-shirt-maroon.webp",
             alt: "Maroon Apple retail shirt mockup, the proposed replacement colorway",
             caption: "Maroon",
           },
           {
-            src: "/work/product-development/apple-retail-merch/03-shirt-navy.jpg",
+            src: "/work/product-development/apple-retail-merch/03-shirt-navy.webp",
             alt: "Navy Apple retail shirt, the colorway kept from the original lineup",
             caption: "Navy, kept as-is",
           },
           {
-            src: "/work/product-development/apple-retail-merch/04-hat-black.jpg",
+            src: "/work/product-development/apple-retail-merch/04-hat-black.webp",
             alt: "Black Apple retail hat mockup with rainbow logo embroidery",
             caption: "Black hat",
           },
           {
-            src: "/work/product-development/apple-retail-merch/05-hat-navy.jpg",
+            src: "/work/product-development/apple-retail-merch/05-hat-navy.webp",
             alt: "Navy Apple retail hat mockup",
             caption: "Navy hat",
           },
           {
-            src: "/work/product-development/apple-retail-merch/06-hat-white.jpg",
+            src: "/work/product-development/apple-retail-merch/06-hat-white.webp",
             alt: "White Apple retail hat mockup",
             caption: "White hat",
           },
