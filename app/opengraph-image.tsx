@@ -1,16 +1,19 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/content/site";
+import { OG_BLUE, OG_SIZE, ogFonts } from "@/lib/og";
 
-/* Share card for links to the site. Generated at build time — same blue, and
-   the same name-led lockup as the home masthead.
-   Note: the renderer only ships one font weight, so the fontWeight values below
-   have no effect today. Register a font with weights here to make them apply. */
+/* Share card for links to the site itself. Generated at build time — same blue,
+   and the same name-led lockup as the home masthead. Individual projects carry
+   their own card showing their own work; see
+   app/work/[category]/[project]/opengraph-image.tsx. */
 
 export const alt = site.title;
-export const size = { width: 1200, height: 630 };
+export const size = OG_SIZE;
 export const contentType = "image/png";
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
+  const fonts = await ogFonts();
+
   return new ImageResponse(
     (
       <div
@@ -20,19 +23,29 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#1a35e0",
+          background: OG_BLUE,
           color: "#fff",
           padding: 72,
-          fontFamily: "sans-serif",
+          fontFamily: "Lato",
         }}
       >
-        <div style={{ display: "flex", fontSize: 18, letterSpacing: 1.2, opacity: 0.8 }}>
+        <div style={{ display: "flex", fontSize: 18, letterSpacing: 1.2, fontWeight: 700, opacity: 0.8 }}>
           {site.role}
         </div>
 
         {/* Same lockup as the home masthead: the name is the message. */}
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 104, lineHeight: 1, letterSpacing: -2 }}>
+          <div
+            style={{
+              display: "flex",
+              fontFamily: "Archivo Black",
+              /* Archivo Black is wide where Anton was condensed — the name
+                 needs ~30% less size to hold the same measure on the card. */
+              fontSize: 72,
+              lineHeight: 1,
+              letterSpacing: -1.5,
+            }}
+          >
             {site.name}
           </div>
           <div style={{ display: "flex", fontSize: 24, letterSpacing: 1.4, marginTop: 22, opacity: 0.85 }}>
@@ -55,6 +68,6 @@ export default function OpengraphImage() {
         </div>
       </div>
     ),
-    size
+    { ...size, fonts },
   );
 }

@@ -12,6 +12,7 @@ const paths = {
   world: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18",
   cube: "M12 3.2 20 7.6v8.8L12 20.8 4 16.4V7.6zM12 12l8-4.4M12 12v8.8M12 12 4 7.6",
   mail: "M3 6h18v12H3zM3 7l9 6 9-6",
+  close: "M6 6l12 12M18 6 6 18",
 } as const;
 
 export type IconName = keyof typeof paths;

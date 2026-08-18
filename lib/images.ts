@@ -9,8 +9,7 @@ import manifest from "@/content/image-manifest.json";
  * ratio is invisible in review but shifts the layout for every visitor.
  *
  * Server-only by construction: the manifest is ~17KB and has no business in a
- * client bundle. Every module that imports this one is a server component, and
- * the two client components (Gallery, Frame) take resolved values as props.
+ * client bundle. Client components receive already-resolved image values.
  */
 
 export type ImageMeta = {

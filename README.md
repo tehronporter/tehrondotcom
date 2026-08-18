@@ -41,6 +41,38 @@ Add one object to the right category's `projects` array in `content/projects.ts`
 The category index row, the case study page, the URL, the sitemap entry, and the
 prev/next links all generate from that. Nothing else to update.
 
+## Publishing and drafts
+
+`published: true` is the one switch. Without it a project is a draft: it keeps
+its place in `content/projects.ts` and is absent from the work index, the
+category pages, its own URL (which 404s), the prev/next chain, the sitemap, and
+the home wall. A category whose projects are all drafts loses its page too.
+
+Drafts stay visible while you run `npm run dev`, marked `DRAFT`, so a case study
+can be read and proofed before it ships. `next build` runs in production mode,
+so nothing draft can reach a built page.
+
+A project needs `featured` as well as `published` to hang on the home wall —
+publishing is your decision that the work is public, `featured` is the existence
+of an image to hang.
+
+## Share cards
+
+Every project generates its own 1200×630 Open Graph image at build time from its
+`featured` image, so a link pasted into Slack, a DM, or a post previews as that
+project's work rather than as a generic card. `app/opengraph-image.tsx` is the
+card for the site itself; `app/work/[category]/[project]/opengraph-image.tsx` is
+the per-project one. Both share `lib/og.ts`.
+
+The renderer cannot read a WebP reliably, so `sharp` decodes the featured image
+to a JPEG first — which is why `public/work` stays WebP-only and nothing about
+the image policy changes. Artwork is fitted, never cropped, and flattened onto
+the site blue so a mark on transparency doesn't land on black.
+
+`assets/fonts/` holds Anton and Inter as `.ttf` for that renderer only. It cannot
+read the copies `next/font` hashes into the client build, and without them the
+cards fall back to a generic sans and silently ignore every font weight.
+
 ## Adding images
 
 Drop files in `public/work/<category-slug>/<project-slug>/` — any format, any
@@ -53,6 +85,12 @@ you're still shooting.
 `mediaLayout: "grid"` on a project for a small uniform feed instead (images keep
 their full aspect ratio, nothing gets cropped) — `mediaColumns: 3` narrows it from
 the 4-across default.
+
+The project's `featured` image is pulled out of whatever layout you choose and
+shown full width at the top of the case study, ahead of the body copy. That is
+the same image that hangs on the home wall, which is what the frame there morphs
+into on the way in. Every image on the page opens full-bleed on click, with
+arrow keys between them.
 
 Raw, unedited photos (phone shots, exports, alternates you're picking from) go in
 `source-photos/<category-slug>/<project-slug>/` at the repo root, not in `public/`.
@@ -93,7 +131,6 @@ losing quality on every run.
 - [ ] Point `site.socials` at your real profiles
 - [ ] Set `site.url` to the live domain (drives canonical URLs, OG tags, sitemap)
 - [ ] Add real project images to `public/`
-- [ ] Add an OG share image at `app/opengraph-image.png` (1200×630)
 
 ## Deploy
 
