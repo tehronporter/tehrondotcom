@@ -1,23 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Inter } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { site } from "@/content/site";
+import { fontVariables } from "@/lib/fonts";
 import "./globals.css";
-
-/* Self-hosted at build time — no external font request, no layout shift. */
-const anton = Anton({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-anton",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -46,7 +32,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${anton.variable} ${inter.variable}`}>
+    <html lang="en" className={fontVariables}>
       <body>
         <a className="skip-link" href="#main">
           SKIP TO CONTENT

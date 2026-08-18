@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
@@ -14,32 +13,11 @@ function isActive(href: string, pathname: string) {
 export function Header() {
   const pathname = usePathname();
 
-  /* The home page opens with the name set as the masthead, so the signature
-     directly above it would be the same word twice. Everywhere else the
-     signature is the only route home — nav no longer carries a HOME item. */
-  const showWordmark = pathname !== "/";
-
   return (
-    <header className="header" data-bare={showWordmark ? undefined : ""}>
-      {/* The signature is the wordmark. It's an image, so the accessible name
-          lives on the link and the img stays alt="" to avoid announcing twice. */}
-      {showWordmark && (
-        <Link href="/" className="header-left" aria-label={`${site.name}, ${site.role}, home`}>
-          <Image
-            src="/brand/signature-white.png"
-            alt=""
-            width={348}
-            height={260}
-            className="wordmark-signature"
-            /* Painted at 75px wide (56px tall, width auto) and 80px below the
-               760px breakpoint — never larger. Without this the browser assumes
-               the declared 348 and reserves a candidate ten times the mark's
-               actual size, on a priority request that sits on every page. */
-            sizes="80px"
-            priority
-          />
-        </Link>
-      )}
+    <header className="header">
+      <Link href="/" className="header-wordmark" aria-label={`${site.name}, ${site.role}, home`}>
+        {site.name}
+      </Link>
 
       <nav className="nav" aria-label="Primary">
         {site.nav.map((item) => (

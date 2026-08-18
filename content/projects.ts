@@ -9,12 +9,10 @@
  */
 
 import type { IconName } from "@/components/Icon";
-import type { FrameStyle } from "@/components/frames";
 import { imageMeta } from "@/lib/images";
-import type { WallDensity } from "@/lib/sizes";
 
 /**
- * The single image that represents a project on the home gallery wall.
+ * The single image that represents a project on homepage and index surfaces.
  * Always one of that project's own images — never borrowed from elsewhere.
  *
  * Intrinsic pixel dimensions are measured from the file by `npm run images`
@@ -37,14 +35,15 @@ export type Featured = {
   focus?: string;
 };
 
-/** A `Featured` with its dimensions resolved — what the wall actually renders. */
+/** A featured image with dimensions resolved for responsive rendering. */
 export type ResolvedFeatured = Omit<Featured, "width" | "height"> & {
   width: number;
   height: number;
   blurDataURL?: string;
 };
 
-export type Orientation = "portrait" | "square" | "landscape";
+/** Legacy wall preference retained on existing project records. */
+export type FrameStyle = "ornate" | "vintage" | "wide" | "plain";
 
 export type Media = {
   /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.webp". Omit for an empty frame. */
@@ -930,35 +929,21 @@ export const getProject = (categorySlug: string, projectSlug: string) => {
 /** Zero-padded display number, e.g. 0 -> "01". */
 export const num = (i: number) => String(i + 1).padStart(2, "0");
 
-/* ---------- home gallery wall ---------- */
+/* ---------- project previews ---------- */
 
-/** A project flattened out of its category and ready to hang. */
-export type GalleryPiece = {
+/** A published project flattened out of its category for visual indexes. */
+export type ProjectPreview = {
   slug: string;
   name: string;
   href: string;
+  categorySlug: string;
+  category: string;
+  meta: string;
   tags: string[];
   shortDescription: string;
   featured: ResolvedFeatured;
-  orientation: Orientation;
-  frameStyle: FrameStyle;
 };
 
-/* Squares get a band rather than an exact 1:1 so that a 1266x1243 photo isn't
-   treated as a landscape over 23 pixels. */
-const orientationOf = ({ width, height }: ResolvedFeatured): Orientation => {
-  const ratio = width / height;
-  if (ratio > 1.15) return "landscape";
-  if (ratio < 0.87) return "portrait";
-  return "square";
-};
-
-/**
- * Measured dimensions win over declared ones; a piece with neither is treated
- * as square, which is the orientation that crops the least badly when we are
- * guessing. Resizing preserves aspect ratio, so re-running the image pipeline
- * can never move a piece into a different moulding.
- */
 const resolveFeatured = (featured: Featured): ResolvedFeatured => {
   const meta = imageMeta(featured.src);
   return {
@@ -970,63 +955,26 @@ const resolveFeatured = (featured: Featured): ResolvedFeatured => {
 };
 
 /**
- * The frame a project gets when it doesn't name one. Orientation is the sensible
- * default — a heavy classical moulding suits a wide piece, a slim vintage one
- * suits a tall piece — and it means a newly published project always arrives
- * framed without a decision being required.
- *
- * Set `frameStyle` on a project to overrule it. That is the knob for keeping the
- * wall varied: two landscapes side by side both default to `ornate`, so give one
- * of them a different moulding when you want them to read apart.
+ * Every project cleared for visual indexes, in the order it appears here.
+ * The two gates remain independent: `published` makes work public and
+ * `featured` supplies its visual preview.
  */
-const FRAME_FOR: Record<Orientation, FrameStyle> = {
-  landscape: "ornate",
-  portrait: "vintage",
-  square: "wide",
-};
-
-/**
- * Every project cleared to hang, in the order it appears in this file.
- * The two gates are independent on purpose: `published` is your decision that
- * the work is public, `featured` is the existence of an image to hang.
- */
-export const galleryProjects = (): GalleryPiece[] =>
+export const projectPreviews = (): ProjectPreview[] =>
   categories.flatMap((category) =>
     category.projects
       .filter((project) => project.published === true && project.featured?.src)
       .map((project) => {
         const featured = resolveFeatured(project.featured as Featured);
-        const orientation = orientationOf(featured);
         return {
           slug: project.slug,
           name: project.name,
           href: `/work/${category.slug}/${project.slug}`,
+          categorySlug: category.slug,
+          category: categoryLabel(category),
+          meta: project.meta,
           tags: project.tags ?? [],
           shortDescription: project.shortDescription ?? project.intro,
           featured,
-          orientation,
-          frameStyle: project.frameStyle ?? FRAME_FOR[orientation],
         };
       }),
   );
-
-/**
- * Filter keywords, computed from what is actually on the wall rather than
- * declared separately — which is why a filter can never appear with nothing
- * behind it, and why a new tag on a new project becomes a filter on its own.
- */
-export const galleryTags = (): string[] => {
-  const seen: string[] = [];
-  for (const piece of galleryProjects()) {
-    for (const tag of piece.tags) if (!seen.includes(tag)) seen.push(tag);
-  }
-  return seen;
-};
-
-/**
- * How busy the wall is. Drives frame size and spacing so a handful of pieces
- * hang large and deliberate while a full portfolio tightens into a salon wall —
- * without the layout ever being rewritten.
- */
-export const wallDensity = (count: number): WallDensity =>
-  count <= 4 ? "sparse" : count <= 9 ? "medium" : "dense";

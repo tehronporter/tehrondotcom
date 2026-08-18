@@ -6,11 +6,13 @@ import { Icon } from "@/components/Icon";
 import { Lines } from "@/components/Lines";
 
 export function Footer() {
+  const pathname = usePathname();
   /* The contact page already is the call to action — don't repeat it there. */
-  const showCta = usePathname() !== "/contact";
+  const showCta = pathname !== "/contact";
+  const isHome = pathname === "/";
 
   return (
-    <footer>
+    <footer className="site-footer" data-home={isHome ? "" : undefined}>
       {showCta && (
         <section className="footer">
           <h2 className="display">
