@@ -8,10 +8,7 @@ export function FeaturedProjects({ projects }: { projects: ProjectPreview[] }) {
   return (
     <section className="home-features" aria-labelledby="featured-title">
       <div className="section-head home-gutter">
-        <div>
-          <p className="home-label">A CLOSER LOOK</p>
-          <h2 id="featured-title">Case Studies</h2>
-        </div>
+        <h2 id="featured-title">Case Studies</h2>
         <p className="section-count">01 — {String(projects.length).padStart(2, "0")}</p>
       </div>
 

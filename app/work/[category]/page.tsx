@@ -57,7 +57,7 @@ export default async function CategoryPage({ params }: Params) {
           development even before it has a featured image. */}
       <ProjectRows
         items={projects.map((project, index) => ({
-          key: category.slug + "/" + project.slug,
+          id: category.slug + "/" + project.slug,
           name: project.name,
           href: `/work/${category.slug}/${project.slug}`,
           meta: project.meta,

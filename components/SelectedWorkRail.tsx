@@ -64,12 +64,9 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
   return (
     <div className="selected-work" ref={rootRef}>
       <div className="section-head home-gutter">
-        <div>
-          <p className="home-label">CURATED PROJECTS</p>
-          <h2 id="selected-work-title" className="editorial-accent">
-            Selected Work
-          </h2>
-        </div>
+        <h2 id="selected-work-title" className="editorial-accent">
+          Selected Work
+        </h2>
         <p className="section-count">01 — {String(items.length).padStart(2, "0")}</p>
       </div>
 

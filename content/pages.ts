@@ -15,17 +15,21 @@ export const about = {
     "I don't think the interesting problems are the safe ones. The work I'm proudest of is the work where the format didn't exist yet. An identity system that had to survive a drop model. A tool nobody could call useful until it actually existed.",
     "The through-line is craft. Systems that hold up, type that's set on purpose, and interfaces that don't need a tutorial.",
   ],
+  /* The same three disciplines the rest of the site is built on, under the same
+     names — these are the /work categories and the home "What I Do" rows,
+     expanded into what each one actually covers. They used to be titled Brand /
+     Technology / Product, which read as a second, competing list of three. */
   capabilities: [
     {
-      title: "Brand",
+      title: "Brand Identity",
       items: ["Identity Systems", "Art Direction", "Campaigns", "Packaging", "Brand Guidelines"],
     },
     {
-      title: "Technology",
+      title: "Creative Technology",
       items: ["Web Experiences", "AI & Automation", "Interactive Prototypes", "Front-end Build"],
     },
     {
-      title: "Product",
+      title: "Product Development",
       items: ["UX / UI Design", "Design Systems", "Product Strategy", "Development"],
     },
   ],

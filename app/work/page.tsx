@@ -15,13 +15,13 @@ export const metadata: Metadata = {
  */
 export default function AllWorkPage() {
   const projects = projectPreviews().map(
-    ({ slug, name, href, categorySlug, meta, tags, published }) => ({
+    ({ slug, name, href, categorySlug, category, meta, published }) => ({
       slug,
       name,
       href,
       categorySlug,
+      category,
       meta,
-      tags,
       published,
     }),
   );
@@ -32,7 +32,7 @@ export default function AllWorkPage() {
         <Breadcrumbs trail={[{ label: "HOME", href: "/" }, { label: "ALL WORK" }]} />
       </div>
 
-      <ProjectArchive projects={projects} label="COMPLETE COLLECTION" title="All Work" />
+      <ProjectArchive projects={projects} title="All Work" />
     </div>
   );
 }

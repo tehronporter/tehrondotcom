@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 
 export type ProjectRowItem = {
-  /** Stable list key — the project's `category/slug` path. */
-  key: string;
+  /** Stable list identity — the project's `category/slug` path. Deliberately
+      not called `key`: that name is reserved in JSX, and a data field wearing
+      it makes React's own key diagnostics point at the wrong component. */
+  id: string;
   name: string;
   href: string;
   meta: string;
@@ -22,7 +24,7 @@ export function ProjectRows({ items }: { items: (ProjectRowItem & { index: numbe
   return (
     <div className="archive-rows">
       {items.map((item) => (
-        <Link className="archive-row" href={item.href} key={item.key}>
+        <Link className="archive-row" href={item.href} key={item.id}>
           <span className="archive-number">{String(item.index + 1).padStart(2, "0")}</span>
           <span className="archive-name">
             {item.name}

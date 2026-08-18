@@ -44,10 +44,7 @@ export default function HomePage() {
 
       <section className="home-disciplines" aria-labelledby="disciplines-title">
         <div className="section-head home-gutter">
-          <div>
-            <p className="home-label">DISCIPLINES</p>
-            <h2 id="disciplines-title">What I Do</h2>
-          </div>
+          <h2 id="disciplines-title">What I Do</h2>
           <p className="section-count">01 — {String(categories.length).padStart(2, "0")}</p>
         </div>
         <div className="discipline-rows">
@@ -82,7 +79,6 @@ export default function HomePage() {
             case-study block that already showed the same projects — the same
             work listed three times on one page. */}
         <Link className="home-all-work home-gutter" href="/work">
-          <span className="home-label">EVERY PROJECT</span>
           <span className="home-all-work-name">
             ALL WORK <Icon name="arrow-up-right" size={22} />
           </span>

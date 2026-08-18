@@ -8,7 +8,7 @@ const ALL = "ALL";
 
 export type ArchiveProject = Pick<
   ProjectPreview,
-  "slug" | "name" | "href" | "categorySlug" | "meta" | "tags" | "published"
+  "slug" | "name" | "href" | "categorySlug" | "category" | "meta" | "published"
 >;
 
 /**
@@ -18,55 +18,57 @@ export type ArchiveProject = Pick<
  */
 export function ProjectArchive({
   projects,
-  label = "COMPLETE COLLECTION",
   title = "All Work",
 }: {
   projects: ArchiveProject[];
-  label?: string;
   title?: string;
 }) {
   const [active, setActive] = useState(ALL);
-  const tags = useMemo(() => {
+  /* Filtered by discipline, not by tag. The tag list carried its own taxonomy —
+     five labels that overlapped the three categories without matching them, so
+     the "BRAND IDENTITY" chip returned four projects while the BRAND IDENTITY
+     category page returned seven. Same words, two answers. The categories are
+     the spine of the site (the routes, the home disciplines, the breadcrumbs),
+     so they are what the filter speaks now, and the finer detail a tag used to
+     carry is already spelled out in each row's meta. */
+  const disciplines = useMemo(() => {
     const seen = new Set<string>();
-    for (const project of projects) for (const tag of project.tags) seen.add(tag);
+    for (const project of projects) seen.add(project.category);
     return [ALL, ...seen];
   }, [projects]);
 
   /* Numbered against the full list, so filtering narrows the set without
      renumbering every project it leaves behind. */
   const indexed = projects.map((project, index) => ({
-    key: project.categorySlug + "/" + project.slug,
+    id: project.categorySlug + "/" + project.slug,
     name: project.name,
     href: project.href,
     meta: project.meta,
     published: project.published,
-    tags: project.tags,
+    category: project.category,
     index,
   }));
-  const visible = active === ALL ? indexed : indexed.filter((item) => item.tags.includes(active));
+  const visible = active === ALL ? indexed : indexed.filter((item) => item.category === active);
 
   return (
     <section className="archive" aria-labelledby="archive-title">
       <div className="section-head home-gutter">
-        <div>
-          <p className="home-label">{label}</p>
-          <h2 id="archive-title">{title}</h2>
-        </div>
+        <h2 id="archive-title">{title}</h2>
         <p className="section-count" role="status">
           {String(visible.length).padStart(2, "0")} / {String(projects.length).padStart(2, "0")} PROJECTS
         </p>
       </div>
 
       <div className="archive-filters home-gutter" role="group" aria-label="Filter work by discipline">
-        {tags.map((tag) => (
+        {disciplines.map((discipline) => (
           <button
             className="archive-filter"
             type="button"
-            key={tag}
-            aria-pressed={active === tag}
-            onClick={() => setActive(tag)}
+            key={discipline}
+            aria-pressed={active === discipline}
+            onClick={() => setActive(discipline)}
           >
-            {tag}
+            {discipline}
           </button>
         ))}
       </div>

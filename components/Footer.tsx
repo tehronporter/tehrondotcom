@@ -30,12 +30,13 @@ export function Footer() {
           {site.location} &nbsp;·&nbsp; © {new Date().getFullYear()} {site.name}
         </span>
         <nav className="socials" aria-label="Social">
+          {/* No EMAIL here: the call above this row is already a mailto, and
+              two of them a few pixels apart is one link too many. */}
           {site.socials.map((s) => (
             <a key={s.label} href={s.href} target="_blank" rel="noreferrer noopener">
               {s.label}
             </a>
           ))}
-          <a href={`mailto:${site.email}`}>EMAIL</a>
         </nav>
       </div>
     </footer>

@@ -8,8 +8,6 @@
   --fg: #ffffff;
   --paper: #f3f0e8;
   --ink: #111111;
-  --paper-rule: rgba(17, 17, 17, 0.24);
-  --paper-rule-soft: rgba(17, 17, 17, 0.12);
 
   /*
    * Stable font roles — all four are real, self-hosted faces (see lib/fonts.ts).
@@ -17,6 +15,14 @@
    * sets the same on Windows and Android as it does here.
    */
   --font-display: var(--font-display-loaded), "Arial Black", Arial, sans-serif;
+
+  /* The display scale, and all of it. Nine blocks used to restate the same
+     face, weight, tracking and transform and differ only in size — eight
+     sizes, two pairs of which were the same number written twice. Three steps
+     cover every heading: section titles, item names, row names. */
+  --display-lg: clamp(2.6rem, 6.4vw, 6.6rem);
+  --display-md: clamp(1.5rem, 3.2vw, 3.6rem);
+  --display-sm: clamp(1.2rem, 2.5vw, 2.6rem);
   --font-primary: var(--font-primary-loaded), Arial, Helvetica, sans-serif;
   --font-editorial: var(--font-editorial-loaded), Georgia, serif;
   --font-mono: var(--font-mono-loaded), "Courier New", monospace;
@@ -42,12 +48,6 @@
      composed instead of stretching; at 1440–1700 it changes nothing. */
   --content-max: 1720px;
 
-  /* Ceiling on the Selected Work block (label row + card grid share it, so
-     they keep the same edges). Border-box, so this includes the 3x --pad
-     inset — the cards themselves get what's left, which keeps each column
-     close to the width of its own content instead of stretching to the page. */
-  --stage-max: 1240px;
-
   /* Secondary label opacity. 0.66 is the floor that still clears WCAG AA on
      ink-over-paper; the inverse blocks keep the old 0.75 floor for blue. */
   --dim: 0.66;
@@ -58,8 +58,6 @@
      to 150–200px voids between blocks. */
   --sp-sm: 1.5rem; /* 24px — inside a component */
   --sp-md: 2.5rem; /* 40px — between related blocks */
-  --sp-lg: 4rem; /*   64px — between content groups */
-  --sp-xl: 6rem; /*   96px — between full sections, ceiling */
 
   /* Distance between full sections. Lives at the root because the archive now
      renders on /work as well as inside .home. */
@@ -195,15 +193,27 @@ img {
    Type
    -------------------------------------------------------------------------- */
 
-/* Archivo Black is already the heaviest weight in the family, so there is no
-   font-weight to set — and it is far wider than the old Lato Bold, which is why
-   the tracking here is nowhere near as tight as it used to be. Past about
-   -0.03em its counters start closing up. */
-.display {
+/* The display voice, stated once and shared by every heading on the site.
+   Archivo Black is already the heaviest weight in its family, so there is no
+   font-weight to choose — and it is far wider than the old Lato Bold, which is
+   why the tracking is nowhere near as tight as it used to be. Past about
+   -0.03em its counters start closing up.
+
+   Size is the only thing a caller sets, through --display-size. */
+.display,
+.section-head h2,
+.placeholder-title,
+.feature-meta h3,
+.discipline-name,
+.home-all-work-name,
+.archive-name,
+.next-project .name,
+.capabilities h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.025em;
+  font-size: var(--display-size, 1em);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
 }
 
@@ -223,7 +233,7 @@ img {
   padding: 1.25rem var(--pad);
   color: var(--ink);
   background: var(--paper);
-  border-bottom: 1px solid var(--paper-rule);
+  border-bottom: 1px solid var(--rule);
 }
 
 .header-wordmark {
@@ -398,13 +408,8 @@ body:has(.home) {
 }
 
 .section-head h2 {
-  margin-top: 0.35rem;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(2.6rem, 6.4vw, 6.6rem);
+  --display-size: var(--display-lg);
   line-height: 0.9;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
 }
 
 /* The one serif moment on the page, and the only heading that breaks the
@@ -443,7 +448,7 @@ body:has(.home) {
   scroll-padding-inline: var(--pad);
   scroll-snap-type: x mandatory;
   overscroll-behavior-inline: contain;
-  scrollbar-color: var(--blue) var(--paper-rule-soft);
+  scrollbar-color: var(--blue) var(--rule-soft);
   scrollbar-width: thin;
   touch-action: pan-x pan-y;
 }
@@ -457,7 +462,7 @@ body:has(.home) {
 }
 
 .selected-work-track::-webkit-scrollbar-track {
-  background: var(--paper-rule-soft);
+  background: var(--rule-soft);
 }
 
 .selected-work-track::-webkit-scrollbar-thumb {
@@ -540,11 +545,7 @@ body:has(.home) {
 }
 
 .placeholder-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.9rem, 3.4vw, 3.6rem);
-  font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
+  --display-size: var(--display-md);
   text-wrap: balance;
 }
 
@@ -678,13 +679,8 @@ body:has(.home) {
 }
 
 .feature-meta h3 {
+  --display-size: var(--display-md);
   margin-top: 0.4rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 3.6rem);
-  font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
 }
 
 .feature-action {
@@ -738,11 +734,7 @@ body:has(.home) {
 }
 
 .discipline-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3.1vw, 3.4rem);
-  font-weight: 400;
-  line-height: 0.92;
-  letter-spacing: -0.03em;
+  --display-size: var(--display-md);
 }
 
 /* 11px mono set to 48ch wrapped to three ragged lines beside a 5rem name — too
@@ -781,13 +773,10 @@ a.discipline-row:focus-visible {
 }
 
 .home-all-work-name {
+  --display-size: var(--display-md);
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.35rem, 3.1vw, 3.4rem);
-  line-height: 0.92;
-  letter-spacing: -0.03em;
   border-bottom: 2px solid transparent;
   transition: border-color var(--speed) var(--ease);
 }
@@ -865,14 +854,10 @@ a.discipline-row:focus-visible {
 }
 
 .archive-name {
+  --display-size: var(--display-sm);
   display: flex;
   align-items: baseline;
   gap: 0.9rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.2rem, 2.5vw, 2.6rem);
-  font-weight: 400;
-  line-height: 0.96;
-  letter-spacing: -0.03em;
 }
 
 .archive-arrow {
@@ -1421,12 +1406,8 @@ a.discipline-row:focus-visible {
 }
 
 .next-project .name {
+  --display-size: var(--display-sm);
   display: block;
-  font-family: var(--font-display);
-  font-size: clamp(20px, 3.4vw, 32px);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  text-transform: uppercase;
 }
 
 .next-project .icon {
@@ -1501,11 +1482,8 @@ a.discipline-row:focus-visible {
 }
 
 .capabilities h3 {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 400;
+  --display-size: 15px;
   letter-spacing: -0.015em;
-  text-transform: uppercase;
   margin-bottom: 0.9rem;
 }
 
@@ -1819,7 +1797,7 @@ a.contact-link:hover {
   }
 
   .section-head h2 {
-    font-size: clamp(2.3rem, 11.4vw, 3.4rem);
+    --display-size: clamp(2.3rem, 11.4vw, 3.4rem);
   }
 
   .section-head h2.editorial-accent {
@@ -1886,7 +1864,7 @@ a.contact-link:hover {
   }
 
   .discipline-name {
-    font-size: clamp(1.5rem, 7.4vw, 2.4rem);
+    --display-size: clamp(1.5rem, 7.4vw, 2.4rem);
   }
 
   .discipline-summary {
