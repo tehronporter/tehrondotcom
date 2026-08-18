@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Lines } from "@/components/Lines";
-import { ProjectRow } from "@/components/ProjectRow";
-import { categories, categoryLabel, getCategory } from "@/content/projects";
+import { ProjectRows } from "@/components/ProjectRows";
+import { categoryLabel, getCategory, liveCategories, liveProjects } from "@/content/projects";
 import { tagLine, titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string }> };
 
+/* Only categories with work behind them get a page. A category whose projects
+   are all drafts is not a thin page, it is a missing one. */
 export function generateStaticParams() {
-  return categories.map((c) => ({ category: c.slug }));
+  return liveCategories().map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -26,6 +28,9 @@ export default async function CategoryPage({ params }: Params) {
   const { category: slug } = await params;
   const category = getCategory(slug);
   if (!category) notFound();
+
+  const projects = liveProjects(category);
+  if (projects.length === 0) notFound();
 
   return (
     <div className="page">
@@ -47,11 +52,19 @@ export default async function CategoryPage({ params }: Params) {
         <p className="cat-summary">{category.summary}</p>
       </div>
 
-      <section>
-        {category.projects.map((project, i) => (
-          <ProjectRow key={project.slug} project={project} index={i} categorySlug={category.slug} />
-        ))}
-      </section>
+      {/* The same row as /work and the home index. Built from the raw project
+          list rather than from previews, so a draft still shows here in
+          development even before it has a featured image. */}
+      <ProjectRows
+        items={projects.map((project, index) => ({
+          key: category.slug + "/" + project.slug,
+          name: project.name,
+          href: `/work/${category.slug}/${project.slug}`,
+          meta: project.meta,
+          published: project.published === true,
+          index,
+        }))}
+      />
     </div>
   );
 }

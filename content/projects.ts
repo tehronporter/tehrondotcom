@@ -906,6 +906,30 @@ export const categories: Category[] = [
   },
 ];
 
+/* ---------- what the public site can see ----------
+
+   `published` is the single gate, and every public surface honours it: the home
+   wall, the work index, the category pages, the case study routes themselves,
+   the prev/next chain, and the sitemap. A project with the flag off is a draft —
+   it keeps its place in this file and simply does not exist to a visitor.
+
+   In development drafts stay visible, so a case study can be read and proofed
+   before it ships. `next build` runs in production, so nothing draft ever
+   reaches a static page or the sitemap. */
+
+const DRAFTS_VISIBLE = process.env.NODE_ENV === "development";
+
+export const isLive = (project: Project) => project.published === true || DRAFTS_VISIBLE;
+
+/** A category's public projects, in file order. */
+export const liveProjects = (category: Category) => category.projects.filter(isLive);
+
+/** Categories with at least one public project — an all-draft category disappears. */
+export const liveCategories = (): Category[] =>
+  categories
+    .map((category) => ({ ...category, projects: liveProjects(category) }))
+    .filter((category) => category.projects.length > 0);
+
 /* ---------- lookups used by the route files ---------- */
 
 export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
@@ -916,13 +940,17 @@ export const categoryLabel = (category: Category) => category.titleLines.join(" 
 export const getProject = (categorySlug: string, projectSlug: string) => {
   const category = getCategory(categorySlug);
   if (!category) return undefined;
-  const index = category.projects.findIndex((p) => p.slug === projectSlug);
+  /* Looked up in the live list rather than the raw one, so a draft slug 404s
+     in production and the prev/next chain can never hand a visitor an empty
+     page it was never meant to reach. */
+  const live = liveProjects(category);
+  const index = live.findIndex((p) => p.slug === projectSlug);
   if (index === -1) return undefined;
   return {
     category,
-    project: category.projects[index],
+    project: live[index],
     index,
-    next: category.projects[(index + 1) % category.projects.length],
+    next: live[(index + 1) % live.length],
   };
 };
 
@@ -942,6 +970,9 @@ export type ProjectPreview = {
   tags: string[];
   shortDescription: string;
   featured: ResolvedFeatured;
+  /* Carried through so an index can mark a draft row in development. In
+     production `isLive` has already filtered these out, so it is always true. */
+  published: boolean;
 };
 
 const resolveFeatured = (featured: Featured): ResolvedFeatured => {
@@ -962,7 +993,7 @@ const resolveFeatured = (featured: Featured): ResolvedFeatured => {
 export const projectPreviews = (): ProjectPreview[] =>
   categories.flatMap((category) =>
     category.projects
-      .filter((project) => project.published === true && project.featured?.src)
+      .filter((project) => isLive(project) && project.featured?.src)
       .map((project) => {
         const featured = resolveFeatured(project.featured as Featured);
         return {
@@ -975,6 +1006,7 @@ export const projectPreviews = (): ProjectPreview[] =>
           tags: project.tags ?? [],
           shortDescription: project.shortDescription ?? project.intro,
           featured,
+          published: project.published === true,
         };
       }),
   );

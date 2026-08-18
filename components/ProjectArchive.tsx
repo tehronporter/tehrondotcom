@@ -1,18 +1,30 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Icon } from "@/components/Icon";
+import { ProjectRows } from "@/components/ProjectRows";
 import type { ProjectPreview } from "@/content/projects";
 
 const ALL = "ALL";
 
 export type ArchiveProject = Pick<
   ProjectPreview,
-  "slug" | "name" | "href" | "categorySlug" | "meta" | "tags"
+  "slug" | "name" | "href" | "categorySlug" | "meta" | "tags" | "published"
 >;
 
-export function ProjectArchive({ projects }: { projects: ArchiveProject[] }) {
+/**
+ * The complete, filterable index of the work. It lives at /work and nowhere
+ * else — the homepage used to carry a second copy of it under two sections that
+ * already showed the same projects.
+ */
+export function ProjectArchive({
+  projects,
+  label = "COMPLETE COLLECTION",
+  title = "All Work",
+}: {
+  projects: ArchiveProject[];
+  label?: string;
+  title?: string;
+}) {
   const [active, setActive] = useState(ALL);
   const tags = useMemo(() => {
     const seen = new Set<string>();
@@ -20,22 +32,32 @@ export function ProjectArchive({ projects }: { projects: ArchiveProject[] }) {
     return [ALL, ...seen];
   }, [projects]);
 
-  const indexed = projects.map((project, index) => ({ project, index }));
-  const visible = active === ALL ? indexed : indexed.filter(({ project }) => project.tags.includes(active));
+  /* Numbered against the full list, so filtering narrows the set without
+     renumbering every project it leaves behind. */
+  const indexed = projects.map((project, index) => ({
+    key: project.categorySlug + "/" + project.slug,
+    name: project.name,
+    href: project.href,
+    meta: project.meta,
+    published: project.published,
+    tags: project.tags,
+    index,
+  }));
+  const visible = active === ALL ? indexed : indexed.filter((item) => item.tags.includes(active));
 
   return (
-    <section className="home-archive" aria-labelledby="archive-title">
-      <div className="archive-heading home-gutter">
+    <section className="archive" aria-labelledby="archive-title">
+      <div className="section-head home-gutter">
         <div>
-          <p className="home-label">COMPLETE COLLECTION</p>
-          <h2 id="archive-title">ARCHIVE</h2>
+          <p className="home-label">{label}</p>
+          <h2 id="archive-title">{title}</h2>
         </div>
-        <p className="archive-count" role="status">
+        <p className="section-count" role="status">
           {String(visible.length).padStart(2, "0")} / {String(projects.length).padStart(2, "0")} PROJECTS
         </p>
       </div>
 
-      <div className="archive-filters home-gutter" role="group" aria-label="Filter archive by discipline">
+      <div className="archive-filters home-gutter" role="group" aria-label="Filter work by discipline">
         {tags.map((tag) => (
           <button
             className="archive-filter"
@@ -49,22 +71,7 @@ export function ProjectArchive({ projects }: { projects: ArchiveProject[] }) {
         ))}
       </div>
 
-      <div className="archive-rows">
-        {visible.map(({ project, index }) => (
-          <Link
-            className="archive-row"
-            href={project.href}
-            key={project.categorySlug + "/" + project.slug}
-          >
-            <span className="archive-number">{String(index + 1).padStart(2, "0")}</span>
-            <span className="archive-name">{project.name}</span>
-            <span className="archive-meta">{project.meta}</span>
-            <span className="archive-arrow" aria-hidden="true">
-              <Icon name="arrow-right" size={17} />
-            </span>
-          </Link>
-        ))}
-      </div>
+      <ProjectRows items={visible} />
     </section>
   );
 }

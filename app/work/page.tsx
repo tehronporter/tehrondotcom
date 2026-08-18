@@ -1,18 +1,29 @@
 import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { ProjectRow } from "@/components/ProjectRow";
-import { categories, categoryLabel } from "@/content/projects";
-import { tagLine } from "@/lib/text";
+import { ProjectArchive } from "@/components/ProjectArchive";
+import { projectPreviews } from "@/content/projects";
 
 export const metadata: Metadata = {
   title: "All Work",
   description: "Every project — brand identity, creative technology, and product development.",
 };
 
-/** Flat index of every project across all three categories. */
+/**
+ * The one complete index. It used to be a second, text-only list in a different
+ * visual language from the archive the homepage carried; both are now this
+ * component, so there is a single list of the work on the site.
+ */
 export default function AllWorkPage() {
-  const all = categories.flatMap((category) =>
-    category.projects.map((project) => ({ category, project }))
+  const projects = projectPreviews().map(
+    ({ slug, name, href, categorySlug, meta, tags, published }) => ({
+      slug,
+      name,
+      href,
+      categorySlug,
+      meta,
+      tags,
+      published,
+    }),
   );
 
   return (
@@ -21,21 +32,7 @@ export default function AllWorkPage() {
         <Breadcrumbs trail={[{ label: "HOME", href: "/" }, { label: "ALL WORK" }]} />
       </div>
 
-      <div className="cat-head">
-        <h1 className="display cat-title">ALL WORK.</h1>
-        <p className="cat-meta">{tagLine(categories.map(categoryLabel))}</p>
-      </div>
-
-      <section>
-        {all.map(({ category, project }, i) => (
-          <ProjectRow
-            key={`${category.slug}/${project.slug}`}
-            project={project}
-            index={i}
-            categorySlug={category.slug}
-          />
-        ))}
-      </section>
+      <ProjectArchive projects={projects} label="COMPLETE COLLECTION" title="All Work" />
     </div>
   );
 }

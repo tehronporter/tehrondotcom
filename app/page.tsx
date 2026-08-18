@@ -1,21 +1,13 @@
 import Link from "next/link";
 import { FeaturedProjects } from "@/components/FeaturedProjects";
-import { ProjectArchive } from "@/components/ProjectArchive";
+import { Icon } from "@/components/Icon";
 import { SelectedWorkRail } from "@/components/SelectedWorkRail";
 import { resolveHomeCuration } from "@/content/home";
 import { categories } from "@/content/projects";
 import { site } from "@/content/site";
 
 export default function HomePage() {
-  const { selected, featured, archive } = resolveHomeCuration();
-  const archiveRows = archive.map(({ slug, name, href, categorySlug, meta, tags }) => ({
-    slug,
-    name,
-    href,
-    categorySlug,
-    meta,
-    tags,
-  }));
+  const { selected, featured } = resolveHomeCuration();
 
   return (
     <div className="page home">
@@ -31,9 +23,9 @@ export default function HomePage() {
         </h1>
 
         <p className="hero-tagline">
-          I BUILD WHAT&apos;S NEXT,
+          I build what&rsquo;s next,
           <br />
-          NOT WHAT&apos;S SAFE.
+          <em className="editorial-accent">not</em> what&rsquo;s safe.
         </p>
       </section>
 
@@ -43,16 +35,20 @@ export default function HomePage() {
         <p className="home-label">THE PRACTICE</p>
         <h2 id="practice-title">
           I work across identity, technology and physical products. The medium changes.{" "}
-          <em className="editorial-accent">The goal doesn&apos;t.</em> Make something people actually remember.
+          <em className="editorial-accent">The goal doesn&rsquo;t.</em> Make something people actually
+          remember.
         </h2>
       </section>
 
       <FeaturedProjects projects={featured} />
 
       <section className="home-disciplines" aria-labelledby="disciplines-title">
-        <div className="disciplines-heading home-gutter">
-          <p className="home-label">DISCIPLINES</p>
-          <h2 id="disciplines-title">WHAT I DO</h2>
+        <div className="section-head home-gutter">
+          <div>
+            <p className="home-label">DISCIPLINES</p>
+            <h2 id="disciplines-title">What I Do</h2>
+          </div>
+          <p className="section-count">01 — {String(categories.length).padStart(2, "0")}</p>
         </div>
         <div className="discipline-rows">
           {categories.map((category, index) => {
@@ -80,9 +76,18 @@ export default function HomePage() {
             );
           })}
         </div>
-      </section>
 
-      <ProjectArchive projects={archiveRows} />
+        {/* The full index lives at /work and only at /work. It used to be
+            repeated here as an eleven-row archive under a curated rail and a
+            case-study block that already showed the same projects — the same
+            work listed three times on one page. */}
+        <Link className="home-all-work home-gutter" href="/work">
+          <span className="home-label">EVERY PROJECT</span>
+          <span className="home-all-work-name">
+            ALL WORK <Icon name="arrow-up-right" size={22} />
+          </span>
+        </Link>
+      </section>
     </div>
   );
 }

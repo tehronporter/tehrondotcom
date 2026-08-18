@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import type { KeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
+import type { CSSProperties, KeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import type { ResolvedSelectedWork } from "@/content/home";
 
@@ -63,14 +63,14 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
 
   return (
     <div className="selected-work" ref={rootRef}>
-      <div className="selected-work-heading home-gutter">
+      <div className="section-head home-gutter">
         <div>
           <p className="home-label">CURATED PROJECTS</p>
           <h2 id="selected-work-title" className="editorial-accent">
             Selected Work
           </h2>
         </div>
-        <p className="selected-work-count">01 — {String(items.length).padStart(2, "0")}</p>
+        <p className="section-count">01 — {String(items.length).padStart(2, "0")}</p>
       </div>
 
       <p id="selected-work-instructions" className="sr-only">
@@ -91,7 +91,11 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
 
           if (item.kind === "placeholder") {
             return (
-              <article className="selected-card selected-card-placeholder" key={"placeholder-" + item.title}>
+              <article
+                className="selected-card selected-card-placeholder"
+                key={"placeholder-" + item.title}
+                style={{ "--card-ratio": item.ratio } as CSSProperties}
+              >
                 <div className="selected-card-media" style={{ background: item.background }}>
                   <p className="placeholder-status">{item.status}</p>
                   <p className="placeholder-title">{item.title}</p>
@@ -109,9 +113,13 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
             );
           }
 
-          const { project, media } = item;
+          const { project, media, ratio } = item;
           return (
-            <article className="selected-card" key={project.categorySlug + "/" + project.slug}>
+            <article
+              className="selected-card"
+              key={project.categorySlug + "/" + project.slug}
+              style={{ "--card-ratio": ratio } as CSSProperties}
+            >
               <Link
                 href={project.href}
                 className="selected-card-link"
@@ -130,7 +138,7 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
                       objectFit: media.objectFit ?? "cover",
                       objectPosition: media.objectPosition ?? project.featured.focus ?? "50% 50%",
                     }}
-                    sizes="(max-width: 760px) 82vw, (max-width: 1100px) 44vw, 31vw"
+                    sizes="(max-width: 760px) 84vw, 46vw"
                     priority={index === 0}
                     {...(project.featured.blurDataURL
                       ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
@@ -148,6 +156,10 @@ export function SelectedWorkRail({ items }: { items: ResolvedSelectedWork[] }) {
           );
         })}
       </div>
+
+      {/* Driven entirely by the track's own scroll-timeline (see globals.css) —
+          there is no scroll listener behind it, so it cannot lag the thumb. */}
+      <div className="rail-progress" aria-hidden="true" />
 
       <div className="project-cursor" ref={cursorRef} aria-hidden="true">
         VIEW PROJECT ↗

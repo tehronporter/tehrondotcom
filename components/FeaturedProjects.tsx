@@ -1,21 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { Icon } from "@/components/Icon";
 import type { ProjectPreview } from "@/content/projects";
 
 export function FeaturedProjects({ projects }: { projects: ProjectPreview[] }) {
   return (
     <section className="home-features" aria-labelledby="featured-title">
-      <div className="feature-heading home-gutter">
-        <p className="home-label">A CLOSER LOOK</p>
-        <h2 id="featured-title">FEATURED PROJECTS</h2>
+      <div className="section-head home-gutter">
+        <div>
+          <p className="home-label">A CLOSER LOOK</p>
+          <h2 id="featured-title">Case Studies</h2>
+        </div>
+        <p className="section-count">01 — {String(projects.length).padStart(2, "0")}</p>
       </div>
 
       <div className="feature-list">
         {projects.map((project, index) => (
           <article className="feature-project" data-layout={index === 0 ? "wide" : "offset"} key={project.href}>
             <Link href={project.href} className="feature-link">
-              <div className="feature-media">
+              {/* The frame takes the picture's own proportions rather than a
+                  fixed 16/9 or 5/4, so nothing is cropped to fit a slot. Height
+                  is what's held constant across the page; width follows from
+                  the ratio, which is what keeps a square image from being
+                  blown up to the full width of the page. */}
+              <div
+                className="feature-media"
+                style={{ "--media-ratio": project.featured.width / project.featured.height } as CSSProperties}
+              >
                 <Image
                   src={project.featured.src}
                   alt={project.featured.alt}

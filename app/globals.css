@@ -12,19 +12,28 @@
   --paper-rule-soft: rgba(17, 17, 17, 0.12);
 
   /*
-   * Stable font roles. --font-primary-loaded currently resolves to the local
-   * Lato fallback; swap its source to licensed Grtsk in lib/fonts.ts later.
-   * The system serif is intentionally temporary until Ogg is available.
+   * Stable font roles — all four are real, self-hosted faces (see lib/fonts.ts).
+   * Nothing here falls back to a system font for its finished look, so the page
+   * sets the same on Windows and Android as it does here.
    */
+  --font-display: var(--font-display-loaded), "Arial Black", Arial, sans-serif;
   --font-primary: var(--font-primary-loaded), Arial, Helvetica, sans-serif;
-  --font-editorial: Georgia, "Times New Roman", serif;
+  --font-editorial: var(--font-editorial-loaded), Georgia, serif;
   --font-mono: var(--font-mono-loaded), "Courier New", monospace;
 
-  --rule: rgba(255, 255, 255, 0.28);
-  --rule-soft: rgba(255, 255, 255, 0.14);
-  --fill: rgba(255, 255, 255, 0.06);
-  --fill-hover: rgba(255, 255, 255, 0.13);
-  --edge-hover: rgba(255, 255, 255, 0.55);
+  /* Ink-on-paper is the default register for the whole site. Blue is now a
+     deliberate accent — the footer call, hover states, the one held field —
+     rather than the ground every page is painted on. */
+  --rule: rgba(17, 17, 17, 0.24);
+  --rule-soft: rgba(17, 17, 17, 0.12);
+  --fill: rgba(17, 17, 17, 0.05);
+  --fill-hover: rgba(17, 17, 17, 0.1);
+  --edge-hover: rgba(17, 17, 17, 0.55);
+
+  /* The same three, held against blue — for the footer field and any other
+     block that deliberately inverts. */
+  --rule-inverse: rgba(255, 255, 255, 0.28);
+  --rule-inverse-soft: rgba(255, 255, 255, 0.14);
 
   /* Horizontal page gutter. Every section aligns to this — it is the grid. */
   --pad: 3.5rem;
@@ -39,9 +48,10 @@
      close to the width of its own content instead of stretching to the page. */
   --stage-max: 1240px;
 
-  /* Secondary label opacity. 0.75 is the floor that still clears WCAG AA
-     (5.1:1) against the blue — anything lighter fails on 10px labels. */
-  --dim: 0.75;
+  /* Secondary label opacity. 0.66 is the floor that still clears WCAG AA on
+     ink-over-paper; the inverse blocks keep the old 0.75 floor for blue. */
+  --dim: 0.66;
+  --dim-inverse: 0.75;
 
   /* Mobile vertical rhythm. Every gap below 760px comes from this ladder
      rather than being picked per-element, which is what let the page drift
@@ -51,16 +61,21 @@
   --sp-lg: 4rem; /*   64px — between content groups */
   --sp-xl: 6rem; /*   96px — between full sections, ceiling */
 
+  /* Distance between full sections. Lives at the root because the archive now
+     renders on /work as well as inside .home. */
+  --home-space: clamp(6rem, 12vw, 12rem);
+
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --speed: 200ms;
 
-  /* The site is one fixed dark theme — tell the UA so scrollbars match. */
-  color-scheme: dark;
+  /* Ink on paper everywhere — tell the UA so form controls and scrollbars
+     match rather than rendering a dark-theme chrome over a light page. */
+  color-scheme: light;
 }
 
 ::selection {
-  background: var(--fg);
-  color: var(--blue);
+  background: var(--blue);
+  color: var(--paper);
 }
 
 * {
@@ -75,8 +90,8 @@ html {
 
 body {
   font-family: var(--font-primary);
-  background: var(--blue);
-  color: var(--fg);
+  background: var(--paper);
+  color: var(--ink);
   /* `clip`, not `hidden`. Both stop the sway and tilt transforms on the wall
      from ever producing a horizontal scrollbar, but `hidden` makes this element
      a scroll container, and a scroll container is what `position: sticky`
@@ -180,23 +195,16 @@ img {
    Type
    -------------------------------------------------------------------------- */
 
+/* Archivo Black is already the heaviest weight in the family, so there is no
+   font-weight to set — and it is far wider than the old Lato Bold, which is why
+   the tracking here is nowhere near as tight as it used to be. Past about
+   -0.03em its counters start closing up. */
 .display {
-  font-family: var(--font-primary);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
-}
-
-.eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.body-copy {
-  font-size: 15px;
-  line-height: 1.6;
 }
 
 /* --------------------------------------------------------------------------
@@ -253,7 +261,6 @@ img {
    -------------------------------------------------------------------------- */
 
 .home {
-  --home-space: clamp(6rem, 12vw, 12rem);
   min-width: 0;
   overflow: clip;
   color: var(--ink);
@@ -307,11 +314,15 @@ body:has(.home) {
 
 /* Hero -------------------------------------------------------------------- */
 
+/* The name and the tagline are one lockup pushed to the foot of the masthead,
+   with the standfirst rule at the top. They used to be centred in a flex:1
+   column with the tagline pinned bottom-right, which left a void above the name,
+   a second void below it, and nothing framed by either. */
 .home-hero {
   display: flex;
   flex-direction: column;
-  min-height: clamp(600px, calc(100svh - 72px), 980px);
-  padding-top: clamp(2rem, 4vw, 4rem);
+  min-height: clamp(520px, calc(100svh - 72px), 840px);
+  padding-top: clamp(1.5rem, 3vw, 2.75rem);
   padding-bottom: clamp(2.5rem, 5vw, 5rem);
 }
 
@@ -319,6 +330,8 @@ body:has(.home) {
   display: flex;
   justify-content: space-between;
   gap: 2rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
@@ -328,14 +341,17 @@ body:has(.home) {
 
 .hero-name {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  justify-content: center;
   min-width: 0;
-  font-size: clamp(4.5rem, 14.2vw, 14.8rem);
-  font-weight: 700;
-  line-height: 0.78;
-  letter-spacing: -0.072em;
+  /* Pushes the name/tagline lockup to the foot of the masthead. */
+  margin-top: auto;
+  font-family: var(--font-display);
+  /* Archivo Black is far wider than the placeholder Lato Bold this was set for,
+     so the same viewport division would now run off the page. */
+  font-size: clamp(3.4rem, 11.4vw, 11.6rem);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
 }
 
@@ -343,14 +359,20 @@ body:has(.home) {
   display: block;
 }
 
+/* Directly under the name and set to the same left edge, so the two read as one
+   masthead rather than as opposite corners of an empty box. */
 .hero-tagline {
-  align-self: flex-end;
-  width: min(100%, 34rem);
-  font-size: clamp(1.25rem, 2.5vw, 2.45rem);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  text-transform: uppercase;
+  width: min(100%, 38rem);
+  margin-top: clamp(1.2rem, 2.2vw, 2rem);
+  font-size: clamp(1.5rem, 3.15vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+}
+
+.hero-tagline .editorial-accent {
+  font-size: 1.12em;
+  line-height: 0.9;
 }
 
 /* Selected Work ----------------------------------------------------------- */
@@ -358,10 +380,16 @@ body:has(.home) {
 .selected-work {
   position: relative;
   padding-top: clamp(5rem, 9vw, 9rem);
+  /* Hoists the track's scroll timeline so the progress rule beneath it — which
+     is a sibling of the scroller, not a descendant — can resolve the name. */
+  timeline-scope: --rail;
 }
 
-.selected-work-heading,
-.archive-heading {
+/* One section lockup, used by all four home sections. Label stacked over the
+   title and flush to the page gutter, index right. Two of these used to sit in
+   a 1fr/2fr grid instead, which started their titles a third of the way across
+   the page and aligned them to nothing else on it. */
+.section-head {
   display: flex;
   justify-content: space-between;
   align-items: end;
@@ -369,18 +397,40 @@ body:has(.home) {
   margin-bottom: clamp(2rem, 4vw, 4rem);
 }
 
-.selected-work-heading h2 {
-  margin-top: 0.3rem;
-  font-size: clamp(3.2rem, 7.2vw, 7.7rem);
+.section-head h2 {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6.4vw, 6.6rem);
   line-height: 0.9;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
-.selected-work-count,
-.archive-count {
+/* The one serif moment on the page, and the only heading that breaks the
+   pattern — which is the point. Instrument Serif is a display cut, so it wants
+   near-zero tracking, not the negative tracking the sans headings carry, and
+   mixed case rather than the caps every other heading is set in. */
+.section-head h2.editorial-accent {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(3rem, 7.4vw, 7.8rem);
+  line-height: 0.86;
+  letter-spacing: -0.005em;
+  text-transform: none;
+}
+
+/* Tabular so the counts in four different sections sit on the same rhythm, and
+   nowrap so "01 — 06" stops folding to two lines on a phone. */
+.section-count {
+  flex: none;
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: var(--dim);
 }
 
 .selected-work-track {
@@ -414,8 +464,18 @@ body:has(.home) {
   background: var(--blue);
 }
 
+/* Every card is the same HEIGHT and a different WIDTH, taken from the picture's
+   own ratio. That is what a rail of photographs actually wants: the crop stops
+   being a decision, a wide campaign shot gets to be wide, and the row picks up
+   a rhythm instead of reading as six identical rectangles.
+
+   Width is set on the card rather than the frame so the meta line underneath
+   sits on the picture's edges, and so the mobile cap shrinks both together. */
 .selected-card {
-  flex: 0 0 clamp(300px, 31vw, 480px);
+  --card-h: clamp(320px, 52vh, 540px);
+  flex: none;
+  width: calc(var(--card-h) * var(--card-ratio, 0.8));
+  max-width: 78vw;
   min-width: 0;
   scroll-snap-align: start;
 }
@@ -426,7 +486,8 @@ body:has(.home) {
 
 .selected-card-media {
   position: relative;
-  aspect-ratio: 4 / 5;
+  width: 100%;
+  aspect-ratio: var(--card-ratio, 0.8);
   overflow: hidden;
   border-radius: 10px;
 }
@@ -479,10 +540,12 @@ body:has(.home) {
 }
 
 .placeholder-title {
-  font-size: clamp(2.4rem, 4vw, 4.6rem);
-  font-weight: 700;
-  line-height: 0.85;
-  letter-spacing: -0.065em;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .placeholder-mark {
@@ -490,10 +553,11 @@ body:has(.home) {
   right: -0.08em;
   bottom: -0.24em;
   color: rgba(255, 255, 255, 0.1);
-  font-size: clamp(10rem, 22vw, 20rem);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: clamp(7rem, 16vw, 15rem);
+  font-weight: 400;
   line-height: 1;
-  letter-spacing: -0.1em;
+  letter-spacing: -0.06em;
 }
 
 .project-cursor {
@@ -561,27 +625,9 @@ body:has(.home) {
 
 .home-features,
 .home-disciplines,
-.home-archive {
+.archive {
   content-visibility: auto;
   contain-intrinsic-size: auto 1200px;
-}
-
-.feature-heading,
-.disciplines-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  align-items: end;
-  gap: 2rem;
-  margin-bottom: clamp(2.5rem, 5vw, 5rem);
-}
-
-.feature-heading h2,
-.disciplines-heading h2,
-.archive-heading h2 {
-  font-size: clamp(2.8rem, 6vw, 6.5rem);
-  font-weight: 700;
-  line-height: 0.86;
-  letter-spacing: -0.06em;
 }
 
 .feature-list {
@@ -600,16 +646,22 @@ body:has(.home) {
   margin-right: var(--pad);
 }
 
+/* Height held, width derived — the same contract as the rail cards. A square
+   image no longer gets stretched across the full width of the page just because
+   the slot was declared 16/9, and a landscape one is no longer cropped to it. */
 .feature-media {
+  --feature-h: min(74vh, 760px);
   position: relative;
-  aspect-ratio: 16 / 9;
+  width: min(100%, calc(var(--feature-h) * var(--media-ratio, 1.6)));
+  aspect-ratio: var(--media-ratio, 1.6);
   overflow: hidden;
   border-radius: 10px;
   background: #ddd8ce;
 }
 
 .feature-project[data-layout="offset"] .feature-media {
-  aspect-ratio: 5 / 4;
+  --feature-h: min(58vh, 560px);
+  margin-left: auto;
 }
 
 .feature-image {
@@ -626,11 +678,13 @@ body:has(.home) {
 }
 
 .feature-meta h3 {
-  margin-top: 0.35rem;
-  font-size: clamp(1.8rem, 4vw, 4.6rem);
-  font-weight: 700;
+  margin-top: 0.4rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.2vw, 3.6rem);
+  font-weight: 400;
   line-height: 0.95;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
 .feature-action {
@@ -658,7 +712,7 @@ body:has(.home) {
 
 .discipline-rows,
 .archive-rows {
-  border-top: 1px solid var(--paper-rule);
+  border-top: 1px solid var(--rule);
 }
 
 .discipline-row {
@@ -668,7 +722,7 @@ body:has(.home) {
   gap: 1.5rem;
   min-height: clamp(7rem, 10vw, 10rem);
   padding-inline: var(--pad);
-  border-bottom: 1px solid var(--paper-rule);
+  border-bottom: 1px solid var(--rule);
 }
 
 .discipline-number,
@@ -684,16 +738,20 @@ body:has(.home) {
 }
 
 .discipline-name {
-  font-size: clamp(1.8rem, 4.4vw, 5rem);
-  font-weight: 700;
-  line-height: 0.9;
-  letter-spacing: -0.055em;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.1vw, 3.4rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
 }
 
+/* 11px mono set to 48ch wrapped to three ragged lines beside a 5rem name — too
+   small to read and too loose to sit still. Shorter measure, larger text. */
 .discipline-summary {
-  max-width: 48ch;
-  font-size: 11px;
-  line-height: 1.5;
+  max-width: 34ch;
+  font-size: 12.5px;
+  line-height: 1.6;
+  opacity: var(--dim);
 }
 
 .discipline-mark {
@@ -711,14 +769,47 @@ a.discipline-row:focus-visible {
   background: var(--blue);
 }
 
-/* Archive ----------------------------------------------------------------- */
-
-.home-archive {
-  padding-top: var(--home-space);
+/* The homepage's single exit to the complete index, sharing the discipline
+   rows' rule so it reads as the last row of that block rather than a button. */
+.home-all-work {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-top: clamp(2.5rem, 5vw, 4rem);
 }
 
-.archive-heading {
-  margin-bottom: 2rem;
+.home-all-work-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.1vw, 3.4rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  border-bottom: 2px solid transparent;
+  transition: border-color var(--speed) var(--ease);
+}
+
+.home-all-work-name .icon {
+  transition: transform var(--speed) var(--ease);
+}
+
+.home-all-work:hover .home-all-work-name,
+.home-all-work:focus-visible .home-all-work-name {
+  border-bottom-color: currentColor;
+}
+
+.home-all-work:hover .icon {
+  transform: translate(3px, -3px);
+}
+
+/* Archive ----------------------------------------------------------------- */
+
+.archive {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: var(--home-space);
 }
 
 .archive-filters {
@@ -730,13 +821,13 @@ a.discipline-row:focus-visible {
 
 .archive-filter {
   min-height: 38px;
-  padding: 0.55rem 0.8rem;
-  color: var(--ink);
+  padding: 0.55rem 0.85rem;
+  color: inherit;
   background: transparent;
-  border: 1px solid var(--paper-rule);
+  border: 1px solid var(--rule);
   border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -758,9 +849,9 @@ a.discipline-row:focus-visible {
   grid-template-columns: 3rem minmax(0, 1fr) minmax(220px, 0.48fr) 2rem;
   align-items: center;
   gap: 1.5rem;
-  min-height: clamp(5.5rem, 8vw, 8rem);
+  min-height: clamp(5rem, 7vw, 7rem);
   padding-inline: var(--pad);
-  border-bottom: 1px solid var(--paper-rule);
+  border-bottom: 1px solid var(--rule);
   transition: color var(--speed) ease, background var(--speed) ease;
 }
 
@@ -774,10 +865,14 @@ a.discipline-row:focus-visible {
 }
 
 .archive-name {
-  font-size: clamp(1.5rem, 3.25vw, 3.8rem);
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.05em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 2.6rem);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
 }
 
 .archive-arrow {
@@ -889,13 +984,13 @@ a.discipline-row:focus-visible {
 }
 
 .cat-title {
-  font-size: clamp(2.1rem, 7vw, 3.4rem);
+  font-size: clamp(2.1rem, 6vw, 4.2rem);
   line-height: 0.98;
 }
 
 .cat-meta {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.05em;
   margin-top: 1rem;
 }
@@ -911,81 +1006,80 @@ a.discipline-row:focus-visible {
   margin-top: 2rem;
 }
 
-/* Fixed tracks, not flex min-width — a name longer than the left column has to
-   wrap inside its own cell rather than shoving the meta column out of line. */
-.project-row {
-  display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.6rem var(--pad);
-  border-top: 1px solid var(--rule);
-  transition: opacity var(--speed) ease, background var(--speed) ease;
-}
-
-.project-row:last-child {
-  border-bottom: 1px solid var(--rule);
-}
-
-.project-row:hover {
-  opacity: 0.75;
-}
-
-.project-left {
-  display: flex;
-  align-items: baseline;
-  gap: 1.4rem;
-  min-width: 0;
-}
-
-.project-num {
-  font-size: 11px;
+/* Development only: drafts are filtered out of every public surface, so this
+   marks why a row is here locally and absent from the live site. */
+.draft-tag {
+  font-size: 9px;
   font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  opacity: var(--dim);
+  white-space: nowrap;
 }
 
-.project-name {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
+.case-head .draft-tag {
+  display: inline-block;
+  margin-top: 1rem;
 }
 
-.project-meta {
-  font-size: 11px;
-  letter-spacing: 0.03em;
-}
-
-.project-arrow {
-  display: flex;
-  align-items: center;
-  justify-self: end;
-}
-
-.project-row:hover .project-arrow .icon,
-.project-row:focus-visible .project-arrow .icon {
-  transform: translateX(3px);
-}
-
-.project-arrow .icon {
-  transition: transform var(--speed) var(--ease);
+.archive-name .draft-tag {
+  flex: none;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-weight: 500;
 }
 
 /* --------------------------------------------------------------------------
    Case study
    -------------------------------------------------------------------------- */
 
+/* Title and lead paragraph left, facts right — the same two-track split the
+   home masthead uses, for the same reason: the lead copy is set to a measure,
+   and the space beside it was empty. The facts used to sit under every image on
+   the page, which put the one block a client reads first behind the longest
+   scroll on the site. */
+/* The case study page is one grid so that the head and the facts can hold the
+   same row while every other block still spans the page. The third track is a
+   spacer: without it the first two would stretch and the facts would end up
+   pinned to the right gutter, aligned with the nav and six hundred pixels from
+   the sentence they belong to. Adjacent beats aligned when two blocks are one
+   thought. */
+.case-study {
+  display: grid;
+  grid-template-columns: minmax(0, 46rem) auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 3.5rem;
+}
+
+.case-study > * {
+  grid-column: 1 / -1;
+}
+
+.case-study > .case-head {
+  grid-column: 1;
+  /* The column gap is the separation here; the page inset would double it. */
+  padding-right: 0;
+}
+
+.case-study > .facts {
+  grid-column: 2;
+}
+
 .case-head {
   padding: 1.6rem var(--pad) 2.4rem;
 }
 
 .case-title {
-  font-size: clamp(2.1rem, 7vw, 3.4rem);
+  font-size: clamp(2.1rem, 6vw, 4.2rem);
   line-height: 0.98;
 }
 
 .case-intro {
-  font-size: clamp(16px, 2vw, 19px);
-  line-height: 1.55;
-  max-width: 620px;
+  font-size: clamp(17px, 2vw, 20px);
+  line-height: 1.5;
+  max-width: 54ch;
   margin-top: 1.6rem;
 }
 
@@ -997,17 +1091,21 @@ a.discipline-row:focus-visible {
   font-weight: 700;
   letter-spacing: 0.04em;
   margin-top: 1.6rem;
-  border-bottom: 1px solid var(--fg);
+  border-bottom: 1px solid currentColor;
   padding-bottom: 3px;
 }
 
+/* A column beside the head rather than a full-width band below the media. The
+   rule on the left is what keeps it reading as a separate register from the
+   lead paragraph now that the two sit side by side. */
 .facts {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-  padding: 2rem var(--pad);
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
+  gap: 1.5rem;
+  min-width: 13rem;
+  max-width: 20rem;
+  margin-top: 2.4rem;
+  padding-left: 2.5rem;
+  border-left: 1px solid var(--rule);
 }
 
 .fact dt {
@@ -1039,9 +1137,9 @@ a.discipline-row:focus-visible {
 }
 
 .case-section p {
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 620px;
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 62ch;
 }
 
 .case-section p + p {
@@ -1066,7 +1164,7 @@ a.discipline-row:focus-visible {
 /* Empty frames hold the layout until real images are dropped into /public. */
 .frame {
   background: var(--fill);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--rule-soft);
   border-radius: 6px;
   aspect-ratio: 16 / 10;
   display: flex;
@@ -1083,7 +1181,7 @@ a.discipline-row:focus-visible {
 
 .frame span {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   opacity: 0.6;
   text-transform: uppercase;
@@ -1128,6 +1226,176 @@ a.discipline-row:focus-visible {
   display: none;
 }
 
+/* --------------------------------------------------------------------------
+   Case study — the hero plate
+   -------------------------------------------------------------------------- */
+
+/* The piece the project is known by, shown at the size it deserves before the
+   feed of supporting images. It is the same image that hangs on the home wall,
+   which is what gives the frame there something worth morphing into.
+
+   No fill, no border, no fixed ratio: the artwork keeps its own proportions and
+   is capped by height rather than cropped to a shape. `.frame`'s 16/10 rabbet
+   is right for a placeholder and wrong for a finished piece. */
+.case-hero {
+  grid-template-columns: minmax(0, 1fr);
+  padding-bottom: 0;
+}
+
+.case-hero .frame {
+  aspect-ratio: auto;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  max-height: min(76vh, 740px);
+}
+
+.case-hero .frame img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(76vh, 740px);
+  object-fit: contain;
+}
+
+/* --------------------------------------------------------------------------
+   Case study — enlarging an image
+   -------------------------------------------------------------------------- */
+
+/* The feed paints at roughly 180px a cell. That is enough to show what a
+   project contains and nowhere near enough to show how it was made, so every
+   image is a button into the lightbox. Styled to look like exactly what it
+   replaced — the affordance is the cursor and the lift, not a new control. */
+.frame-open {
+  display: flex;
+  width: 100%;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: zoom-in;
+  transition: transform var(--speed) var(--ease), border-color var(--speed) var(--ease);
+}
+
+@media (hover: hover) {
+  .frame-open:hover {
+    transform: scale(1.015);
+    border-color: var(--edge-hover);
+  }
+}
+
+.frame-open:focus-visible {
+  border-color: currentColor;
+}
+
+/* The one surface that is still dark. Now that the site's tokens are ink over
+   paper, the overlay re-points them at their inverse rather than each control
+   hard-coding a white. */
+.lightbox {
+  --rule: var(--rule-inverse);
+  --rule-soft: var(--rule-inverse-soft);
+  --fill: rgba(255, 255, 255, 0.06);
+  --fill-hover: rgba(255, 255, 255, 0.13);
+  --edge-hover: rgba(255, 255, 255, 0.55);
+  --dim: var(--dim-inverse);
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  overflow: hidden;
+}
+
+.lightbox::backdrop {
+  /* Darkened blue rather than black — the site never leaves its one colour. */
+  background: rgba(8, 18, 96, 0.94);
+}
+
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 100%;
+  padding: 4.5rem 4.5rem 3rem;
+}
+
+.lightbox-img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  /* Leaves room for the caption under the image at any viewport height. */
+  max-height: calc(100dvh - 11rem);
+  object-fit: contain;
+}
+
+.lightbox-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: var(--dim);
+}
+
+.lightbox-count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font: inherit;
+  color: var(--fg);
+  background: var(--fill);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--speed) ease, border-color var(--speed) ease;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background: var(--fill-hover);
+  border-color: var(--edge-hover);
+}
+
+.lightbox-close {
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lightbox-nav.prev {
+  left: 1.5rem;
+}
+
+.lightbox-nav.next {
+  right: 1.5rem;
+}
+
 .next-project {
   display: flex;
   align-items: center;
@@ -1154,9 +1422,11 @@ a.discipline-row:focus-visible {
 
 .next-project .name {
   display: block;
-  font-size: clamp(20px, 3.4vw, 28px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3.4vw, 32px);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
 }
 
 .next-project .icon {
@@ -1179,10 +1449,12 @@ a.discipline-row:focus-visible {
   max-width: 900px;
 }
 
+/* 15px across 560px is ~90 characters a line. Set to a measure instead of a
+   pixel width so the size and the line length can never drift apart again. */
 .prose p {
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 560px;
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 62ch;
 }
 
 .prose p + p {
@@ -1229,20 +1501,23 @@ a.discipline-row:focus-visible {
 }
 
 .capabilities h3 {
+  font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-  margin-bottom: 0.8rem;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin-bottom: 0.9rem;
 }
 
 .capabilities ul {
   list-style: none;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 2.1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
-/* Same rhythm as .project-row: full-bleed rows, rules edge to edge. */
+/* Same rhythm as .archive-row: full-bleed rows, rules edge to edge. */
 .contact-links {
   border-top: 1px solid var(--rule);
 }
@@ -1282,16 +1557,15 @@ a.contact-link:hover {
    -------------------------------------------------------------------------- */
 
 .footer {
-  padding: 3.5rem var(--pad) 2.5rem;
-  border-top: 1px solid var(--rule);
-  margin-top: 0.4rem;
+  padding: clamp(3.5rem, 6vw, 5.5rem) var(--pad) 3rem;
 }
 
 /* Slightly more presence against the bottom row, and more air beneath it so
    the statement and the email read as two steps rather than one clump. */
 .footer h2 {
-  font-size: clamp(1.8rem, 5.4vw, 2.5rem);
-  line-height: 1.08;
+  font-size: clamp(1.7rem, 4.6vw, 2.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   margin-bottom: 1.75rem;
 }
 
@@ -1312,7 +1586,7 @@ a.contact-link:hover {
 
 .footer-email:hover,
 .footer-email:focus-visible {
-  border-bottom-color: var(--fg);
+  border-bottom-color: currentColor;
 }
 
 .footer-email .icon {
@@ -1348,12 +1622,32 @@ a.contact-link:hover {
   opacity: 0.7;
 }
 
-/* The homepage earns one large field of Tehron blue: the final invitation. */
-.site-footer[data-home] {
+/* Blue is the site's one held field, and the footer is where it lives — on
+   every page, not just home. It is the last thing a visitor sees and the only
+   block that inverts, which is what makes it read as a signature rather than
+   as a theme. Tokens are re-pointed at their inverse for the whole block so
+   nothing inside it has to know it is sitting on colour. */
+.site-footer {
+  --rule: var(--rule-inverse);
+  --rule-soft: var(--rule-inverse-soft);
+  --dim: var(--dim-inverse);
   color: var(--fg);
   background: var(--blue);
 }
 
+.site-footer ::selection {
+  background: var(--fg);
+  color: var(--blue);
+}
+
+.site-footer .footer-email {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Home gets the full-bleed version of the same block: a held field the reader
+   falls into, rather than a band under the last section. */
 .site-footer[data-home] .footer {
   display: flex;
   flex-direction: column;
@@ -1366,23 +1660,22 @@ a.contact-link:hover {
 }
 
 .site-footer[data-home] .footer h2 {
-  max-width: 7ch;
+  /* No character cap: content/site.ts already breaks this into the two lines
+     it is meant to read as. Capping the measure on top of that re-broke it
+     into a four-line rag of short/short/long/short. */
   margin-bottom: 4rem;
-  font-size: clamp(4.2rem, 12vw, 13rem);
-  line-height: 0.78;
-  letter-spacing: -0.075em;
+  font-size: clamp(2.6rem, 8.2vw, 9rem);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
 }
 
 .site-footer[data-home] .footer-email {
   align-self: flex-start;
   border-color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-mono);
-  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
-  font-weight: 500;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
 }
 
-.site-footer[data-home] .footer-bottom {
-  border-color: rgba(255, 255, 255, 0.28);
+.footer-bottom {
   font-family: var(--font-mono);
 }
 
@@ -1399,8 +1692,36 @@ a.contact-link:hover {
 }
 
 @media (max-width: 900px) {
+  /* The head stops sharing a row with the facts — the lead paragraph needs the
+     full measure — and the facts move below the hero rather than above it.
+     There is no empty column to absorb them at this width, so leaving them in
+     place would push the work itself off the first screen: the reason to lift
+     them on a wide display is the reason to drop them on a narrow one. */
+  .case-study {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .case-study > .case-head {
+    padding-right: var(--pad);
+  }
+
   .facts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    order: 1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.6rem;
+    min-width: 0;
+    max-width: none;
+    margin-top: 0;
+    padding: 1.8rem var(--pad) 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .case-body,
+  .media:not(.case-hero),
+  .next-project {
+    order: 2;
   }
 
   .capabilities {
@@ -1468,10 +1789,14 @@ a.contact-link:hover {
     --home-space: 6.5rem;
   }
 
+  /* Not a full viewport on a phone. Bottom-anchoring the lockup inside a
+     100svh box put ~500px of nothing between the standfirst rule and the name;
+     at this height the air still reads as air, and the first card of the rail
+     shows above the fold, which is what tells a thumb the page scrolls. */
   .home-hero {
-    min-height: calc(100svh - 64px);
-    padding-top: 1.5rem;
-    padding-bottom: 2rem;
+    min-height: min(72svh, 560px);
+    padding-top: 1.25rem;
+    padding-bottom: 1.75rem;
   }
 
   .hero-topline {
@@ -1480,28 +1805,29 @@ a.contact-link:hover {
   }
 
   .hero-name {
-    font-size: clamp(4.45rem, 20.5vw, 6rem);
-    line-height: 0.8;
+    font-size: clamp(2.9rem, 15.6vw, 4.6rem);
+    line-height: 0.86;
   }
 
   .hero-tagline {
-    align-self: flex-start;
-    font-size: clamp(1.2rem, 6.2vw, 1.75rem);
+    font-size: clamp(1.25rem, 6vw, 1.85rem);
   }
 
-  .selected-work-heading,
-  .archive-heading {
+  .section-head {
     align-items: start;
     margin-bottom: 2rem;
   }
 
-  .selected-work-heading h2 {
-    font-size: clamp(3rem, 15vw, 4.25rem);
+  .section-head h2 {
+    font-size: clamp(2.3rem, 11.4vw, 3.4rem);
   }
 
-  .selected-work-count,
-  .archive-count {
-    padding-top: 0.2rem;
+  .section-head h2.editorial-accent {
+    font-size: clamp(2.9rem, 14.5vw, 4.25rem);
+  }
+
+  .section-count {
+    padding-top: 0.25rem;
     font-size: 9px;
   }
 
@@ -1511,7 +1837,8 @@ a.contact-link:hover {
   }
 
   .selected-card {
-    flex-basis: 82vw;
+    --card-h: 58vh;
+    max-width: 84vw;
   }
 
   .selected-card-meta p {
@@ -1528,12 +1855,6 @@ a.contact-link:hover {
     white-space: normal;
   }
 
-  .feature-heading,
-  .disciplines-heading {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-  }
-
   .feature-project[data-layout="wide"],
   .feature-project[data-layout="offset"] {
     width: auto;
@@ -1543,7 +1864,9 @@ a.contact-link:hover {
 
   .feature-media,
   .feature-project[data-layout="offset"] .feature-media {
-    aspect-ratio: 4 / 5;
+    --feature-h: none;
+    width: 100%;
+    margin-left: 0;
   }
 
   .feature-meta {
@@ -1563,11 +1886,18 @@ a.contact-link:hover {
   }
 
   .discipline-name {
-    font-size: clamp(1.75rem, 8.8vw, 2.8rem);
+    font-size: clamp(1.5rem, 7.4vw, 2.4rem);
   }
 
   .discipline-summary {
-    font-size: 10px;
+    max-width: none;
+    font-size: 11.5px;
+  }
+
+  /* Sits with the number rather than floating against the name's last line. */
+  .discipline-mark {
+    align-self: start;
+    font-size: 0.85rem;
   }
 
   .archive-filters {
@@ -1598,17 +1928,6 @@ a.contact-link:hover {
     padding-top: var(--sp-sm);
   }
 
-  /* Index rows stack: name on its own line, then meta left / year right. */
-  .project-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.5rem 1rem;
-    padding: 1.3rem var(--pad);
-  }
-
-  .project-left {
-    grid-column: 1 / -1;
-  }
-
   .media {
     grid-template-columns: 1fr;
   }
@@ -1623,6 +1942,36 @@ a.contact-link:hover {
 
   .media.media-grid.media-grid-3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* The controls belong to the image on a phone, not to the corners of the
+     screen — a 44px circle inset 1.5rem from a 375px edge sits on top of the
+     artwork. Close pins to the top, paging moves under the caption. */
+  .lightbox-figure {
+    padding: 4rem 1rem 5.5rem;
+  }
+
+  .lightbox-img {
+    max-height: calc(100dvh - 13rem);
+  }
+
+  .lightbox-close {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .lightbox-nav {
+    top: auto;
+    bottom: 1.25rem;
+    transform: none;
+  }
+
+  .lightbox-nav.prev {
+    left: 25%;
+  }
+
+  .lightbox-nav.next {
+    right: 25%;
   }
 
   /* ~28% off the previous vertical padding. */
@@ -1672,4 +2021,179 @@ a.contact-link:hover {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* --------------------------------------------------------------------------
+   Motion — scroll-driven, compositor-only
+   --------------------------------------------------------------------------
+
+   Everything below runs on the browser's own scroll-driven animation timelines:
+   no IntersectionObserver, no rAF loop, no animation library, and nothing on the
+   main thread. That matters here for two reasons beyond the bundle size — the
+   reveals cannot judder while the horizontal rail is being flung, and they
+   cannot desynchronise from a scroll the user is still driving.
+
+   The whole block is inside @supports. Where `animation-timeline` is missing
+   (Firefox at time of writing) not one rule below applies, no element is ever
+   left at opacity 0, and the page renders exactly as it did before. Reduced
+   motion is honoured by the global override further up, which flattens every
+   duration — and a scroll-driven animation with a flattened duration still
+   resolves to its end state, so the content stays visible either way. */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* One rise, used by everything that enters as a block of text. Deliberately
+       short: an editorial page should feel like it is being set, not assembled. */
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(1.6rem);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Images get a wipe rather than a fade — the picture arrives whole and
+       uncropped, which is the same argument the layout makes. */
+    @keyframes wipe {
+      from {
+        clip-path: inset(0 0 100% 0);
+      }
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+
+    .section-head,
+    .practice-statement h2,
+    .discipline-row,
+    .archive-row,
+    .home-all-work,
+    .feature-meta,
+    .case-section,
+    .prose > * {
+      animation: rise linear both;
+      animation-timeline: view();
+      /* Both ends named against `entry` on purpose. Mixing range names —
+         `entry 8% cover 18%` — inverts on any element taller than the scrollport,
+         because `cover 18%` can resolve earlier than `entry 8%`, and the
+         practice statement is exactly that tall. A single range name is always
+         monotonic. It also finishes well before the element reaches the middle
+         of the screen, so nothing is still moving as it is being read. */
+      animation-range: entry 5% entry 70%;
+    }
+
+    .feature-media,
+    .case-hero .frame {
+      animation: wipe linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 85%;
+    }
+
+    /* The rail's own cards ride the horizontal track, so they are timed against
+       that scroller rather than the page. */
+    .selected-card {
+      animation: rise linear both;
+      animation-timeline: view(inline);
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+/* The rail had no affordance at all: six cards, one of which is always cut off
+   at the right edge, and nothing to say the row scrolls or how far it runs.
+   This is a real scroll-timeline driven by the track itself — the indicator is
+   the scroll position, not a JS approximation of it. */
+.selected-work-track {
+  scroll-timeline: --rail inline;
+}
+
+.rail-progress {
+  position: relative;
+  height: 2px;
+  margin: 0.4rem var(--pad) 0;
+  background: var(--rule-soft);
+  overflow: hidden;
+}
+
+.rail-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--blue);
+  transform-origin: left center;
+  transform: scaleX(0.25);
+}
+
+@supports (animation-timeline: scroll()) {
+  @keyframes rail-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .rail-progress::after {
+    animation: rail-fill linear both;
+    animation-timeline: --rail;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Motion — the lightbox
+   --------------------------------------------------------------------------
+   @starting-style plus allow-discrete lets a <dialog> animate in and out of the
+   top layer without a JS-driven "closing" class, which is the pattern this
+   used to need. */
+
+.lightbox,
+.lightbox::backdrop {
+  transition: opacity 260ms var(--ease), display 260ms allow-discrete,
+    overlay 260ms allow-discrete;
+  opacity: 0;
+}
+
+.lightbox[open],
+.lightbox[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .lightbox[open],
+  .lightbox[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.lightbox[open] .lightbox-figure {
+  animation: lightbox-in 320ms var(--ease) both;
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Cross-document view transitions. Next's App Router navigates in-document, so
+   this fires on a hard entry (a pasted URL, a refresh, a link from outside)
+   rather than on every click — Next 16.3 exposes no flag for wrapping soft
+   navigations in a transition. It costs three lines and degrades to nothing. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease);
 }
