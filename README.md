@@ -17,6 +17,7 @@ npm install && npm run dev
 | The home page hero                            | `content/site.ts`       |
 | Categories, projects, case study copy         | `content/projects.ts`   |
 | About + Contact page copy                     | `content/pages.ts`      |
+| Featured ordering                             | `content/projects.ts`   |
 | Colors, type, spacing, every visual rule      | `app/globals.css`       |
 
 Nothing else needs touching for normal content updates.
@@ -40,6 +41,12 @@ Add one object to the right category's `projects` array in `content/projects.ts`
 
 The category index row, the case study page, the URL, the sitemap entry, and the
 prev/next links all generate from that. Nothing else to update.
+
+Set `published: true` and add a `featured` image to place a project in the Work
+browser. Add `featuredRank: 1` (or another unique rank) to include it in the
+curated Featured collection. Recent is always the first six published projects
+in file order. Folder covers use the existing featured image and optional
+`featured.focus`; source artwork is never reshaped or overwritten.
 
 ## Adding images
 

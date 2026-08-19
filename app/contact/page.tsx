@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const projectEmail = `mailto:${site.email}?subject=${encodeURIComponent("Project inquiry")}&body=${encodeURIComponent("Hi Tehron,\n\nI'm building...\n\nTimeline:\nProject type:\n")}`;
+
   return (
     <div className="page">
       <div className="cat-head top">
@@ -29,8 +31,8 @@ export default function ContactPage() {
 
       {/* Full-bleed, matching the project index rows. */}
       <section className="contact-links">
-        <a className="contact-link" href={`mailto:${site.email}`}>
-          <span className="k">EMAIL</span>
+        <a className="contact-link contact-primary" href={projectEmail}>
+          <span className="k">START A PROJECT</span>
           <span className="v">
             {site.email} <Icon name="arrow-right" size={16} />
           </span>
@@ -54,6 +56,11 @@ export default function ContactPage() {
         <div className="contact-link">
           <span className="k">BASED</span>
           <span className="v">{site.location}</span>
+        </div>
+
+        <div className="contact-link">
+          <span className="k">AVAILABILITY</span>
+          <span className="v">{contact.availability}</span>
         </div>
       </section>
     </div>

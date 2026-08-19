@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Inter } from "next/font/google";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { AppShell } from "@/components/AppShell";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -41,7 +40,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1a35e0",
+  themeColor: "#f2f0ec",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -51,11 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip-link" href="#main">
           SKIP TO CONTENT
         </a>
-        <div className="shell">
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -89,6 +89,8 @@ export type Project = {
   frameStyle?: FrameStyle;
   /** Opt-in. Absent or false keeps the project off the homepage. */
   published?: boolean;
+  /** Curated order for the Featured collection. Absent keeps it out. */
+  featuredRank?: number;
 };
 
 export type Category = {
@@ -121,6 +123,7 @@ export const categories: Category[] = [
         role: ["Creative Direction", "Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Packaging", "Campaign Imagery"],
         published: true,
+        featuredRank: 1,
         tags: ["BRAND IDENTITY", "APPAREL", "ART DIRECTION"],
         shortDescription:
           "A complete identity system for an apparel label built around a single garment.",
@@ -196,6 +199,7 @@ export const categories: Category[] = [
         role: ["Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Capsule Apparel"],
         published: true,
+        featuredRank: 2,
         tags: ["BRAND IDENTITY", "APPAREL"],
         shortDescription:
           "An apparel line built on one line of type per piece — and a tee that travelled on its own.",
@@ -387,6 +391,7 @@ export const categories: Category[] = [
         role: ["Art Direction", "Graphic Design"],
         deliverables: ["Campaign Flyers", "Poster Series"],
         published: true,
+        featuredRank: 3,
         tags: ["ART DIRECTION", "CONCEPTS"],
         shortDescription:
           "A Griselda x Saucony flyer series art-directed like a stack of vintage lucha libre posters.",
@@ -451,6 +456,7 @@ export const categories: Category[] = [
         role: ["Graphic Design", "Apparel Design"],
         deliverables: ["Pattern Design", "Mascot Graphic", "Apparel Mockups", "Colorway System"],
         published: true,
+        featuredRank: 4,
         tags: ["APPAREL", "ART DIRECTION"],
         shortDescription:
           "A playful all-over banana print and mascot graphic, built out across three colorways.",
@@ -631,6 +637,7 @@ export const categories: Category[] = [
         role: ["Concept Development", "Product Design", "3D Design"],
         deliverables: ["Sunglasses Design", "Umbrella Print Design", "Production Run"],
         published: true,
+        featuredRank: 5,
         tags: ["PRODUCT DESIGN", "CONCEPTS"],
         shortDescription:
           "One concept, two objects — sun-and-moon shades and sky-and-flower umbrellas, sketch to production.",
@@ -773,6 +780,7 @@ export const categories: Category[] = [
         role: ["Product Design", "3D Design"],
         deliverables: ["3D Model", "Prototype", "Colorway System"],
         published: true,
+        featuredRank: 6,
         tags: ["PRODUCT DESIGN", "CONCEPTS"],
         shortDescription:
           "A two-finger ring where the numerals themselves are the band — 222, printed in three colorways.",
@@ -937,6 +945,11 @@ export type GalleryPiece = {
   slug: string;
   name: string;
   href: string;
+  meta: string;
+  categorySlug: string;
+  categoryLabel: string;
+  globalIndex: number;
+  featuredRank?: number;
   tags: string[];
   shortDescription: string;
   featured: ResolvedFeatured;
@@ -991,24 +1004,52 @@ const FRAME_FOR: Record<Orientation, FrameStyle> = {
  * the work is public, `featured` is the existence of an image to hang.
  */
 export const galleryProjects = (): GalleryPiece[] =>
-  categories.flatMap((category) =>
-    category.projects
-      .filter((project) => project.published === true && project.featured?.src)
-      .map((project) => {
+  categories
+    .flatMap((category) =>
+      category.projects
+        .filter((project) => project.published === true && project.featured?.src)
+        .map((project) => ({ category, project })),
+    )
+    .map(({ category, project }, globalIndex) => {
         const featured = resolveFeatured(project.featured as Featured);
         const orientation = orientationOf(featured);
         return {
           slug: project.slug,
           name: project.name,
           href: `/work/${category.slug}/${project.slug}`,
+          meta: project.meta,
+          categorySlug: category.slug,
+          categoryLabel: categoryLabel(category),
+          globalIndex,
+          featuredRank: project.featuredRank,
           tags: project.tags ?? [],
           shortDescription: project.shortDescription ?? project.intro,
           featured,
           orientation,
           frameStyle: project.frameStyle ?? FRAME_FOR[orientation],
         };
-      }),
-  );
+      });
+
+export type ProjectCollection = "work" | "featured" | "recent";
+
+/** Minimal, serializable shape passed from Server Components to the project browser. */
+export type BrowserProject = Omit<GalleryPiece, "tags" | "orientation" | "frameStyle">;
+
+const browserShape = ({ tags: _tags, orientation: _orientation, frameStyle: _frameStyle, ...project }: GalleryPiece) =>
+  project;
+
+/** Project sets used by the app-like portfolio browser. */
+export const collectionProjects = (collection: ProjectCollection): BrowserProject[] => {
+  const all = galleryProjects();
+  if (collection === "featured") {
+    return all
+      .filter((project) => project.featuredRank !== undefined)
+      .sort((a, b) => (a.featuredRank ?? 0) - (b.featuredRank ?? 0))
+      .map(browserShape);
+  }
+  if (collection === "recent") return all.slice(0, 6).map(browserShape);
+  return all.map(browserShape);
+};
 
 /**
  * Filter keywords, computed from what is actually on the wall rather than

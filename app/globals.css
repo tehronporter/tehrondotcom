@@ -1,1481 +1,414 @@
-/* ==========================================================================
-   TEHRON PORTER — design system
-   The whole visual language lives in this file. Change a token, change the site.
-   ========================================================================== */
-
 :root {
   --blue: #1a35e0;
-  --fg: #ffffff;
-
-  --rule: rgba(255, 255, 255, 0.28);
-  --rule-soft: rgba(255, 255, 255, 0.14);
-  --fill: rgba(255, 255, 255, 0.06);
-  --fill-hover: rgba(255, 255, 255, 0.13);
-  --edge-hover: rgba(255, 255, 255, 0.55);
-
-  /* Horizontal page gutter. Every section aligns to this — it is the grid. */
-  --pad: 3.5rem;
-
-  /* Ceiling on line length for very wide displays. Above this the page stays
-     composed instead of stretching; at 1440–1700 it changes nothing. */
-  --content-max: 1720px;
-
-  /* Ceiling on the Selected Work block (label row + card grid share it, so
-     they keep the same edges). Border-box, so this includes the 3x --pad
-     inset — the cards themselves get what's left, which keeps each column
-     close to the width of its own content instead of stretching to the page. */
-  --stage-max: 1240px;
-
-  /* Secondary label opacity. 0.75 is the floor that still clears WCAG AA
-     (5.1:1) against the blue — anything lighter fails on 10px labels. */
-  --dim: 0.75;
-
-  /* Mobile vertical rhythm. Every gap below 760px comes from this ladder
-     rather than being picked per-element, which is what let the page drift
-     to 150–200px voids between blocks. */
-  --sp-sm: 1.5rem; /* 24px — inside a component */
-  --sp-md: 2.5rem; /* 40px — between related blocks */
-  --sp-lg: 4rem; /*   64px — between content groups */
-  --sp-xl: 6rem; /*   96px — between full sections, ceiling */
-
+  --blue-dark: #1024ad;
+  --canvas: #eeece8;
+  --surface: #fbfaf8;
+  --surface-strong: #ffffff;
+  --surface-muted: #f1efec;
+  --ink: #111111;
+  --muted: #66645f;
+  --faint: #97948e;
+  --rule: #dfddd8;
+  --rule-strong: #d2cfca;
+  --brand: #1b67f2;
+  --technology: #6844e9;
+  --product: #ef7a0b;
+  --radius-lg: 18px;
+  --sidebar: 250px;
+  --toolbar: 82px;
+  --page-pad: clamp(1.5rem, 3vw, 2.6rem);
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --speed: 200ms;
-
-  /* The site is one fixed dark theme — tell the UA so scrollbars match. */
-  color-scheme: dark;
+  --speed: 180ms;
+  color-scheme: light;
 }
 
-::selection {
-  background: var(--fg);
-  color: var(--blue);
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; background: var(--canvas); }
 
 body {
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--blue);
-  color: var(--fg);
-  overflow-x: hidden;
+  min-height: 100dvh;
+  padding: 18px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% -20%, rgba(255,255,255,.95), transparent 52%), var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-.icon {
-  flex: none;
-  vertical-align: middle;
-}
-
-/* Keyboard focus stays visible; mouse clicks stay clean. */
-:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 3px;
-}
-
-/* Skip link — off-screen until focused, then pinned top-left. */
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  z-index: 10;
-  background: var(--fg);
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  padding: 0.8rem 1.2rem;
-}
-
-.skip-link:focus {
-  left: 0;
-}
-
-/* Available to assistive tech, absent from the layout. */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-/* --------------------------------------------------------------------------
-   Layout primitives
-   -------------------------------------------------------------------------- */
-
-.shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
-  max-width: var(--content-max);
-  margin-inline: auto;
-}
-
-.shell main {
-  flex: 1;
-}
-
-.pad {
-  padding-left: var(--pad);
-  padding-right: var(--pad);
-}
-
-/* Page-enter transition — the fade-up from the original prototype, applied on
-   every route change instead of being wired by hand. */
-.page {
-  animation: page-in 320ms var(--ease) both;
-}
-
-@keyframes page-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Native View Transitions for the wall -> case study hop (wired in Gallery.tsx,
-   which feature-detects document.startViewTransition and falls back to a plain
-   navigation — the .page-in fade above — everywhere it's unsupported or motion
-   is reduced). Nothing else on the site calls the API, so these rules are
-   otherwise inert. The piece's own image carries a matching view-transition-name
-   in Frame.tsx and on the case study hero, so that one image morphs in place
-   while the rest of the page cross-fades underneath it. */
-::view-transition-old(root) {
-  animation: piece-vt-out 420ms var(--ease) both;
-}
-
-::view-transition-new(root) {
-  animation: piece-vt-in 420ms var(--ease) both;
-}
-
-@keyframes piece-vt-out {
-  to {
-    opacity: 0;
-    transform: scale(0.985);
-  }
-}
-
-@keyframes piece-vt-in {
-  from {
-    opacity: 0;
-    transform: scale(1.015);
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Type
-   -------------------------------------------------------------------------- */
+a { color: inherit; text-decoration: none; }
+button, summary { color: inherit; font: inherit; }
+button { border: 0; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--blue); color: #fff; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 .display {
   font-family: var(--font-anton), Impact, sans-serif;
   font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.005em;
+  letter-spacing: -.01em;
+  line-height: .94;
   text-transform: uppercase;
 }
 
-.eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
+.icon { flex: none; vertical-align: middle; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-.body-copy {
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* --------------------------------------------------------------------------
-   Header
-   -------------------------------------------------------------------------- */
-
-/* Full width, no max-width: nav's right edge lines up with the page content
-   below it at the same --pad inset the wordmark uses on the left. The rule
-   marks where the masthead ends and content begins.
-   Centered rather than baseline-aligned now that the left item is an image,
-   which would otherwise baseline-align on its bottom edge. */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem var(--pad);
-  border-bottom: 1px solid var(--rule);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-/* The signature standing in for the name. Its crop is already vertically
-   symmetric — 12px of clear space above the ink, 12px below — so centring
-   the box centres the mark; no optical nudge needed. Sized so the mark is
-   at least as wide as the text wordmark it replaced. */
-.wordmark-signature {
-  height: 56px;
-  width: auto;
-}
-
-/* 12px reads at arm's length without adding bulk to the masthead. */
-.nav {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 2rem;
+  z-index: 100;
+  border-radius: 0 0 8px 8px;
+  background: var(--blue);
+  color: #fff;
+  padding: .8rem 1rem;
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-weight: 700;
+  letter-spacing: .04em;
 }
+.skip-link:focus { top: 0; }
 
-.nav a {
-  padding-bottom: 6px;
-  border-bottom: 2px solid transparent;
-  transition: border-color var(--speed) var(--ease);
-}
-
-.nav a:hover {
-  border-bottom-color: var(--edge-hover);
-}
-
-.nav a.active {
-  border-bottom-color: var(--fg);
-}
-
-/* On the home page the name is already the masthead, so the signature is left
-   off and the nav has the row to itself. */
-.header[data-bare] {
-  justify-content: flex-end;
-}
-
-/* --------------------------------------------------------------------------
-   Home — masthead
-   -------------------------------------------------------------------------- */
-
-/* Masthead, filters, and wall share one grid so the name and the keyword list
-   hold the same row and the artwork spans the full width beneath them. The
-   filters and the wall come out of <Gallery>, so they arrive as siblings of
-   .masthead rather than nested inside it — placing all three explicitly is what
-   lets that component own its own state without owning the page layout. */
-.home-grid {
+/* App shell */
+.app-frame {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  column-gap: 3rem;
-  padding: 3.5rem var(--pad) 5rem;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  width: min(100%, 1720px);
+  height: calc(100dvh - 36px);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid rgba(17,17,17,.1);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 18px 50px rgba(35,31,24,.09);
 }
 
-.masthead {
-  grid-column: 1;
-  grid-row: 1;
-  min-width: 0;
-}
-
-/* The name is the hero now. It sizes off the viewport so it fills the measure
-   at every width; the ceiling stops it outgrowing --content-max on a very wide
-   display. */
-.masthead-name {
-  font-size: clamp(2.4rem, 9vw, 8.5rem);
-  line-height: 0.92;
-}
-
-.masthead-role {
-  font-size: clamp(12px, 1.05vw, 15px);
-  letter-spacing: 0.02em;
-  opacity: var(--dim);
-  margin-top: 1.1rem;
-}
-
-/* --------------------------------------------------------------------------
-   Keyword filters
-   -------------------------------------------------------------------------- */
-
-/* Generated from the tags actually present on the wall, so the row can never
-   offer a filter with nothing behind it. Deliberately low-chrome — these
-   organise the work, they don't compete with it. */
-.filters {
-  grid-column: 2;
-  grid-row: 1;
+.app-sidebar {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  max-width: 26rem;
-  padding-top: 0.9rem;
-}
-
-.filter {
-  font: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.07em;
-  color: var(--fg);
-  background: transparent;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 0.5rem 0.9rem;
-  cursor: pointer;
-  transition: background var(--speed) ease, border-color var(--speed) ease, color var(--speed) ease;
-}
-
-.filter:hover {
-  border-color: var(--edge-hover);
-  background: var(--fill);
-}
-
-/* Inverted rather than merely brighter: at 10px a border change on its own is
-   not a reliable read of "this one is on". */
-.filter[aria-pressed="true"] {
-  background: var(--fg);
-  border-color: var(--fg);
-  color: var(--blue);
-}
-
-/* --------------------------------------------------------------------------
-   The wall
-   -------------------------------------------------------------------------- */
-
-/* Responsive on two axes. Columns come from auto-fit against --col-min, so the
-   wall reflows with the viewport. --col-min itself comes from the density tier
-   below, so the wall also reflows as the portfolio grows — a few pieces hang
-   large and deliberate, a full portfolio tightens into a salon wall. Neither
-   ever needs the layout rewritten.
-
-   align-items: start is what makes this a wall rather than a grid: each piece
-   keeps its own aspect ratio and hangs from a common line instead of being
-   padded out to a shared row height. */
-.wall {
-  position: relative;
-  grid-column: 1 / -1;
-  grid-row: 2;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(var(--col-min), 100%), 1fr));
-  justify-items: start;
-  align-items: start;
-  column-gap: var(--wall-gap);
-  row-gap: calc(var(--wall-gap) * 1.3);
-  margin-top: 4.5rem;
-}
-
-/* Track lighting that follows the cursor. Absolutely positioned and last in
-   source order so it paints above the pieces (mix-blend-mode only sees what's
-   already behind it), out of grid flow so it never takes a column, and inert
-   until Gallery.tsx opts it in with data-spotlight on pointer entry. */
-.wall-spotlight {
-  display: none;
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 260ms var(--ease);
-  background: radial-gradient(
-    420px circle at var(--spot-x, 50%) var(--spot-y, 50%),
-    rgba(255, 244, 219, 0.16),
-    transparent 72%
-  );
-  mix-blend-mode: soft-light;
-}
-
-.wall[data-spotlight] .wall-spotlight {
-  opacity: 1;
-}
-
-@media (hover: hover) {
-  .wall-spotlight {
-    display: block;
-  }
-}
-
-.home[data-density="sparse"] {
-  --col-min: 380px;
-  --col-max: 520px;
-  --wall-gap: 4rem;
-  --rail-base: clamp(18px, 2.4vw, 34px);
-  --drop-step: 2.5rem;
-  --parallax-strength: 1.3;
-}
-
-.home[data-density="medium"] {
-  --col-min: 300px;
-  --col-max: 420px;
-  --wall-gap: 3rem;
-  --rail-base: clamp(15px, 1.9vw, 26px);
-  --drop-step: 2rem;
-  --parallax-strength: 1;
-}
-
-.home[data-density="dense"] {
-  --col-min: 240px;
-  --col-max: 340px;
-  --wall-gap: 2.25rem;
-  --rail-base: clamp(12px, 1.5vw, 20px);
-  --drop-step: 1.5rem;
-  --parallax-strength: 0.55;
-}
-
-.piece {
-  min-width: 0;
-  /* A ceiling, not a width. auto-fit collapses the tracks it cannot fill, so
-     filtering down to one project hands that piece the whole wall — capping the
-     piece rather than the track keeps it at gallery scale while still letting
-     auto-fit count columns off --col-min. */
-  max-width: var(--col-max);
-  transition: opacity 200ms var(--ease);
-}
-
-/* Curated irregularity, not randomness: a fixed three-step cycle taken from
-   each project's position in the data rather than its position on screen. The
-   hang therefore stays put when the wall is filtered, and there is nothing
-   random for the server and the client to disagree about. */
-.piece[data-drop="1"] {
-  margin-top: var(--drop-step);
-}
-
-.piece[data-drop="2"] {
-  margin-top: calc(var(--drop-step) * 0.45);
-}
-
-/* Stated explicitly — .piece sets its own display, which would otherwise beat
-   the user-agent rule for [hidden]. */
-.piece[hidden] {
-  display: none;
-}
-
-/* The fade that runs just before the wall closes the gap. */
-.piece[data-out] {
-  opacity: 0;
-}
-
-.piece-link {
-  display: block;
-}
-
-/* Shrink-wraps the frame so the hover veil can cover the artwork exactly,
-   without reaching down over the caption.
-
-   It also resolves --rail, because depth is part of a moulding's character: a
-   thin vintage gilt that stands as proud as a heavy classical frame stops
-   reading as thin. The density tier sets the base; each style takes its share.
-   Both .piece-frame and .piece-veil inherit the result, which is what keeps the
-   veil landing exactly inside the moulding rather than over it. */
-/* Hung into place on first paint, then left to hang: a finite drop-and-settle
-   handed off to a barely-there idle sway once it's done. The two are sequenced
-   rather than layered — sway's delay starts only after settle's last piece has
-   finished — so there's never a moment where both are steering `transform` at
-   once. --wall-i (set inline per piece in Gallery.tsx) staggers the drop across
-   the wall; data-drop, already used for the hang stagger, staggers the sway so
-   neighbouring pieces don't breathe in sync. */
-.piece-plate {
-  position: relative;
-  --rail: var(--rail-base);
-  transform-origin: 50% 0%;
-  animation-name: piece-settle, piece-sway;
-  animation-timing-function: var(--ease), ease-in-out;
-  animation-duration: 640ms, 8s;
-  animation-iteration-count: 1, infinite;
-  animation-fill-mode: both, none;
-  animation-delay: calc(var(--wall-i, 0) * 70ms), calc(2.4s + var(--wall-i, 0) * 70ms);
-}
-
-.piece[data-drop="1"] .piece-plate {
-  animation-duration: 640ms, 8.8s;
-}
-
-.piece[data-drop="2"] .piece-plate {
-  animation-duration: 640ms, 9.6s;
-}
-
-@keyframes piece-settle {
-  from {
-    opacity: 0;
-    transform: translateY(-16px) rotate(-2.2deg) scale(0.965);
-  }
-
-  65% {
-    opacity: 1;
-    transform: translateY(2px) rotate(0.5deg) scale(1.004);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes piece-sway {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-
-  50% {
-    transform: rotate(0.55deg);
-  }
-}
-
-.piece-plate[data-frame="wide"] {
-  --rail: calc(var(--rail-base) * 1.14);
-}
-
-.piece-plate[data-frame="vintage"] {
-  --rail: calc(var(--rail-base) * 0.58);
-}
-
-.piece-plate[data-frame="plain"] {
-  --rail: calc(var(--rail-base) * 0.72);
-}
-
-/* --------------------------------------------------------------------------
-   Gold frames — home page only
-   -------------------------------------------------------------------------- */
-
-/* Case study galleries stay unframed; gilding belongs to the wall. That is why
-   these are .piece-frame and not the .frame used on the project pages.
-
-   The moulding is a 9-slice border-image: the carved corners hold their drawn
-   size while the ornament along the rails repeats to whatever length it needs,
-   so one asset frames any aspect ratio without stretching a bead. Sources and
-   slice values are set as custom properties on .home by frames.ts. */
-/* Every live motion on a piece — hover lift, cursor tilt, scroll parallax —
-   resolves into this one transform instead of each effect setting `transform`
-   outright. A hover rule and two independent scripts (Frame.tsx's pointermove,
-   Gallery.tsx's scroll listener) all just write one custom property apiece;
-   none of them can clobber the others because none of them owns the shorthand. */
-.piece-frame {
-  --lift: 0px;
-  --tilt-rx: 0deg;
-  --tilt-ry: 0deg;
-  --parallax-y: 0px;
-  position: relative;
-  border-style: solid;
-  border-width: var(--rail);
-  /* Fallback band if the SVG source is ever unavailable. */
-  border-color: #b8891f;
-  border-image-repeat: round;
-  /* The rabbet — artwork sits recessed and casts into the moulding. */
-  background: rgba(0, 0, 0, 0.3);
-  box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.45),
-    inset 0 2px 10px rgba(0, 0, 0, 0.5);
-  /* Hangs off the wall rather than lying flat on it. */
-  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.34));
-  transform: translateY(calc(var(--lift) + var(--parallax-y))) perspective(900px)
-    rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry));
-  transition: transform var(--speed) var(--ease), filter var(--speed) var(--ease);
-  will-change: transform;
-}
-
-/* Diagonal sheen, like glass catching light as you pass. Sized larger than the
-   frame and swept via background-position rather than its own transform, so it
-   never has to fight the frame above it for the transform shorthand either —
-   and backgrounds clip to their own box for free, no overflow tricks needed. */
-.piece-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.55) 50%, transparent 58%);
-  background-size: 260% 100%;
-  background-position: -110% 0;
-  transition: background-position 700ms var(--ease);
-}
-
-.piece-plate[data-frame="ornate"] .piece-frame {
-  border-image-source: var(--frame-ornate);
-  border-image-slice: var(--slice-ornate);
-}
-
-.piece-plate[data-frame="wide"] .piece-frame {
-  border-image-source: var(--frame-wide);
-  border-image-slice: var(--slice-wide);
-}
-
-.piece-plate[data-frame="vintage"] .piece-frame {
-  border-image-source: var(--frame-vintage);
-  border-image-slice: var(--slice-vintage);
-}
-
-.piece-plate[data-frame="plain"] .piece-frame {
-  border-image-source: var(--frame-plain);
-  border-image-slice: var(--slice-plain);
-}
-
-/* Width fills the column, height follows the image's own ratio — artwork is
-   never stretched, and the varied heights are what give the wall its hang.
-   object-fit is a safety net for a mis-stated dimension, not the mechanism. */
-.piece-art {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-/* --------------------------------------------------------------------------
-   Hover reveal + caption
-   -------------------------------------------------------------------------- */
-
-/* Sits inside the moulding, over the artwork only. The gradient keeps the top
-   of the image legible — the point is to add a sentence, not to hide the work. */
-.piece-veil {
-  position: absolute;
-  inset: var(--rail);
-  display: flex;
+  min-height: 0;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 0.9rem;
-  padding: 1.4rem;
-  background: linear-gradient(
-    to top,
-    rgba(8, 20, 110, 0.94),
-    rgba(8, 20, 110, 0.4) 62%,
-    rgba(8, 20, 110, 0) 100%
-  );
-  opacity: 0;
-  transition: opacity 240ms var(--ease);
-  pointer-events: none;
+  border-right: 1px solid var(--rule);
+  padding: 2.1rem 1rem 1.6rem;
+  background: rgba(248,247,244,.84);
 }
 
-.piece-note {
-  font-size: 13px;
-  line-height: 1.5;
-}
+.sidebar-wordmark { display: block; margin: 0 .8rem 2.1rem; font-size: 1.65rem; line-height: 1; white-space: nowrap; }
+.sidebar-nav, .discipline-nav { display: grid; gap: .2rem; }
 
-.piece-cta {
-  display: inline-flex;
+.sidebar-link, .discipline-link {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  min-height: 43px;
+  border-radius: 10px;
+  transition: color var(--speed) ease, background var(--speed) ease, transform var(--speed) var(--ease);
 }
 
-.piece-label {
-  margin-top: 1.15rem;
-}
+.sidebar-link { gap: .85rem; padding: 0 .85rem; font-size: 13px; font-weight: 540; }
+.sidebar-link:hover, .discipline-link:hover { background: rgba(17,17,17,.045); }
+.sidebar-link.is-active { background: #e9e7e3; color: var(--blue); font-weight: 700; }
+.sidebar-divider { height: 1px; margin: 1.25rem .75rem 1.35rem; background: var(--rule); }
+.sidebar-label { margin: 0 .75rem .75rem; color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .09em; }
+.discipline-link { gap: .8rem; min-height: 37px; padding: 0 .75rem; color: #403f3c; font-size: 12px; }
+.discipline-link.is-active { color: var(--ink); font-weight: 650; }
 
-.piece-title {
-  font-size: clamp(13px, 1.1vw, 15px);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
+.discipline-dot, .project-card-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--faint); }
+.discipline-dot.all { border: 2px solid var(--blue); background: transparent; }
+[data-discipline="brand-identity"] .project-card-dot, .discipline-dot[data-discipline="brand-identity"] { background: var(--brand); }
+[data-discipline="creative-technology"] .project-card-dot, .discipline-dot[data-discipline="creative-technology"] { background: var(--technology); }
+[data-discipline="product-development"] .project-card-dot, .discipline-dot[data-discipline="product-development"] { background: var(--product); }
 
-.piece-tags {
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  opacity: var(--dim);
-  margin-top: 0.35rem;
-}
+.sidebar-status { margin-top: auto; padding: 1.5rem .75rem 0; color: var(--muted); font-size: 9px; letter-spacing: .045em; line-height: 1.75; }
+.status-track { display: block; width: 100%; height: 5px; margin-top: 1.2rem; overflow: hidden; border-radius: 99px; background: #e3e1dd; }
+.status-track span { display: block; width: 48%; height: 100%; border-radius: inherit; background: var(--blue); }
 
-/* The sentence is in the caption at every width so assistive tech always
-   reaches it — the hover veil is decorative and aria-hidden. On a pointer
-   device it stays visually hidden here because the veil shows it; on touch,
-   where there is no hover, it becomes a real visible caption. */
-.piece-note-caption {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
+.app-workspace { display: grid; min-width: 0; min-height: 0; grid-template-rows: var(--toolbar) minmax(0,1fr); background: var(--surface-strong); }
+.workspace-toolbar { position: relative; z-index: 20; display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 1.5rem; border-bottom: 1px solid var(--rule); padding: 0 2rem; background: rgba(255,255,255,.91); backdrop-filter: blur(16px); }
+.toolbar-leading, .toolbar-actions, .history-controls, .view-controls { display: flex; align-items: center; }
+.toolbar-leading { min-width: 0; gap: 2rem; }
+.history-controls { gap: .35rem; }
 
+.history-controls button, .view-controls button, .toolbar-button, .toolbar-menu summary {
+  position: relative;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--speed) ease, color var(--speed) ease;
+}
+.history-controls button:hover, .view-controls button:hover, .toolbar-button:hover, .toolbar-menu summary:hover { background: var(--surface-muted); }
+.history-controls button:disabled { color: var(--rule-strong); cursor: default; }
+.history-controls button:disabled:hover { background: transparent; }
 @media (hover: hover) {
-  .piece-link:hover .piece-veil,
-  .piece-link:focus-visible .piece-veil {
-    opacity: 1;
+  [data-tooltip]::after {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 7px);
+    left: 50%;
+    padding: .35rem .5rem;
+    border-radius: 6px;
+    background: var(--ink);
+    color: #fff;
+    content: attr(data-tooltip);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: .02em;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -3px);
+    transition: opacity var(--speed) ease, transform var(--speed) ease;
+    white-space: nowrap;
   }
-
-  .piece-link:hover .piece-frame,
-  .piece-link:focus-visible .piece-frame {
-    --lift: -4px;
-    filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.42));
-  }
-
-  .piece-link:hover .piece-frame::after,
-  .piece-link:focus-visible .piece-frame::after {
-    background-position: 210% 0;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Category + project index
-   -------------------------------------------------------------------------- */
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.back-link .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.back-link:hover .icon,
-.back-link:focus-visible .icon {
-  transform: translateX(-3px);
-}
-
-/* Every /work page's full position in one row, each level a click away —
-   replaces the old stepped back-link chain (project -> category -> all work
-   -> home), which took three clicks to get home from a project even though
-   most visitors now land on one straight from the home gallery. */
-.crumb-list {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  list-style: none;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.crumb-list li {
-  display: flex;
-  align-items: center;
-}
-
-/* Divider drawn on the item rather than as its own element — one less node
-   per crumb, and it never needs an aria-hidden span kept in sync with it. */
-.crumb-list li:not(:first-child)::before {
-  content: "/";
-  margin: 0 0.6rem;
-  opacity: var(--dim);
-}
-
-.crumb-list a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.crumb-list a:hover,
-.crumb-list a:focus-visible {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.crumb-list .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.crumb-list a:hover .icon,
-.crumb-list a:focus-visible .icon {
-  transform: translateX(-3px);
-}
-
-/* The page you're already on — not a link, dimmed to read as inactive. */
-.crumb-current {
-  opacity: var(--dim);
-}
-
-/* Every inner page opens on this baseline. */
-.page-head {
-  padding: 2.4rem var(--pad) 0;
-}
-
-.cat-head {
-  padding: 1.6rem var(--pad) 2.6rem;
-}
-
-/* Pages with no back link above them open on that same baseline. */
-.cat-head.top {
-  padding-top: 2.4rem;
-}
-
-.cat-title {
-  font-size: clamp(2.1rem, 7vw, 3.4rem);
-  line-height: 0.98;
-}
-
-.cat-meta {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  margin-top: 1rem;
-}
-
-.cat-summary {
-  font-size: 15px;
-  line-height: 1.6;
-  max-width: 460px;
-  margin-top: 1.4rem;
-}
-
-.cat-back {
-  margin-top: 2rem;
-}
-
-/* Fixed tracks, not flex min-width — a name longer than the left column has to
-   wrap inside its own cell rather than shoving the meta column out of line. */
-.project-row {
-  display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.6rem var(--pad);
-  border-top: 1px solid var(--rule);
-  transition: opacity var(--speed) ease, background var(--speed) ease;
-}
-
-.project-row:last-child {
-  border-bottom: 1px solid var(--rule);
-}
-
-.project-row:hover {
-  opacity: 0.75;
-}
-
-.project-left {
-  display: flex;
-  align-items: baseline;
-  gap: 1.4rem;
-  min-width: 0;
-}
-
-.project-num {
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.project-name {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-
-.project-meta {
-  font-size: 11px;
-  letter-spacing: 0.03em;
-}
-
-.project-arrow {
-  display: flex;
-  align-items: center;
-  justify-self: end;
-}
-
-.project-row:hover .project-arrow .icon,
-.project-row:focus-visible .project-arrow .icon {
-  transform: translateX(3px);
-}
-
-.project-arrow .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-/* --------------------------------------------------------------------------
-   Case study
-   -------------------------------------------------------------------------- */
-
-.case-head {
-  padding: 1.6rem var(--pad) 2.4rem;
-}
-
-.case-title {
-  font-size: clamp(2.1rem, 7vw, 3.4rem);
-  line-height: 0.98;
-}
-
-.case-intro {
-  font-size: clamp(16px, 2vw, 19px);
-  line-height: 1.55;
-  max-width: 620px;
-  margin-top: 1.6rem;
-}
-
-.case-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  margin-top: 1.6rem;
-  border-bottom: 1px solid var(--fg);
-  padding-bottom: 3px;
-}
-
-.facts {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-  padding: 2rem var(--pad);
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-}
-
-.fact dt {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  opacity: var(--dim);
-  margin-bottom: 0.6rem;
-}
-
-.fact dd {
-  font-size: 12px;
-  line-height: 1.8;
-  letter-spacing: 0.02em;
-}
-
-.case-body {
-  padding: 3.4rem var(--pad) 1rem;
-  display: grid;
-  gap: 2.8rem;
-  max-width: 900px;
-}
-
-.case-section h2 {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  margin-bottom: 1rem;
-}
-
-.case-section p {
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 620px;
-}
-
-.case-section p + p {
-  margin-top: 1rem;
-}
-
-.media {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.4rem;
-  padding: 2.4rem var(--pad) 4rem;
-}
-
-.media figure {
-  min-width: 0;
-}
-
-.media figure.full {
-  grid-column: 1 / -1;
-}
-
-/* Empty frames hold the layout until real images are dropped into /public. */
-.frame {
-  background: var(--fill);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 6px;
-  aspect-ratio: 16 / 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.frame span {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  opacity: 0.6;
-  text-transform: uppercase;
-  padding: 1rem;
-  text-align: center;
-}
-
-.media figcaption {
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  opacity: var(--dim);
-  margin-top: 0.7rem;
-}
-
-/* Small uniform feed: fixed square cells, full image visible (no cropping). */
-.media.media-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.6rem;
-}
-
-.media.media-grid.media-grid-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.media.media-grid figure.full,
-.media.media-grid figure.half {
-  grid-column: auto;
-}
-
-.media.media-grid .frame {
-  aspect-ratio: 1 / 1;
-  border-radius: 4px;
-}
-
-.media.media-grid .frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.media.media-grid figcaption {
-  display: none;
-}
-
-.next-project {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 2rem var(--pad);
-  border-top: 1px solid var(--rule);
-  transition: opacity var(--speed) ease;
-}
-
-.next-project:hover {
-  opacity: 0.75;
-}
-
-/* Both are spans inside a flex item, so they need blockifying to stack. */
-.next-project .label {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  opacity: var(--dim);
-  margin-bottom: 0.5rem;
-}
-
-.next-project .name {
-  display: block;
-  font-size: clamp(20px, 3.4vw, 28px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.next-project .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.next-project:hover .icon,
-.next-project:focus-visible .icon {
-  transform: translateX(4px);
-}
-
-/* --------------------------------------------------------------------------
-   Prose pages (About, Contact)
-   -------------------------------------------------------------------------- */
-
-.prose {
-  padding: 1.6rem var(--pad) 3.4rem;
-  display: grid;
-  gap: 2.6rem;
-  max-width: 900px;
-}
-
-.prose p {
-  font-size: 15px;
-  line-height: 1.7;
-  max-width: 560px;
-}
-
-.prose p + p {
-  margin-top: 1rem;
-}
-
-.prose h2 {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  margin-bottom: 1rem;
-}
-
-.list-rows {
-  border-top: 1px solid var(--rule);
-}
-
-.list-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 13px;
-}
-
-.list-row .k {
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-
-.list-row .v {
-  font-size: 11px;
-  letter-spacing: 0.03em;
-  opacity: 0.78;
-  text-align: right;
-}
-
-.capabilities {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2.4rem;
-}
-
-.capabilities h3 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-  margin-bottom: 0.8rem;
-}
-
-.capabilities ul {
-  list-style: none;
-  font-size: 11px;
-  line-height: 2.1;
-  letter-spacing: 0.04em;
-}
-
-/* Same rhythm as .project-row: full-bleed rows, rules edge to edge. */
-.contact-links {
-  border-top: 1px solid var(--rule);
-}
-
-.contact-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.4rem var(--pad);
-  border-bottom: 1px solid var(--rule);
-  transition: opacity var(--speed) ease;
-}
-
-a.contact-link:hover {
-  opacity: 0.72;
-}
-
-.contact-link .k {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  opacity: var(--dim);
-}
-
-.contact-link .v {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: clamp(15px, 2.4vw, 19px);
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-
-/* --------------------------------------------------------------------------
-   Footer
-   -------------------------------------------------------------------------- */
-
-.footer {
-  padding: 3.5rem var(--pad) 2.5rem;
-  border-top: 1px solid var(--rule);
-  margin-top: 0.4rem;
-}
-
-/* Slightly more presence against the bottom row, and more air beneath it so
-   the statement and the email read as two steps rather than one clump. */
-.footer h2 {
-  font-size: clamp(1.8rem, 5.4vw, 2.5rem);
-  line-height: 1.08;
-  margin-bottom: 1.75rem;
-}
-
-/* The rule sits closer to a baseline than a box now, and the letter-spacing
-   keeps it from reading as a solid bar at this weight. */
-.footer-email {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border-bottom: 1px solid var(--rule);
-  padding-bottom: 6px;
-  word-break: break-word;
-  transition: border-color var(--speed) var(--ease);
-}
-
-.footer-email:hover,
-.footer-email:focus-visible {
-  border-bottom-color: var(--fg);
-}
-
-.footer-email .icon {
-  transition: transform var(--speed) var(--ease);
-}
-
-.footer-email:hover .icon,
-.footer-email:focus-visible .icon {
-  transform: translateX(3px);
-}
-
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem var(--pad);
-  border-top: 1px solid var(--rule);
-  font-size: 11px;
-  letter-spacing: 0.04em;
-}
-
-.socials {
-  display: flex;
-  gap: 1.5rem;
-}
-
-.socials a {
-  transition: opacity var(--speed) ease;
-}
-
-.socials a:hover {
-  opacity: 0.7;
-}
-
-/* --------------------------------------------------------------------------
-   Responsive
-   -------------------------------------------------------------------------- */
-
-/* Tablet: brand-to-nav gap narrows along with the viewport instead of
-   holding the desktop cap. */
-@media (max-width: 1024px) {
-  .nav {
-    gap: 1.4rem;
-  }
-}
-
-@media (max-width: 900px) {
-  .facts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .capabilities {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-
-  /* The name and the keyword list stop sharing a row: at this width the name
-     needs the full measure, and right-aligned filters under it would read as
-     detached from the wall they control. */
-  .home-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .masthead,
-  .filters,
-  .wall {
-    grid-column: 1;
-  }
-
-  .filters {
-    grid-row: 2;
-    justify-content: flex-start;
-    max-width: none;
-    padding-top: 0;
-    margin-top: 2.5rem;
-  }
-
-  .wall {
-    grid-row: 3;
-    margin-top: 3.5rem;
-  }
-
-  /* Tablet keeps two columns rather than falling to one: the desktop floor
-     needs more room than this viewport has, and a single 380px column in a
-     656px measure leaves the wall stranded against a wide empty margin.
-     The width ceiling comes off here too — with the tracks this narrow the
-     pieces should fill them, and it only exists to stop a filtered-down
-     desktop wall from stretching one piece across the page. */
-  .home[data-density] {
-    --col-min: 280px;
-    --col-max: 100%;
-  }
+  [data-tooltip]:hover::after, [data-tooltip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+}
+.toolbar-title { overflow: hidden; font-size: 13px; font-weight: 750; letter-spacing: .02em; text-overflow: ellipsis; white-space: nowrap; }
+.toolbar-actions { gap: .65rem; }
+.view-controls { gap: .2rem; border-radius: 12px; padding: 3px; background: #f4f2ef; }
+.view-controls button.is-active { background: #fff; color: var(--blue); box-shadow: 0 1px 4px rgba(25,22,17,.12); }
+.toolbar-button { position: relative; }
+.toolbar-feedback { position: absolute; top: calc(100% + 8px); right: 0; color: var(--blue); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.toolbar-menu { position: relative; }
+.toolbar-menu summary { list-style: none; }
+.toolbar-menu summary::-webkit-details-marker { display: none; }
+.toolbar-popover { position: absolute; top: calc(100% + 8px); right: 0; display: grid; width: 150px; overflow: hidden; border: 1px solid var(--rule); border-radius: 11px; background: #fff; box-shadow: 0 14px 35px rgba(31,27,20,.14); }
+.toolbar-popover a { padding: .78rem .9rem; font-size: 11px; font-weight: 650; }
+.toolbar-popover a:hover { background: var(--surface-muted); color: var(--blue); }
+.workspace-scroll { min-width: 0; min-height: 0; overflow: auto; scroll-behavior: smooth; scroll-padding-top: 2rem; }
+.mobile-nav { display: none; }
+
+/* Page transitions */
+.page { animation: page-in 300ms var(--ease) both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+::view-transition-old(root) { animation: fade-out 260ms var(--ease) both; }
+::view-transition-new(root) { animation: fade-in 340ms var(--ease) both; }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes fade-in { from { opacity: 0; } }
+
+/* Project collections */
+.portfolio-page { padding: 2rem var(--page-pad) 1.4rem; }
+.browser-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: .75rem; }
+.browser-heading h1 { font-size: clamp(3.1rem, 6vw, 5.25rem); }
+.browser-description { max-width: 360px; padding-bottom: .35rem; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.browser-controls { display: flex; align-items: center; justify-content: space-between; min-height: 36px; margin: 0 0 1.5rem .25rem; }
+.browser-count { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .08em; }
+.mobile-practice-filters { display: none; }
+
+.project-browser { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 2.2rem 1.55rem; min-height: 12rem; }
+.project-card { min-width: 0; content-visibility: auto; contain-intrinsic-size: auto 250px; }
+.project-card-link { position: relative; display: block; }
+.folder-cover { position: relative; aspect-ratio: 1.17 / 1; isolation: isolate; transition: transform 260ms var(--ease); }
+.folder-layer, .folder-art { position: absolute; inset: 0; clip-path: polygon(0 10%,29% 10%,38% 23%,95% 23%,100% 28%,100% 100%,0 100%); border-radius: 10px; }
+.folder-layer { pointer-events: none; transition: transform 260ms var(--ease); }
+.folder-layer-back { transform: translate(3px,-6px) scale(.96); background: color-mix(in srgb,var(--folder-accent,var(--blue)) 22%,white); }
+.folder-layer-mid { transform: translate(5px,-2px) scale(.98); background: color-mix(in srgb,var(--folder-accent,var(--blue)) 12%,#f4f1ec); }
+.project-card[data-discipline="brand-identity"] { --folder-accent: var(--brand); }
+.project-card[data-discipline="creative-technology"] { --folder-accent: var(--technology); }
+.project-card[data-discipline="product-development"] { --folder-accent: var(--product); }
+.folder-art { z-index: 2; overflow: hidden; background: #dedbd5; box-shadow: 0 8px 18px rgba(24,22,17,.1); }
+.folder-image { width: 100%; height: 100%; object-fit: cover; transition: transform 420ms var(--ease), filter 260ms ease; }
+.folder-sheen { position: absolute; inset: 0; background: linear-gradient(125deg,rgba(255,255,255,.18),transparent 42%,rgba(0,0,0,.05)); pointer-events: none; }
+.project-card-link:hover .folder-cover, .project-card-link:focus-visible .folder-cover { transform: translateY(-4px); }
+.project-card-link:hover .folder-layer-back, .project-card-link:focus-visible .folder-layer-back { transform: translate(1px,-9px) scale(.96); }
+.project-card-link:hover .folder-layer-mid, .project-card-link:focus-visible .folder-layer-mid { transform: translate(7px,-4px) scale(.98); }
+.project-card-link:hover .folder-image, .project-card-link:focus-visible .folder-image { transform: scale(1.025); filter: saturate(1.04); }
+
+.project-card-copy { position: relative; padding: .8rem 1rem 0 .12rem; }
+.project-card-title { display: flex; gap: .55rem; font-size: 12px; font-weight: 720; line-height: 1.35; }
+.project-card-title span { color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.project-card-meta { margin-top: .35rem; overflow: hidden; color: var(--muted); font-size: 10px; letter-spacing: .035em; line-height: 1.35; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+.project-card-description { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.project-card-dot { position: absolute; right: .05rem; bottom: .15rem; width: 8px; height: 8px; }
+.project-list-arrow { display: none; }
+
+.project-browser.is-list { display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--rule); }
+.is-list .project-card { border-bottom: 1px solid var(--rule); }
+.is-list .project-card-link { display: grid; grid-template-columns: 132px minmax(0,1fr) auto; align-items: center; gap: 1.5rem; min-height: 118px; padding: .8rem; transition: background var(--speed) ease; }
+.is-list .project-card-link:hover, .is-list .project-card-link:focus-visible { background: var(--surface-muted); }
+.is-list .folder-cover { width: 116px; }
+.is-list .project-card-copy { display: grid; grid-template-columns: minmax(180px,.75fr) minmax(180px,1fr); align-items: center; gap: 1.5rem; padding: 0; }
+.is-list .project-card-title { font-size: 15px; }
+.is-list .project-card-meta { margin: 0; white-space: normal; }
+.is-list .project-card-description { position: static; width: auto; height: auto; grid-column: 1 / -1; overflow: visible; clip-path: none; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.is-list .project-card-dot { right: auto; bottom: auto; left: -1.15rem; top: .25rem; }
+.is-list .project-list-arrow { display: block; color: var(--blue); transition: transform var(--speed) var(--ease); }
+.is-list .project-card-link:hover .project-list-arrow { transform: translateX(3px); }
+
+.empty-collection { display: grid; min-height: 260px; max-width: 560px; margin-inline: auto; place-content: center; text-align: center; }
+.empty-collection .display { font-size: 2.2rem; }
+.empty-collection h2 + p { margin-top: .75rem; color: var(--muted); font-size: 13px; }
+.empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .65rem; margin-top: 1.25rem; }
+.empty-actions a { display: inline-grid; min-height: 44px; place-items: center; border: 1px solid var(--rule-strong); border-radius: 9px; padding: 0 1rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .055em; }
+.empty-actions a:first-child { border-color: var(--blue); background: var(--blue); color: #fff; }
+
+/* Profile panel */
+.profile-panel { display: grid; grid-template-columns: minmax(170px,.85fr) minmax(240px,1.5fr) minmax(175px,.85fr) minmax(140px,.65fr); align-items: stretch; margin-top: 3rem; overflow: hidden; border: 1px solid var(--rule); border-radius: 15px; background: #fdfcfb; }
+.profile-panel > * { min-width: 0; padding: 1.6rem; }
+.profile-panel > * + * { border-left: 1px solid var(--rule); }
+.profile-name { display: grid; place-content: center; font-size: clamp(2.3rem,3.4vw,3.8rem); }
+.profile-summary, .profile-connect { display: flex; flex-direction: column; justify-content: center; gap: .65rem; font-size: 11px; line-height: 1.55; }
+.profile-kicker { color: var(--ink); font-size: 10px; font-weight: 750; letter-spacing: .055em; }
+.profile-summary p:not(.profile-kicker) { color: var(--muted); }
+.profile-connect a, .inline-link { display: inline-flex; align-items: center; gap: .5rem; text-decoration: underline; text-decoration-color: var(--rule-strong); text-underline-offset: 3px; }
+.inline-link { margin-top: .2rem; color: var(--blue); font-size: 9px; font-weight: 750; letter-spacing: .055em; text-decoration: none; }
+.signature-mark { min-height: 130px; background: var(--blue); mask: url("/brand/signature-white.png") center / 68% auto no-repeat; }
+
+/* Case studies */
+.page-head, .cat-head, .case-head, .case-hero, .case-body, .facts, .media, .prose, .contact-links { margin-inline: var(--page-pad); }
+.page-head { padding-top: 1.5rem; }
+.crumb-list { display: flex; flex-wrap: wrap; align-items: center; list-style: none; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .055em; }
+.crumb-list li { display: flex; align-items: center; }
+.crumb-list li:not(:first-child)::before { content: "/"; margin: 0 .55rem; color: var(--rule-strong); }
+.crumb-list a { display: inline-flex; align-items: center; gap: .45rem; }
+.crumb-list a:hover { color: var(--blue); }
+.crumb-current { color: var(--faint); }
+
+.case-head { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); align-items: end; gap: 3rem; padding-block: 2rem 2.4rem; }
+.case-title, .cat-title { font-size: clamp(3.3rem,7vw,6.6rem); }
+.case-intro { color: #33322f; font-size: clamp(15px,1.45vw,19px); line-height: 1.65; }
+.case-live { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .05em; }
+
+.case-hero { margin-bottom: 1rem; }
+.case-hero .frame { height: clamp(320px,54vw,720px); }
+.case-hero .frame img { width: 100%; height: 100%; object-fit: contain; }
+.case-hero figcaption { margin: .55rem .15rem 0; color: var(--muted); font-size: 10px; letter-spacing: .04em; }
+
+.media { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; margin-bottom: 2rem; }
+.media figure { min-width: 0; }
+.media figure.full { grid-column: 1 / -1; }
+.frame { display: grid; min-height: 180px; overflow: hidden; place-items: center; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface-muted); }
+.frame img { width: 100%; height: auto; }
+.frame span { color: var(--muted); padding: 2rem; font-size: 10px; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+.media figcaption { margin: .55rem .15rem 0; color: var(--muted); font-size: 9px; letter-spacing: .04em; }
+.media.media-grid { grid-template-columns: repeat(4,minmax(0,1fr)); gap: .6rem; }
+.media.media-grid.media-grid-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.media.media-grid figure.full, .media.media-grid figure.half { grid-column: auto; }
+.media.media-grid .frame { aspect-ratio: 1; }
+.media.media-grid .frame img { width: 100%; height: 100%; object-fit: contain; }
+
+.facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--rule); border-radius: 12px; background: var(--rule); }
+.fact { min-height: 120px; padding: 1.35rem; background: var(--surface); }
+.fact dt, .case-section h2, .prose h2 { margin-bottom: .7rem; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .08em; }
+.fact dd { font-size: 11px; line-height: 1.75; }
+.case-body { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.2rem; padding-block: 1.2rem 2rem; }
+.case-body-lead { grid-template-columns: minmax(0,1fr); padding-bottom: 1.2rem; }
+.case-body-lead .case-section { max-width: 840px; }
+.case-body-outcome { grid-template-columns: minmax(0,1fr); padding-top: 0; }
+.case-body-outcome .case-section { max-width: 840px; }
+.supporting-media { margin-top: 0; }
+.case-section { border: 1px solid var(--rule); border-radius: 12px; padding: 1.5rem; background: var(--surface); }
+.case-section p { max-width: 630px; color: #363531; font-size: 13px; line-height: 1.75; }
+.case-section p + p { margin-top: .9rem; }
+
+.next-project { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; padding: 2.2rem var(--page-pad); border-top: 1px solid var(--rule); background: var(--surface-muted); transition: color var(--speed) ease, background var(--speed) ease; }
+.next-project:hover { background: #e9edff; color: var(--blue); }
+.next-project .label { display: block; margin-bottom: .5rem; color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.next-project .name { font-family: var(--font-anton), Impact, sans-serif; font-size: clamp(1.8rem,4vw,3.5rem); text-transform: uppercase; }
+
+/* About and contact */
+.cat-head { padding-block: 2rem; }
+.cat-head.top { padding-top: 2.5rem; }
+.cat-meta, .cat-summary { margin-top: 1rem; color: var(--muted); }
+.cat-meta { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.cat-summary { max-width: 520px; font-size: 14px; line-height: 1.65; }
+.prose { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; padding-bottom: 2rem; }
+.prose > div { border: 1px solid var(--rule); border-radius: 13px; padding: clamp(1.4rem,3vw,2.2rem); background: var(--surface); }
+.prose p { color: #34332f; font-size: 14px; line-height: 1.75; }
+.prose p + p { margin-top: 1rem; }
+.capabilities { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem; }
+.capabilities h3 { margin-bottom: .7rem; font-size: 12px; }
+.capabilities ul { list-style: none; color: var(--muted); font-size: 11px; line-height: 1.8; }
+.list-rows { border-top: 1px solid var(--rule); }
+.list-row { display: grid; grid-template-columns: minmax(130px,.8fr) minmax(0,1.2fr); gap: 1rem; border-bottom: 1px solid var(--rule); padding: .8rem 0; font-size: 11px; line-height: 1.5; }
+.list-row .k { color: var(--muted); }
+.contact-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; padding-bottom: 2.5rem; }
+.contact-link { display: flex; min-height: 92px; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--rule); border-radius: 12px; padding: 1.2rem 1.35rem; background: var(--surface); transition: border-color var(--speed) ease, color var(--speed) ease, transform var(--speed) var(--ease); }
+a.contact-link:hover { transform: translateY(-2px); border-color: #b9c3ff; color: var(--blue); }
+.contact-primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+.contact-primary .k { color: rgba(255,255,255,.86); }
+.contact-primary:hover { background: var(--blue-dark); color: #fff !important; }
+.contact-link .k { color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.contact-link .v { display: inline-flex; align-items: center; gap: .55rem; font-size: 12px; }
+.cat-back { margin-top: 1.5rem; }
+.back-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .06em; }
+
+/* Responsive */
+@media (max-width: 1450px) { .project-browser { grid-template-columns: repeat(5,minmax(0,1fr)); } }
+
+@media (max-width: 1220px) {
+  :root { --sidebar: 228px; }
+  .project-browser { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .profile-panel { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .signature-mark { grid-column: 1 / -1; min-height: 105px; border-top: 1px solid var(--rule); border-left: 0 !important; mask-size: 130px auto; }
+}
+
+@media (max-width: 980px) {
+  body { padding: 0; overflow: auto; }
+  .app-frame { display: block; width: 100%; height: auto; min-height: 100dvh; overflow: visible; border: 0; border-radius: 0; box-shadow: none; }
+  .app-sidebar { display: none; }
+  .app-workspace { display: block; }
+  .workspace-toolbar { position: sticky; top: 0; height: 68px; padding: 0 1rem; }
+  .workspace-scroll { overflow: visible; padding-bottom: 82px; }
+  .mobile-nav { position: fixed; z-index: 50; right: .75rem; bottom: max(.75rem,env(safe-area-inset-bottom)); left: .75rem; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); overflow: hidden; border: 1px solid rgba(17,17,17,.12); border-radius: 15px; padding: .35rem; background: rgba(255,255,255,.94); box-shadow: 0 12px 34px rgba(24,21,16,.16); backdrop-filter: blur(18px); }
+  .mobile-nav a { display: grid; min-height: 52px; place-items: center; align-content: center; gap: .2rem; border-radius: 10px; color: var(--muted); font-size: 10px; font-weight: 650; }
+  .mobile-nav a.is-active { background: #edf0ff; color: var(--blue); }
+  .project-browser { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .case-head { grid-template-columns: 1fr; gap: 1.4rem; }
 }
 
 @media (max-width: 760px) {
-  :root {
-    --pad: 1.5rem;
-  }
-
-  /* One compact composition: signature left, nav right. flex-wrap is the
-     fallback rather than a hard breakpoint — the nav drops to its own line
-     only on viewports too narrow to hold both, and the small row-gap keeps
-     that from becoming its own section. */
-  .header {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1.5rem;
-    padding: 1.25rem var(--pad);
-  }
-
-  /* Specified by width here — it's the dimension that reads on a phone. */
-  .wordmark-signature {
-    width: 80px;
-    height: auto;
-  }
-
-  .nav {
-    font-size: 13px;
-    gap: 1.25rem;
-  }
-
-  .home-grid {
-    padding: var(--sp-md) var(--pad) var(--sp-xl);
-  }
-
-  .filters {
-    margin-top: var(--sp-md);
-  }
-
-  .wall {
-    margin-top: var(--sp-lg);
-  }
-
-  /* One column at every density tier — a phone has room for one piece at a
-     time, and the artwork is the point. The moulding scales with the viewport
-     rather than the tier so the gold stays substantial rather than shrinking
-     to a hairline, and the stagger switches off since there is no second
-     column to stagger against. */
-  .home[data-density] {
-    --col-min: 100%;
-    --col-max: 100%;
-    --wall-gap: var(--sp-md);
-    --rail-base: clamp(14px, 4.5vw, 26px);
-    --drop-step: 0rem;
-    /* Cursor-driven effects are already off on touch; scroll parallax stays,
-       just quieter, since a phone's scroll velocity makes a full-strength
-       offset feel like jitter rather than depth. */
-    --parallax-strength: 0.4;
-  }
-
-  /* A comfortable tap target — 10px pills are a desktop-pointer size. */
-  .filter {
-    font-size: 11px;
-    padding: 0.6rem 1rem;
-  }
-
-  /* No hover to reveal it, so the sentence becomes a real caption instead. */
-  .piece-note-caption {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0.55rem 0 0;
-    overflow: visible;
-    clip-path: none;
-    white-space: normal;
-    font-size: 13px;
-    line-height: 1.5;
-    opacity: var(--dim);
-  }
-
-  .page-head,
-  .cat-head.top {
-    padding-top: var(--sp-sm);
-  }
-
-  /* Index rows stack: name on its own line, then meta left / year right. */
-  .project-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.5rem 1rem;
-    padding: 1.3rem var(--pad);
-  }
-
-  .project-left {
-    grid-column: 1 / -1;
-  }
-
-  .media {
-    grid-template-columns: 1fr;
-  }
-
-  .media figure.full {
-    grid-column: auto;
-  }
-
-  .media.media-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .media.media-grid.media-grid-3 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* ~28% off the previous vertical padding. */
-  .footer {
-    padding: var(--sp-md) var(--pad) var(--sp-sm);
-  }
-
-  /* Was running edge to edge at 375px. */
-  .footer-email {
-    font-size: 14px;
-  }
-
-  .footer-bottom {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.85rem;
-    padding: var(--sp-sm) var(--pad);
-  }
-
-  .socials {
-    gap: 1.2rem;
-  }
+  :root { --page-pad: 1.35rem; }
+  .toolbar-leading { gap: .7rem; }
+  .history-controls button:last-child { display: none; }
+  .toolbar-actions { gap: .15rem; }
+  .portfolio-page { padding-top: 1.5rem; }
+  .browser-heading { display: block; margin-bottom: .7rem; }
+  .browser-description { margin-top: 1rem; }
+  .browser-controls { display: block; margin: 0 0 1.5rem; }
+  .browser-count { margin-left: .15rem; }
+  .mobile-practice-filters { display: flex; gap: .45rem; margin-top: .9rem; overflow-x: auto; padding: 2px .15rem 5px; scrollbar-width: none; }
+  .mobile-practice-filters::-webkit-scrollbar { display: none; }
+  .mobile-practice-filters a { display: inline-flex; min-height: 44px; flex: none; align-items: center; gap: .45rem; border: 1px solid var(--rule); border-radius: 999px; padding: 0 .9rem; color: var(--muted); font-size: 11px; font-weight: 650; }
+  .mobile-practice-filters a.is-active { border-color: #c7ceff; background: #edf0ff; color: var(--blue); }
+  .mobile-practice-filters .discipline-dot { width: 8px; height: 8px; }
+  .project-browser { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.8rem 1rem; }
+  .is-list .project-card-link { grid-template-columns: 94px minmax(0,1fr) auto; gap: .85rem; min-height: 96px; padding-inline: 0; }
+  .is-list .folder-cover { width: 88px; }
+  .is-list .project-card-copy { display: block; }
+  .is-list .project-card-description { display: none; }
+  .profile-panel, .facts, .case-body, .prose, .contact-links { grid-template-columns: 1fr; }
+  .profile-panel > * + * { border-top: 1px solid var(--rule); border-left: 0; }
+  .profile-name { place-content: start; }
+  .signature-mark { grid-column: auto; }
+  .media, .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .media figure.full { grid-column: 1 / -1; }
+  .case-body { gap: .8rem; }
+  .capabilities { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 420px) {
-  .facts {
-    grid-template-columns: 1fr;
-    gap: 1.4rem;
-  }
+@media (max-width: 520px) {
+  .toolbar-title { max-width: 112px; font-size: 11px; }
+  .toolbar-menu { display: none; }
+  .project-browser { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.8rem .8rem; }
+  .folder-cover { aspect-ratio: 1.17 / 1; }
+  .project-card-copy { padding-right: .7rem; }
+  .project-card-title { gap: .35rem; font-size: 12px; }
+  .project-card-meta { font-size: 10px; }
+  .project-card-dot { width: 9px; height: 9px; }
+  .media, .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: 1fr; }
+  .media figure.full { grid-column: auto; }
+  .contact-link { align-items: flex-start; flex-direction: column; justify-content: center; }
+  .contact-link .v { overflow-wrap: anywhere; }
+  .case-hero .frame { height: min(78vw,520px); min-height: 260px; }
+}
+
+@media (max-width: 340px) {
+  .project-browser { grid-template-columns: 1fr; gap: 2rem; }
+  .toolbar-title { max-width: 82px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

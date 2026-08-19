@@ -5,7 +5,8 @@ import { site } from "@/content/site";
 export default function sitemap(): MetadataRoute.Sitemap {
   const urls = [
     "/",
-    "/work",
+    "/featured",
+    "/recent",
     "/about",
     "/contact",
     ...categories.map((c) => `/work/${c.slug}`),

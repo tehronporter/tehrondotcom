@@ -38,12 +38,34 @@ function sizesFor(project: Project, item: Media): string {
   return item.span === "half" ? MEDIA_SIZES.half : MEDIA_SIZES.full;
 }
 
+function CaseSections({ sections, className = "" }: { sections: Project["sections"]; className?: string }) {
+  if (sections.length === 0) return null;
+  return (
+    <section className={`case-body ${className}`.trim()}>
+      {sections.map((section) => (
+        <div className="case-section" key={section.heading}>
+          <h2>{section.heading}</h2>
+          {section.body.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export default async function ProjectPage({ params }: Params) {
   const { category: categorySlug, project: projectSlug } = await params;
   const found = getProject(categorySlug, projectSlug);
   if (!found) notFound();
 
   const { category, project, next } = found;
+  const featuredIndex = project.media.findIndex((item) => item.src && item.src === project.featured?.src);
+  const firstImageIndex = project.media.findIndex((item) => item.src);
+  const heroIndex = featuredIndex >= 0 ? featuredIndex : Math.max(0, firstImageIndex);
+  const hero = project.media[heroIndex];
+  const supportingMedia = project.media.filter((_, index) => index !== heroIndex);
+  const [leadSection, ...remainingSections] = project.sections;
 
   return (
     <div className="page">
@@ -51,7 +73,6 @@ export default async function ProjectPage({ params }: Params) {
         <Breadcrumbs
           trail={[
             { label: "HOME", href: "/" },
-            { label: "ALL WORK", href: "/work" },
             { label: categoryLabel(category), href: `/work/${category.slug}` },
             { label: project.name },
           ]}
@@ -73,32 +94,16 @@ export default async function ProjectPage({ params }: Params) {
         )}
       </div>
 
-      {project.media.length > 0 && (
-        <section
-          className={[
-            "media",
-            project.mediaLayout === "grid" && "media-grid",
-            project.mediaLayout === "grid" && project.mediaColumns === 3 && "media-grid-3",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {project.media.map((item, i) => (
-            <CaseStudyMedia
-              key={i}
-              item={item}
-              sizes={sizesFor(project, item)}
-              /* The first figure is above the fold on every case study, so it is
-                 the LCP element. The rest stay lazy. */
-              priority={i === 0}
-              /* Keyed off the project slug both sides already have, so a new
-                 project gets the wall -> case study morph for free the moment
-                 it sets `featured` to one of its own media entries. */
-              heroName={item.src && item.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
-            />
-          ))}
+      {hero ? (
+        <section className="case-hero" aria-label="Project hero">
+          <CaseStudyMedia
+            item={hero}
+            sizes={MEDIA_SIZES.full}
+            priority
+            heroName={hero.src && hero.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
+          />
         </section>
-      )}
+      ) : null}
 
       <dl className="facts">
         {project.client && (
@@ -125,16 +130,27 @@ export default async function ProjectPage({ params }: Params) {
         </div>
       </dl>
 
-      <section className="case-body">
-        {project.sections.map((section) => (
-          <div className="case-section" key={section.heading}>
-            <h2>{section.heading}</h2>
-            {section.body.map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-          </div>
-        ))}
-      </section>
+      <CaseSections sections={leadSection ? [leadSection] : []} className="case-body-lead" />
+
+      {supportingMedia.length > 0 ? (
+        <section
+          className={[
+            "media",
+            "supporting-media",
+            project.mediaLayout === "grid" && "media-grid",
+            project.mediaLayout === "grid" && project.mediaColumns === 3 && "media-grid-3",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          aria-label="Project gallery"
+        >
+          {supportingMedia.map((item, index) => (
+            <CaseStudyMedia key={`${item.src ?? item.alt}-${index}`} item={item} sizes={sizesFor(project, item)} />
+          ))}
+        </section>
+      ) : null}
+
+      <CaseSections sections={remainingSections} className="case-body-outcome" />
 
       {next.slug !== project.slug && (
         <Link href={`/work/${category.slug}/${next.slug}`} className="next-project">

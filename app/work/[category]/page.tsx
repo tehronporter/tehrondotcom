@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Lines } from "@/components/Lines";
-import { ProjectRow } from "@/components/ProjectRow";
-import { categories, categoryLabel, getCategory } from "@/content/projects";
-import { tagLine, titleCase } from "@/lib/text";
+import { PortfolioPage } from "@/components/PortfolioPage";
+import { categories, categoryLabel, collectionProjects, getCategory } from "@/content/projects";
+import { titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string }> };
 
@@ -26,32 +24,9 @@ export default async function CategoryPage({ params }: Params) {
   const { category: slug } = await params;
   const category = getCategory(slug);
   if (!category) notFound();
+  const projects = collectionProjects("work").filter((project) => project.categorySlug === category.slug);
 
   return (
-    <div className="page">
-      <div className="page-head">
-        <Breadcrumbs
-          trail={[
-            { label: "HOME", href: "/" },
-            { label: "ALL WORK", href: "/work" },
-            { label: categoryLabel(category) },
-          ]}
-        />
-      </div>
-
-      <div className="cat-head">
-        <h1 className="display cat-title">
-          <Lines lines={category.titleLines} />
-        </h1>
-        <p className="cat-meta">{tagLine(category.tags)}</p>
-        <p className="cat-summary">{category.summary}</p>
-      </div>
-
-      <section>
-        {category.projects.map((project, i) => (
-          <ProjectRow key={project.slug} project={project} index={i} categorySlug={category.slug} />
-        ))}
-      </section>
-    </div>
+    <PortfolioPage title={categoryLabel(category)} description={category.summary} projects={projects} />
   );
 }
