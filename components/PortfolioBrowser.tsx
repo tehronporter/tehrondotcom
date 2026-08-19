@@ -28,28 +28,30 @@ const reducedMotion = () =>
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
 type FolderTreatment = {
+  accessory: "label" | "pin" | "stamp" | "sticker";
   code: string;
   mark: string;
   note: string;
   tab: "left" | "middle" | "right";
-  tape: "black" | "cream" | "white";
+  tape: "black" | "clear" | "cream";
 };
 
 const folderTreatments: Record<string, FolderTreatment> = {
-  "blue-t-shirt": { code: "BTS / ARCHIVE", mark: "☆", note: "ONE SHIRT. WHOLE WORLD.", tab: "left", tape: "white" },
-  "cant-buy-respect": { code: "CBR / NOT FOR SALE", mark: "⊘", note: "SEEN BACKSTAGE", tab: "right", tape: "black" },
-  "karl-kani": { code: "KK / DESIGN FILE", mark: "↗", note: "COLOR + CUT NOTES", tab: "middle", tape: "cream" },
-  "indivisual-threads": { code: "IT / CAPSULE 01", mark: "✳", note: "SPRAY / PRINT / REPEAT", tab: "left", tape: "black" },
-  "westside-gunn-saucony": { code: "WSG / FLYER SET", mark: "★", note: "BATTLE CARD PROOF", tab: "right", tape: "cream" },
-  "amine-club-banana": { code: "ACB / COLORWAYS", mark: ":)", note: "PATTERN TEST — PASS", tab: "middle", tape: "white" },
-  "red-panda-academy": { code: "RPA / MARK SYSTEM", mark: "◎", note: "CREST STUDY", tab: "left", tape: "cream" },
-  "tomorrow-is-yesterday": { code: "TIY / OBJECT FILE", mark: "☼", note: "SKETCH → PRODUCTION", tab: "right", tape: "white" },
-  "thank-you-dilla": { code: "TYD / TRIBUTE", mark: "♡", note: "MADE, NOT SET", tab: "middle", tape: "black" },
-  "222-rings": { code: "222 / PROTOTYPE", mark: "222", note: "FORM STUDY", tab: "left", tape: "cream" },
-  "apple-retail-merch": { code: "ARM / COLOR FILE", mark: "✓", note: "PROPOSED → PRODUCED", tab: "right", tape: "white" },
+  "blue-t-shirt": { accessory: "stamp", code: "BTS / ARCHIVE", mark: "◎", note: "ONE SHIRT.\nWHOLE WORLD.  →", tab: "left", tape: "cream" },
+  "cant-buy-respect": { accessory: "sticker", code: "CBR", mark: "＿＿", note: "NOT FOR SALE", tab: "middle", tape: "black" },
+  "karl-kani": { accessory: "pin", code: "KK–93 / SAMPLE", mark: "↗", note: "CHECK COLOR + CUT", tab: "right", tape: "cream" },
+  "indivisual-threads": { accessory: "stamp", code: "CAPSULE 01", mark: "✳", note: "SPRAY / PRINT / REPEAT", tab: "left", tape: "black" },
+  "westside-gunn-saucony": { accessory: "label", code: "FLYER SET / 05", mark: "★", note: "BATTLE CARD PROOF", tab: "middle", tape: "cream" },
+  "amine-club-banana": { accessory: "sticker", code: "ACB", mark: ":)", note: "PATTERN TEST — PASS", tab: "right", tape: "clear" },
+  "red-panda-academy": { accessory: "stamp", code: "MARK SYSTEM", mark: "◎", note: "CREST STUDY / FINAL", tab: "left", tape: "cream" },
+  "tomorrow-is-yesterday": { accessory: "label", code: "OBJECT FILE", mark: "☼", note: "SKETCH → PRODUCTION", tab: "middle", tape: "clear" },
+  "thank-you-dilla": { accessory: "sticker", code: "TYD", mark: "♡", note: "MADE, NOT SET", tab: "right", tape: "black" },
+  "222-rings": { accessory: "pin", code: "PROTO / 222", mark: "222", note: "FORM STUDY", tab: "left", tape: "cream" },
+  "apple-retail-merch": { accessory: "label", code: "COLOR FILE", mark: "✓", note: "PROPOSED → PRODUCED", tab: "middle", tape: "clear" },
 };
 
 const defaultTreatment: FolderTreatment = {
+  accessory: "stamp",
   code: "TP / WORK FILE",
   mark: "+",
   note: "ARCHIVE COPY",
@@ -155,7 +157,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                   className="project-card-link"
                   onClick={openProject(project.href)}
                 >
-                  <div className={`folder-cover folder-tab-${treatment.tab}`}>
+                  <div className={`folder-cover folder-${project.slug} folder-tab-${treatment.tab}`}>
                     <span className="folder-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-mid" aria-hidden="true" />
@@ -167,9 +169,11 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                     <div className="folder-face">
                       <span className="folder-grain" aria-hidden="true" />
                       <span className="folder-crease" aria-hidden="true" />
-                      <span className="folder-archive-code" aria-hidden="true">{treatment.code}</span>
                       <span className="folder-hand-note" aria-hidden="true">{treatment.note}</span>
                       <span className="folder-mark" aria-hidden="true">{treatment.mark}</span>
+                      <span className={`folder-accessory folder-accessory-${treatment.accessory}`} aria-hidden="true">
+                        {treatment.code}
+                      </span>
 
                       <div className="folder-art" style={artworkStyle}>
                         <span className="folder-art-inner" style={artworkInnerStyle}>
@@ -196,7 +200,6 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                       </div>
 
                       <span className={`folder-tape folder-tape-${treatment.tape}`} aria-hidden="true" />
-                      <span className="folder-stamp" aria-hidden="true">TP / FILED</span>
                     </div>
                   </div>
 
