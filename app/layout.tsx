@@ -38,21 +38,28 @@ const marker = Permanent_Marker({
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
+  /* The home route is the only one that ever surfaces these three — every
+     other route calls pageMetadata with its own `title`, which overrides all
+     three below rather than filling the template. So this is the browser tab,
+     the share-sheet title, and the link-preview headline for the site itself,
+     and all three used to read as the full tagline sentence. A share sheet
+     is read at a glance; a name is what belongs there, the way the OG image's
+     own wordmark already only says the name. */
   title: {
-    default: site.title,
+    default: site.name,
     template: `%s — ${site.shortName}`,
   },
   description: site.description,
   openGraph: {
-    title: site.title,
+    title: site.name,
     description: site.description,
     url: site.url,
-    siteName: site.title,
+    siteName: site.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: site.title,
+    title: site.name,
     description: site.description,
   },
 };

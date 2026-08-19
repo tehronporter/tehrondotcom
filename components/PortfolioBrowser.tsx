@@ -27,20 +27,6 @@ const reducedMotion = () =>
  */
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
-/**
- * "brand-identity" -> "BI". A filing code, not a label.
- *
- * The tab used to carry the project's full name, which at four columns was a
- * title cut off mid-word — `02 CAN'T BUY RE…` — three centimetres above the
- * same title set clean and complete under the card. It was the only broken
- * typography left on the wall, and it bought nothing: the shorthand written
- * across the paper already says which project this is. A two-letter code is
- * what a real tab carries, it is in a different register from the readable
- * category below, and it cannot truncate at any width.
- */
-const practiceCode = (categorySlug: string) =>
-  categorySlug.split("-").map((word) => word[0] ?? "").join("").toUpperCase().slice(0, 3);
-
 type FolderTreatment = {
   accessory?: "pin" | "sticker";
   code?: string;
@@ -209,6 +195,12 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
   const view = searchParams.get("view") === "list" ? "list" : "grid";
   const visibleProjects = discipline ? projects.filter((project) => project.categorySlug === discipline) : projects;
   const activePractice = practices.find((practice) => practice.slug === discipline);
+  /* The tab's second line: the same short word the mobile filter pills use
+     ("Brand", "Product"), not a code invented for the tab. A two-letter
+     filing code was tried here first and read as an error code, not as
+     something anyone would file a folder under. */
+  const practiceShortLabel = (categorySlug: string) =>
+    practices.find((practice) => practice.slug === categorySlug)?.shortLabel.toUpperCase() ?? "";
   /* Index rather than the project itself, because the preview's caption
      numbers it the same way the rows do — by position in this collection. */
   const activeListIndex = Math.max(
@@ -340,7 +332,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
 
                     <span className="folder-tab-copy" aria-hidden="true">
                       <strong>{numberAt(position)}</strong>
-                      <span>{practiceCode(project.categorySlug)}</span>
+                      <span>{practiceShortLabel(project.categorySlug)}</span>
                     </span>
                     {/* Decorative: the tab above it and the heading below it
                         already carry this project's name to a screen reader. */}

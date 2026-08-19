@@ -28,8 +28,12 @@ export function pageMetadata({
 }): Metadata {
   const url = new URL(path, site.url).toString();
   /* The title template lives in the layout and only applies to the `title`
-     field, so the OG title has to be composed here to match what the tab says. */
-  const ogTitle = title ? `${title} — ${site.shortName}` : site.title;
+     field, so the OG title has to be composed here to match what the tab says.
+     The home-page fallback is the bare name rather than the full tagline: a
+     share sheet or a link-preview card is read at a glance, at a size where
+     "Tehron Porter — Designer & Creative Technologist" wraps to two or three
+     lines before the description even starts. */
+  const ogTitle = title ? `${title} — ${site.shortName}` : site.name;
 
   return {
     ...(title ? { title } : {}),
@@ -39,7 +43,7 @@ export function pageMetadata({
       title: ogTitle,
       description,
       url,
-      siteName: site.title,
+      siteName: site.name,
       type: "website",
     },
     twitter: {
