@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Lines } from "@/components/Lines";
 import { about } from "@/content/pages";
+import { pageMetadata } from "@/lib/meta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/about",
   title: "About",
   description: about.intro[0],
-};
+});
 
 export default function AboutPage() {
   return (

@@ -3,9 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
+import { Lightbox, type LightboxItem } from "@/components/Lightbox";
 import { Icon } from "@/components/Icon";
 import { categories, categoryLabel, getProject } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
+import { imageProps } from "@/lib/images";
+import { pageMetadata } from "@/lib/meta";
 import { MEDIA_SIZES } from "@/lib/sizes";
 import { titleCase } from "@/lib/text";
 
@@ -21,10 +24,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { category, project: projectSlug } = await params;
   const found = getProject(category, projectSlug);
   if (!found) return {};
-  return {
+  return pageMetadata({
+    path: `/work/${category}/${projectSlug}`,
     title: titleCase(found.project.name),
     description: found.project.intro,
-  };
+  });
 }
 
 /**
@@ -67,6 +71,31 @@ export default async function ProjectPage({ params }: Params) {
   const supportingMedia = project.media.filter((_, index) => index !== heroIndex);
   const [leadSection, ...remainingSections] = project.sections;
 
+  /* One flat list for the whole page, in the order the images are painted —
+     hero first, then the gallery — so the lightbox's arrow keys walk the case
+     study the way the page reads. Entries with no `src` are placeholders with
+     nothing to enlarge, so they are left out, which is why the index a figure
+     is given is looked up here rather than taken from `project.media`. */
+  const lightboxItems: LightboxItem[] = [hero, ...supportingMedia]
+    .filter((item): item is Media => Boolean(item?.src))
+    .map((item) => {
+      const source = item.src as string;
+      const { width, height, blurDataURL } = imageProps(source, { width: 1600, height: 1000 });
+      return {
+        src: source,
+        alt: item.alt,
+        caption: item.caption,
+        width,
+        height,
+        ...(blurDataURL ? { blurDataURL } : {}),
+      };
+    });
+  const at = (src?: string) => {
+    if (!src) return undefined;
+    const found = lightboxItems.findIndex((entry) => entry.src === src);
+    return found === -1 ? undefined : found;
+  };
+
   return (
     <div className="page">
       <div className="page-head">
@@ -101,6 +130,7 @@ export default async function ProjectPage({ params }: Params) {
             sizes={MEDIA_SIZES.full}
             priority
             heroName={hero.src && hero.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
+            lightboxIndex={at(hero.src)}
           />
         </section>
       ) : null}
@@ -145,12 +175,22 @@ export default async function ProjectPage({ params }: Params) {
           aria-label="Project gallery"
         >
           {supportingMedia.map((item, index) => (
-            <CaseStudyMedia key={`${item.src ?? item.alt}-${index}`} item={item} sizes={sizesFor(project, item)} />
+            <CaseStudyMedia
+              key={`${item.src ?? item.alt}-${index}`}
+              item={item}
+              sizes={sizesFor(project, item)}
+              lightboxIndex={at(item.src)}
+            />
           ))}
         </section>
       ) : null}
 
       <CaseSections sections={remainingSections} className="case-body-outcome" />
+
+      {/* One dialog for the page, opened by delegation off the `data-lightbox`
+          attribute each figure renders. Renders nothing when the project has no
+          real images. */}
+      <Lightbox items={lightboxItems} />
 
       {next.slug !== project.slug && (
         <Link href={`/work/${category.slug}/${next.slug}`} className="next-project">

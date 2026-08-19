@@ -3,11 +3,13 @@ import { Icon } from "@/components/Icon";
 import { Lines } from "@/components/Lines";
 import { contact } from "@/content/pages";
 import { site } from "@/content/site";
+import { pageMetadata } from "@/lib/meta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/contact",
   title: "Contact",
   description: contact.intro[0],
-};
+});
 
 export default function ContactPage() {
   const projectEmail = `mailto:${site.email}?subject=${encodeURIComponent("Project inquiry")}&body=${encodeURIComponent("Hi Tehron,\n\nI'm building...\n\nTimeline:\nProject type:\n")}`;

@@ -24,6 +24,8 @@ const paths = {
   share: "M12 16V4M8 8l4-4 4 4M5 13v7h14v-7",
   more: "M5 12h.01M12 12h.01M19 12h.01",
   check: "m5 12 4 4L19 6",
+  close: "M6 6l12 12M18 6 6 18",
+  expand: "M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7",
 } as const;
 
 export type IconName = keyof typeof paths;

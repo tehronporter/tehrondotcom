@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PortfolioPage } from "@/components/PortfolioPage";
 import { categories, categoryLabel, collectionProjects, getCategory } from "@/content/projects";
+import { pageMetadata } from "@/lib/meta";
 import { titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string }> };
@@ -14,10 +15,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { category: slug } = await params;
   const category = getCategory(slug);
   if (!category) return {};
-  return {
+  return pageMetadata({
+    path: `/work/${category.slug}`,
     title: titleCase(categoryLabel(category)),
     description: category.summary,
-  };
+  });
 }
 
 export default async function CategoryPage({ params }: Params) {

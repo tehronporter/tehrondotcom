@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
     default: site.title,
-    template: `%s — ${site.name.split(" ").map((w) => w[0] + w.slice(1).toLowerCase()).join(" ")}`,
+    template: `%s — ${site.shortName}`,
   },
   description: site.description,
   openGraph: {

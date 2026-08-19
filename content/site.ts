@@ -5,6 +5,9 @@
 
 export const site = {
   name: "TEHRON PORTER",
+  /** Sentence-case name, for the places the all-caps lockup would shout: the
+      browser tab, the title template, and every og:title. */
+  shortName: "Tehron Porter",
   role: "DESIGNER & CREATIVE TECHNOLOGIST",
   email: "tehronporter@gmail.com",
   location: "LAS VEGAS / REMOTE",

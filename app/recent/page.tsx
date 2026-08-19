@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { PortfolioPage } from "@/components/PortfolioPage";
+import { pageMetadata } from "@/lib/meta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
+  path: "/recent",
   title: "Latest Work",
   description: "A selection of the latest published projects from Tehron Porter.",
-};
+});
 
 export default function RecentPage() {
   return (
