@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { PortfolioBrowser } from "@/components/PortfolioBrowser";
 import { ProfilePanel } from "@/components/ProfilePanel";
-import { collectionProjects, type BrowserProject, type ProjectCollection } from "@/content/projects";
+import { collectionProjects, livePractices, type BrowserProject, type ProjectCollection } from "@/content/projects";
 
 export function PortfolioPage({
   collection,
@@ -15,6 +15,7 @@ export function PortfolioPage({
   projects?: BrowserProject[];
 }) {
   const items = projects ?? collectionProjects(collection ?? "work");
+  const practices = livePractices();
 
   return (
     <div className="page portfolio-page">
@@ -24,7 +25,7 @@ export function PortfolioPage({
       </header>
 
       <Suspense fallback={<div className="project-browser browser-loading" aria-hidden="true" />}>
-        <PortfolioBrowser projects={items} />
+        <PortfolioBrowser projects={items} practices={practices} />
       </Suspense>
 
       <ProfilePanel />

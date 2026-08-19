@@ -218,7 +218,16 @@ img { display: block; max-width: 100%; }
 .project-card-copy { position: relative; padding: .8rem 1rem 0 .12rem; }
 .project-card-title { display: flex; gap: .55rem; font-size: 12px; font-weight: 720; line-height: 1.35; }
 .project-card-title span { color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
-.project-card-meta { margin-top: .35rem; overflow: hidden; color: var(--muted); font-size: 10px; letter-spacing: .035em; line-height: 1.35; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+/* Wraps rather than truncating. `white-space: nowrap` with an ellipsis turned
+   half these into "BRAND IDENTITY / CREATI…" — the category is the one thing
+   the card is classifying the project by, so cutting it mid-word costs the
+   card its whole job. Two lines, then it clips. */
+.project-card-meta { display: -webkit-box; overflow: hidden; margin-top: .35rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--muted); font-size: 10px; letter-spacing: .035em; line-height: 1.35; text-transform: uppercase; }
+/* Clipped in grid view on a pointer device, where the card is one of many in a
+   scannable wall and the description would flatten the rhythm. It is still in
+   the DOM and still announced — and on touch, below, it becomes visible, since
+   there is no hover to reveal anything and a phone shows few enough cards that
+   the extra line reads as detail rather than noise. */
 .project-card-description { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .project-card-dot { position: absolute; right: .05rem; bottom: .15rem; width: 8px; height: 8px; }
 .project-list-arrow { display: none; }
@@ -393,7 +402,19 @@ a.contact-primary:hover { border-color: var(--blue-dark); background: var(--blue
   .is-list .project-card-link { grid-template-columns: 94px minmax(0,1fr) auto; gap: .85rem; min-height: 96px; padding-inline: 0; }
   .is-list .folder-cover { width: 88px; }
   .is-list .project-card-copy { display: block; }
-  .is-list .project-card-description { display: none; }
+
+  /* The written line is the only thing on a card that says what the project
+     actually is. It was clipped in grid view and display:none in list view at
+     this width, so on a phone — most of the traffic — it was never shown in
+     either. Both views get it back; list view keeps it to one line so the row
+     height holds. */
+  .project-card-description { position: static; width: auto; height: auto; overflow: hidden; margin-top: .3rem; clip-path: none; color: var(--muted); font-size: 11px; line-height: 1.45; }
+  .is-list .project-card-description { display: -webkit-box; margin-top: .2rem; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+
+  /* Up to the title row, out of the copy's right gutter. Pinned to the bottom
+     right it used to sit just past the meta line; with a description below it
+     landed at the end of the last sentence and read as punctuation. */
+  .project-card-dot { top: .95rem; right: .15rem; bottom: auto; }
   .profile-panel, .facts, .case-body, .prose, .contact-links { grid-template-columns: 1fr; }
   .profile-panel > * + * { border-top: 1px solid var(--rule); border-left: 0; }
   .profile-name { place-content: start; }
@@ -523,6 +544,21 @@ a.contact-primary:hover { border-color: var(--blue-dark); background: var(--blue
 }
 
 .lightbox :focus-visible { outline: 2px solid var(--surface); outline-offset: 3px; }
+
+/* Narrow screens: the arrows dock into a row under the caption.
+
+   This block has to sit after the rules above, not up in the other
+   max-width: 520px section — a media query adds no specificity, so the only
+   thing separating these from the base `top`/`left` they override is source
+   order. Declared earlier, `top: auto` and `left: 50%` lost while the
+   `margin-left` beside them won, which threw both arrows off-screen. */
+@media (max-width: 520px) {
+  .lightbox { --lightbox-h: calc(100dvh - (2 * var(--lightbox-pad)) - 7.5rem); }
+  .lightbox-figure { padding-bottom: 3.6rem; }
+  .lightbox-nav { top: auto; bottom: var(--lightbox-pad); margin-top: 0; }
+  .lightbox-nav.prev { left: 50%; margin-left: -3.1rem; }
+  .lightbox-nav.next { right: 50%; margin-right: -3.1rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

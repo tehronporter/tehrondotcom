@@ -10,6 +10,7 @@
 
 import type { IconName } from "@/components/Icon";
 import type { FrameStyle } from "@/components/frames";
+import type { Practice } from "@/content/practices";
 import { imageMeta } from "@/lib/images";
 import type { WallDensity } from "@/lib/sizes";
 
@@ -97,6 +98,8 @@ export type Category = {
   slug: string;
   /** Rendered as stacked lines on the home card and category header. */
   titleLines: string[];
+  /** One word for the mobile practice pills, where the full label will not fit. */
+  shortLabel: string;
   icon: IconName;
   /** Home card tag list, also joined into the category subhead. */
   tags: string[];
@@ -108,6 +111,7 @@ export type Category = {
 export const categories: Category[] = [
   {
     slug: "brand-identity",
+    shortLabel: "Brand",
     titleLines: ["BRAND", "IDENTITY."],
     icon: "crop",
     tags: ["BRAND DESIGN", "VISUAL IDENTITY", "CAMPAIGNS", "ART DIRECTION"],
@@ -576,6 +580,7 @@ export const categories: Category[] = [
   },
   {
     slug: "creative-technology",
+    shortLabel: "Technology",
     titleLines: ["CREATIVE", "TECHNOLOGY."],
     icon: "world",
     tags: ["SOFTWARE", "WEB EXPERIENCES", "AI & AUTOMATION", "INTERACTIVE SYSTEMS"],
@@ -622,6 +627,7 @@ export const categories: Category[] = [
   },
   {
     slug: "product-development",
+    shortLabel: "Product",
     titleLines: ["PRODUCT", "DEVELOPMENT."],
     icon: "cube",
     tags: ["PRODUCT DESIGN", "CONCEPT DEVELOPMENT", "PROTOTYPING", "EXECUTION"],
@@ -915,13 +921,77 @@ export const categories: Category[] = [
   },
 ];
 
+/* ---------- what is actually live ---------- */
+
+/**
+ * The one test for "this project is public": you have said so, and there is an
+ * image to show for it. Both halves are load-bearing and independent —
+ * `published` is your decision, `featured` is whether the work exists yet.
+ */
+export const isLive = (project: Project) => project.published === true && Boolean(project.featured?.src);
+
+/**
+ * Categories that have at least one live project, carrying only those projects.
+ *
+ * Everything that describes the site to the outside world is built from this
+ * rather than from `categories`: the static params, the sitemap, and the
+ * practice list in the sidebar. Reading the raw array instead is what let three
+ * image-less placeholder projects get prerendered and indexed, and what left
+ * Creative Technology routable with no way to navigate to it.
+ */
+export const liveCategories = (): Category[] =>
+  categories
+    .map((category) => ({ ...category, projects: category.projects.filter(isLive) }))
+    .filter((category) => category.projects.length > 0);
+
+/**
+ * The practices offered in the sidebar and the mobile filter pills.
+ *
+ * Derived rather than declared, so a practice can never appear with nothing
+ * behind it and can never go missing once it has work — the failure the
+ * hand-maintained list had in both directions at once.
+ *
+ * Returned as plain data so it can be handed to the client components that
+ * render it. They must not import this module directly: it reaches the image
+ * manifest through lib/images, and a value import from a client component would
+ * pull all ~17KB of that into the browser bundle.
+ */
+export const livePractices = (): Practice[] =>
+  liveCategories().map((category) => ({
+    slug: category.slug,
+    label: titleCaseLabel(categoryLabel(category)),
+    shortLabel: category.shortLabel,
+  }));
+
 /* ---------- lookups used by the route files ---------- */
 
-export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
+/**
+ * A category by slug, from the live set only.
+ *
+ * Deliberately not `categories.find(...)`. `generateStaticParams` no longer
+ * prerenders the empty ones, but `dynamicParams` defaults to true — so without
+ * this an unpublished category still rendered on demand at request time, which
+ * is exactly the URL the prerender list was changed to stop serving. Returning
+ * undefined is what turns it into the 404 it should be.
+ */
+export const getCategory = (slug: string) => liveCategories().find((c) => c.slug === slug);
 
 /** A category's stacked title lines flattened to one label, e.g. "BRAND IDENTITY". */
 export const categoryLabel = (category: Category) => category.titleLines.join(" ").replace(".", "");
 
+/** "BRAND IDENTITY" -> "Brand Identity", for the places the caps would shout. */
+const titleCaseLabel = (label: string) =>
+  label
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+/**
+ * A project and its neighbours, from the live set only — so `next` can never
+ * hand a visitor to a placeholder, and an unpublished slug 404s rather than
+ * rendering on demand.
+ */
 export const getProject = (categorySlug: string, projectSlug: string) => {
   const category = getCategory(categorySlug);
   if (!category) return undefined;

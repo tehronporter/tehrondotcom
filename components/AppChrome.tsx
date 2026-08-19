@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Icon, type IconName } from "@/components/Icon";
-import { isPortfolioPractice, portfolioPractices, practiceFromPath } from "@/content/practices";
+import { isPractice, practiceFromPath, type Practice } from "@/content/practices";
 import { site } from "@/content/site";
 
 const primaryNavigation: Array<{ label: string; href: string; icon: IconName }> = [
@@ -36,11 +36,13 @@ function labelFromPath(pathname: string) {
   return decodeURIComponent(last).replaceAll("-", " ").toUpperCase();
 }
 
-export function AppNavigation() {
+export function AppNavigation({ practices }: { practices: Practice[] }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const requestedDiscipline = searchParams.get("discipline");
-  const activeDiscipline = practiceFromPath(pathname) ?? (isPortfolioPractice(requestedDiscipline) ? requestedDiscipline : null);
+  const activeDiscipline =
+    practiceFromPath(pathname, practices) ??
+    (isPractice(requestedDiscipline, practices) ? requestedDiscipline : null);
   const base = collectionBase(pathname);
   const disciplineHref = (slug?: string) => {
     const params = new URLSearchParams();
@@ -81,7 +83,7 @@ export function AppNavigation() {
           <span className="discipline-dot all" />
           All work
         </Link>
-        {portfolioPractices.map((discipline) => (
+        {practices.map((discipline) => (
           <Link
             key={discipline.slug}
             href={disciplineHref(discipline.slug)}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Icon } from "@/components/Icon";
 import { Lines } from "@/components/Lines";
 import { about } from "@/content/pages";
+import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/meta";
 
 export const metadata: Metadata = pageMetadata({
@@ -58,6 +60,11 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+          <p className="cat-back">
+            <a className="back-link" href={site.resume} target="_blank" rel="noreferrer noopener">
+              FULL RÉSUMÉ (PDF) <Icon name="arrow-up-right" size={13} />
+            </a>
+          </p>
         </div>
       </section>
     </div>

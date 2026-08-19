@@ -5,7 +5,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
 import { Lightbox, type LightboxItem } from "@/components/Lightbox";
 import { Icon } from "@/components/Icon";
-import { categories, categoryLabel, getProject } from "@/content/projects";
+import { categoryLabel, getProject, liveCategories } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
 import { imageProps } from "@/lib/images";
 import { pageMetadata } from "@/lib/meta";
@@ -14,8 +14,10 @@ import { titleCase } from "@/lib/text";
 
 type Params = { params: Promise<{ category: string; project: string }> };
 
+/* Live projects only — `liveCategories` has already dropped the unpublished
+   ones, so a placeholder with no artwork never becomes a page. */
 export function generateStaticParams() {
-  return categories.flatMap((c) =>
+  return liveCategories().flatMap((c) =>
     c.projects.map((p) => ({ category: c.slug, project: p.slug }))
   );
 }

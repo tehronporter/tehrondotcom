@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { categories, categoryLabel, getProject } from "@/content/projects";
+import { categoryLabel, getProject, liveCategories } from "@/content/projects";
 import { site } from "@/content/site";
 import { OG_CANVAS, OG_INK, OG_MUTED, OG_RULE, OG_SIZE, OG_SURFACE, artwork, ogFonts, practiceAccent } from "@/lib/og";
 
@@ -17,7 +17,7 @@ export const size = OG_SIZE;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return categories.flatMap((c) => c.projects.map((p) => ({ category: c.slug, project: p.slug })));
+  return liveCategories().flatMap((c) => c.projects.map((p) => ({ category: c.slug, project: p.slug })));
 }
 
 /** The box the artwork is fitted into, leaving the left column for the type. */

@@ -25,6 +25,18 @@ export const site = {
   description:
     "Design, technology, and culture. Brands, products, and digital experiences. Las Vegas / Remote.",
 
+  /**
+   * Served from `public/`, so it has a real URL. The authored source stays in
+   * `resume/` at the repo root — run that folder's build to regenerate, then
+   * copy the PDF here. Only what is under `public/` is publicly reachable.
+   *
+   * Deliberately not `public/resume/`: `.git/info/exclude` carries a bare
+   * `resume/` pattern, which matches a directory of that name at any depth. A
+   * copy placed there is silently untracked, so it never deploys and this link
+   * 404s in production while working perfectly in dev.
+   */
+  resume: "/Tehron-Porter-Resume.pdf",
+
   /** Footer CTA, shared by every page. */
   cta: {
     headline: ["LET'S MAKE", "SOMETHING REAL."],

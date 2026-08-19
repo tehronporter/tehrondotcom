@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { MouseEvent } from "react";
 import { Icon } from "@/components/Icon";
 import type { BrowserProject } from "@/content/projects";
-import { isPortfolioPractice, portfolioPractices, practiceFromPath } from "@/content/practices";
+import { isPractice, practiceFromPath, type Practice } from "@/content/practices";
 import { BROWSER_COVER_SIZES } from "@/lib/sizes";
 import { titleCase } from "@/lib/text";
 
@@ -18,16 +18,16 @@ type ViewTransitionDocument = Document & {
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function PortfolioBrowser({ projects }: { projects: BrowserProject[] }) {
+export function PortfolioBrowser({ projects, practices }: { projects: BrowserProject[]; practices: Practice[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const requestedDiscipline = searchParams.get("discipline");
-  const routeDiscipline = practiceFromPath(pathname);
-  const discipline = routeDiscipline ?? (isPortfolioPractice(requestedDiscipline) ? requestedDiscipline : null);
+  const routeDiscipline = practiceFromPath(pathname, practices);
+  const discipline = routeDiscipline ?? (isPractice(requestedDiscipline, practices) ? requestedDiscipline : null);
   const view = searchParams.get("view") === "list" ? "list" : "grid";
   const visibleProjects = discipline ? projects.filter((project) => project.categorySlug === discipline) : projects;
-  const activePractice = portfolioPractices.find((practice) => practice.slug === discipline);
+  const activePractice = practices.find((practice) => practice.slug === discipline);
   const collectionBase = pathname === "/" || pathname === "/featured" || pathname === "/recent" ? pathname : "/";
   const filterHref = (slug?: string) => {
     const params = new URLSearchParams();
@@ -64,7 +64,7 @@ export function PortfolioBrowser({ projects }: { projects: BrowserProject[] }) {
           <Link href={filterHref()} className={!discipline ? "is-active" : undefined} aria-current={!discipline ? "true" : undefined}>
             All
           </Link>
-          {portfolioPractices.map((practice) => (
+          {practices.map((practice) => (
             <Link
               key={practice.slug}
               href={filterHref(practice.slug)}

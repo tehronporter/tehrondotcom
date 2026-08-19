@@ -1,15 +1,21 @@
 import { Suspense } from "react";
 import { AppNavigation, MobileNavigation, WorkspaceScrollReset, WorkspaceToolbar } from "@/components/AppChrome";
+import { livePractices } from "@/content/projects";
 
 function ChromeFallback({ className }: { className: string }) {
   return <div className={className} aria-hidden="true" />;
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  /* Resolved here, on the server, and passed down. The sidebar is a client
+     component and must not reach into content/projects.ts itself — see the note
+     in content/practices.ts. */
+  const practices = livePractices();
+
   return (
     <div className="app-frame">
       <Suspense fallback={<ChromeFallback className="app-sidebar" />}>
-        <AppNavigation />
+        <AppNavigation practices={practices} />
       </Suspense>
 
       <div className="app-workspace">

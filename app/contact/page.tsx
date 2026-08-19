@@ -55,6 +55,13 @@ export default function ContactPage() {
           </a>
         ))}
 
+        <a className="contact-link" href={site.resume} target="_blank" rel="noreferrer noopener">
+          <span className="k">RÉSUMÉ</span>
+          <span className="v">
+            PDF <Icon name="arrow-up-right" size={16} />
+          </span>
+        </a>
+
         <div className="contact-link">
           <span className="k">BASED</span>
           <span className="v">{site.location}</span>
