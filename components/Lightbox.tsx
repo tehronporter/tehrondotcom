@@ -114,8 +114,19 @@ export function Lightbox({ items }: { items: LightboxItem[] }) {
      hardcoded value, since the stylesheet, not this, owns the resting state. */
   useEffect(() => {
     if (index === null) return;
-    const scroller: HTMLElement =
-      document.querySelector<HTMLElement>(".workspace-scroll") ?? document.body;
+    /* Whichever element is actually scrolling right now, which is not the same
+       one at every width. On desktop the workspace pane scrolls inside a body
+       that is pinned; below the mobile breakpoint the stylesheet hands scrolling
+       back to the document and lets the pane grow. Locking a hardcoded element
+       therefore covers one layout and silently misses the other — the case study
+       kept moving under the open dialog on the width that was not chosen. */
+    const scroller =
+      [
+        document.querySelector<HTMLElement>(".workspace-scroll"),
+        document.scrollingElement as HTMLElement | null,
+        document.body,
+      ].find((el) => el && el.scrollHeight > el.clientHeight) ?? document.body;
+
     const previous = scroller.style.overflow;
     scroller.style.overflow = "hidden";
     return () => {

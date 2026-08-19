@@ -334,12 +334,19 @@ img { display: block; max-width: 100%; }
 .list-row .k { color: var(--muted); }
 .contact-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; padding-bottom: 2.5rem; }
 .contact-link { display: flex; min-height: 92px; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--rule); border-radius: 12px; padding: 1.2rem 1.35rem; background: var(--surface); transition: border-color var(--speed) ease, color var(--speed) ease, transform var(--speed) var(--ease); }
-a.contact-link:hover { transform: translateY(-2px); border-color: #b9c3ff; color: var(--blue); }
-.contact-primary { border-color: var(--blue); background: var(--blue); color: #fff; }
-.contact-primary .k { color: rgba(255,255,255,.86); }
-.contact-primary:hover { background: var(--blue-dark); color: #fff !important; }
 .contact-link .k { color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
 .contact-link .v { display: inline-flex; align-items: center; gap: .55rem; font-size: 12px; }
+a.contact-link:hover { transform: translateY(-2px); border-color: #b9c3ff; color: var(--blue); }
+
+/* The primary card last, and matching the selector shape it overrides. Both
+   `.contact-primary .k` and `.contact-link .k` are two classes, so source order
+   is the whole tiebreak — declared above the grey it was cancelled by it, which
+   left START A PROJECT sitting at 1.35:1 on the blue. Same reason the hover
+   uses `a.contact-primary:hover`: `a.contact-link:hover` carries an element
+   selector, so a bare class could not reach it without !important. */
+.contact-primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+.contact-primary .k { color: rgba(255,255,255,.86); }
+a.contact-primary:hover { border-color: var(--blue-dark); background: var(--blue-dark); color: #fff; }
 .cat-back { margin-top: 1.5rem; }
 .back-link { display: inline-flex; align-items: center; gap: .5rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .06em; }
 
