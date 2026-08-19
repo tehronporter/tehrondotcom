@@ -27,11 +27,40 @@ const reducedMotion = () =>
  */
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
+type FolderTreatment = {
+  code: string;
+  mark: string;
+  note: string;
+  tab: "left" | "middle" | "right";
+  tape: "black" | "cream" | "white";
+};
+
+const folderTreatments: Record<string, FolderTreatment> = {
+  "blue-t-shirt": { code: "BTS / ARCHIVE", mark: "☆", note: "ONE SHIRT. WHOLE WORLD.", tab: "left", tape: "white" },
+  "cant-buy-respect": { code: "CBR / NOT FOR SALE", mark: "⊘", note: "SEEN BACKSTAGE", tab: "right", tape: "black" },
+  "karl-kani": { code: "KK / DESIGN FILE", mark: "↗", note: "COLOR + CUT NOTES", tab: "middle", tape: "cream" },
+  "indivisual-threads": { code: "IT / CAPSULE 01", mark: "✳", note: "SPRAY / PRINT / REPEAT", tab: "left", tape: "black" },
+  "westside-gunn-saucony": { code: "WSG / FLYER SET", mark: "★", note: "BATTLE CARD PROOF", tab: "right", tape: "cream" },
+  "amine-club-banana": { code: "ACB / COLORWAYS", mark: ":)", note: "PATTERN TEST — PASS", tab: "middle", tape: "white" },
+  "red-panda-academy": { code: "RPA / MARK SYSTEM", mark: "◎", note: "CREST STUDY", tab: "left", tape: "cream" },
+  "tomorrow-is-yesterday": { code: "TIY / OBJECT FILE", mark: "☼", note: "SKETCH → PRODUCTION", tab: "right", tape: "white" },
+  "thank-you-dilla": { code: "TYD / TRIBUTE", mark: "♡", note: "MADE, NOT SET", tab: "middle", tape: "black" },
+  "222-rings": { code: "222 / PROTOTYPE", mark: "222", note: "FORM STUDY", tab: "left", tape: "cream" },
+  "apple-retail-merch": { code: "ARM / COLOR FILE", mark: "✓", note: "PROPOSED → PRODUCED", tab: "right", tape: "white" },
+};
+
+const defaultTreatment: FolderTreatment = {
+  code: "TP / WORK FILE",
+  mark: "+",
+  note: "ARCHIVE COPY",
+  tab: "left",
+  tape: "cream",
+};
+
 export function PortfolioBrowser({ projects, practices }: { projects: BrowserProject[]; practices: Practice[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [selectedHref, setSelectedHref] = useState<string | null>(null);
   const [listPreviewHref, setListPreviewHref] = useState<string | null>(null);
   const requestedDiscipline = searchParams.get("discipline");
@@ -104,7 +133,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
         <section className="project-browser is-grid" aria-label="Portfolio projects">
           {visibleProjects.map((project, position) => {
             const cover = project.browser.cover;
-            const revealPreview = hoveredHref === project.href && project.browser.hoverPreview.length > 0;
+            const treatment = folderTreatments[project.slug] ?? defaultTreatment;
             const artworkStyle = { background: cover?.background } satisfies CSSProperties;
             const artworkInnerStyle = {
               transform: cover?.scale ? `scale(${cover.scale})` : undefined,
@@ -125,53 +154,49 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                   href={project.href}
                   className="project-card-link"
                   onClick={openProject(project.href)}
-                  onMouseEnter={() => setHoveredHref(project.href)}
-                  onMouseLeave={() => setHoveredHref(null)}
                 >
-                  <div className="folder-cover">
-                    {/* Back panel and tab. Sits behind the artwork rather than
-                        being cut out of it — see the note in globals.css. */}
+                  <div className={`folder-cover folder-tab-${treatment.tab}`}>
                     <span className="folder-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-mid" aria-hidden="true" />
-                    {revealPreview ? project.browser.hoverPreview.map((preview, previewIndex) => (
-                      <span className={`folder-preview folder-preview-${previewIndex + 1}`} key={preview.src} aria-hidden="true">
-                        <Image
-                          src={preview.src}
-                          alt=""
-                          width={preview.width}
-                          height={preview.height}
-                          sizes={BROWSER_COVER_SIZES}
-                          className="folder-preview-image"
-                          {...(preview.blurDataURL
-                            ? { placeholder: "blur" as const, blurDataURL: preview.blurDataURL }
-                            : {})}
-                        />
-                      </span>
-                    )) : null}
-                    {/* Front panel: the work, printed across the whole face. */}
-                    <div className="folder-art" style={artworkStyle}>
-                      <span className="folder-art-inner" style={artworkInnerStyle}>
-                        <Image
-                          src={project.featured.src}
-                          alt={project.featured.alt}
-                          width={project.featured.width}
-                          height={project.featured.height}
-                          sizes={BROWSER_COVER_SIZES}
-                          className="folder-image"
-                          style={{
-                            objectFit: cover?.fit ?? "cover",
-                            objectPosition: cover?.position ?? project.featured.focus,
-                          }}
-                          ref={(element) => {
-                            if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
-                          }}
-                          priority={position === 0}
-                          {...(project.featured.blurDataURL
-                            ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
-                            : {})}
-                        />
-                      </span>
+                    <span className="folder-tab-copy" aria-hidden="true">
+                      <strong>{numberAt(position)}</strong>
+                      <span>{project.name}</span>
+                    </span>
+
+                    <div className="folder-face">
+                      <span className="folder-grain" aria-hidden="true" />
+                      <span className="folder-crease" aria-hidden="true" />
+                      <span className="folder-archive-code" aria-hidden="true">{treatment.code}</span>
+                      <span className="folder-hand-note" aria-hidden="true">{treatment.note}</span>
+                      <span className="folder-mark" aria-hidden="true">{treatment.mark}</span>
+
+                      <div className="folder-art" style={artworkStyle}>
+                        <span className="folder-art-inner" style={artworkInnerStyle}>
+                          <Image
+                            src={project.featured.src}
+                            alt={project.featured.alt}
+                            width={project.featured.width}
+                            height={project.featured.height}
+                            sizes={BROWSER_COVER_SIZES}
+                            className="folder-image"
+                            style={{
+                              objectFit: cover?.fit ?? "cover",
+                              objectPosition: cover?.position ?? project.featured.focus,
+                            }}
+                            ref={(element) => {
+                              if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
+                            }}
+                            priority={position === 0}
+                            {...(project.featured.blurDataURL
+                              ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
+                              : {})}
+                          />
+                        </span>
+                      </div>
+
+                      <span className={`folder-tape folder-tape-${treatment.tape}`} aria-hidden="true" />
+                      <span className="folder-stamp" aria-hidden="true">TP / FILED</span>
                     </div>
                   </div>
 
