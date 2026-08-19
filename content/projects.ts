@@ -9,10 +9,8 @@
  */
 
 import type { IconName } from "@/components/Icon";
-import type { FrameStyle } from "@/components/frames";
 import type { Practice } from "@/content/practices";
 import { imageMeta } from "@/lib/images";
-import type { WallDensity } from "@/lib/sizes";
 
 /**
  * The single image that represents a project on the home gallery wall.
@@ -44,8 +42,6 @@ export type ResolvedFeatured = Omit<Featured, "width" | "height"> & {
   height: number;
   blurDataURL?: string;
 };
-
-export type Orientation = "portrait" | "square" | "landscape";
 
 export type Media = {
   /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.webp". Omit for an empty frame. */
@@ -86,8 +82,6 @@ export type Project = {
   shortDescription?: string;
   /** The piece hung on the wall. No featured image, no wall slot. */
   featured?: Featured;
-  /** Overrides the frame otherwise chosen from the artwork's orientation. */
-  frameStyle?: FrameStyle;
   /** Opt-in. Absent or false keeps the project off the homepage. */
   published?: boolean;
   /** Curated order for the Featured collection. Absent keeps it out. */
@@ -264,7 +258,6 @@ export const categories: Category[] = [
         /* Blue T-Shirt is the other landscape on the wall and takes the default
            heavy ornate moulding — a slim vintage gilt keeps these two apart, and
            suits a white design sheet better than a wide carved frame would. */
-        frameStyle: "vintage",
         featured: {
           src: "/work/brand-identity/karl-kani/01-design-sheet.webp",
           alt: "Karl Kani apparel design sheet, navy and red colorway",
@@ -316,7 +309,6 @@ export const categories: Category[] = [
         /* Can't Buy Respect already holds the default "wide" frame for a square
            piece — "plain" keeps this one from doubling it and suits the flat
            graphic-tee artwork better than a heavier carved moulding would. */
-        frameStyle: "plain",
         featured: {
           src: "/work/brand-identity/indivisual-threads/01-red-tee-front.webp",
           alt: "Indivisual Threads spray-can icon on a red tee",
@@ -402,7 +394,6 @@ export const categories: Category[] = [
         /* The only portrait piece on the wall so far. Karl Kani already holds
            "vintage" for its landscape sheet — "ornate" instead, which also
            suits the maximalist poster style better than a slim gilt would. */
-        frameStyle: "ornate",
         featured: {
           src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.webp",
           alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
@@ -517,7 +508,6 @@ export const categories: Category[] = [
         /* The other squares on the wall hold "wide" (Can't Buy Respect), "plain"
            (Indivisual Threads), and "ornate" (222 Rings) — "vintage" completes
            the set and suits a crest-and-seal mark better than the rest would. */
-        frameStyle: "vintage",
         featured: {
           src: "/work/brand-identity/red-panda-academy/01-logo-mark.webp",
           alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
@@ -650,7 +640,6 @@ export const categories: Category[] = [
         /* Blue T-Shirt already holds the default "ornate" for a landscape piece,
            and Karl Kani holds "vintage" — plain keeps this one apart from both
            and suits a product concept better than a heavier carved moulding. */
-        frameStyle: "plain",
         featured: {
           src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.webp",
           alt: "Sky and sunflower Tomorrow Is Yesterday umbrellas on a retail shop floor",
@@ -739,7 +728,6 @@ export const categories: Category[] = [
         /* The other landscape pieces on the wall hold "ornate" (Blue T-Shirt),
            "vintage" (Karl Kani), and "plain" (Tomorrow Is Yesterday) — "wide"
            finishes the set and gives this one enough substance for a flat lay. */
-        frameStyle: "wide",
         featured: {
           src: "/work/product-development/thank-you-dilla/02-donut-typography.webp",
           alt: "THANK YOU DILLA! spelled out in glazed donuts",
@@ -793,7 +781,6 @@ export const categories: Category[] = [
         /* The other square piece on the wall, Can't Buy Respect, holds the
            default "wide"; Indivisual Threads already took "plain" — "ornate"
            suits the jewelry scale better than either would. */
-        frameStyle: "ornate",
         featured: {
           src: "/work/product-development/222-rings/01-222-rings-worn.webp",
           alt: "222 rings in red, yellow, and blue worn across three fingers",
@@ -863,7 +850,6 @@ export const categories: Category[] = [
            default "vintage"; Westside Gunn x Saucony holds "ornate" — "plain"
            keeps this one apart and suits a corporate colorway pitch better
            than either would. */
-        frameStyle: "plain",
         featured: {
           src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.webp",
           alt: "Forest green Apple retail shirt, one of the two new colorways proposed to replace the old palette",
@@ -1008,9 +994,9 @@ export const getProject = (categorySlug: string, projectSlug: string) => {
 /** Zero-padded display number, e.g. 0 -> "01". */
 export const num = (i: number) => String(i + 1).padStart(2, "0");
 
-/* ---------- home gallery wall ---------- */
+/* ---------- the project browser ---------- */
 
-/** A project flattened out of its category and ready to hang. */
+/** A project flattened out of its category, ready for the browser. */
 export type GalleryPiece = {
   slug: string;
   name: string;
@@ -1023,24 +1009,13 @@ export type GalleryPiece = {
   tags: string[];
   shortDescription: string;
   featured: ResolvedFeatured;
-  orientation: Orientation;
-  frameStyle: FrameStyle;
-};
-
-/* Squares get a band rather than an exact 1:1 so that a 1266x1243 photo isn't
-   treated as a landscape over 23 pixels. */
-const orientationOf = ({ width, height }: ResolvedFeatured): Orientation => {
-  const ratio = width / height;
-  if (ratio > 1.15) return "landscape";
-  if (ratio < 0.87) return "portrait";
-  return "square";
 };
 
 /**
  * Measured dimensions win over declared ones; a piece with neither is treated
  * as square, which is the orientation that crops the least badly when we are
  * guessing. Resizing preserves aspect ratio, so re-running the image pipeline
- * can never move a piece into a different moulding.
+ * can never move a piece into a different frame.
  */
 const resolveFeatured = (featured: Featured): ResolvedFeatured => {
   const meta = imageMeta(featured.src);
@@ -1053,25 +1028,9 @@ const resolveFeatured = (featured: Featured): ResolvedFeatured => {
 };
 
 /**
- * The frame a project gets when it doesn't name one. Orientation is the sensible
- * default — a heavy classical moulding suits a wide piece, a slim vintage one
- * suits a tall piece — and it means a newly published project always arrives
- * framed without a decision being required.
- *
- * Set `frameStyle` on a project to overrule it. That is the knob for keeping the
- * wall varied: two landscapes side by side both default to `ornate`, so give one
- * of them a different moulding when you want them to read apart.
- */
-const FRAME_FOR: Record<Orientation, FrameStyle> = {
-  landscape: "ornate",
-  portrait: "vintage",
-  square: "wide",
-};
-
-/**
- * Every project cleared to hang, in the order it appears in this file.
+ * Every published, featured project, in the order it appears in this file.
  * The two gates are independent on purpose: `published` is your decision that
- * the work is public, `featured` is the existence of an image to hang.
+ * the work is public, `featured` is the existence of an image to show for it.
  */
 export const galleryProjects = (): GalleryPiece[] =>
   categories
@@ -1080,33 +1039,26 @@ export const galleryProjects = (): GalleryPiece[] =>
         .filter((project) => project.published === true && project.featured?.src)
         .map((project) => ({ category, project })),
     )
-    .map(({ category, project }, globalIndex) => {
-        const featured = resolveFeatured(project.featured as Featured);
-        const orientation = orientationOf(featured);
-        return {
-          slug: project.slug,
-          name: project.name,
-          href: `/work/${category.slug}/${project.slug}`,
-          meta: project.meta,
-          categorySlug: category.slug,
-          categoryLabel: categoryLabel(category),
-          globalIndex,
-          featuredRank: project.featuredRank,
-          tags: project.tags ?? [],
-          shortDescription: project.shortDescription ?? project.intro,
-          featured,
-          orientation,
-          frameStyle: project.frameStyle ?? FRAME_FOR[orientation],
-        };
-      });
+    .map(({ category, project }, globalIndex) => ({
+      slug: project.slug,
+      name: project.name,
+      href: `/work/${category.slug}/${project.slug}`,
+      meta: project.meta,
+      categorySlug: category.slug,
+      categoryLabel: categoryLabel(category),
+      globalIndex,
+      featuredRank: project.featuredRank,
+      tags: project.tags ?? [],
+      shortDescription: project.shortDescription ?? project.intro,
+      featured: resolveFeatured(project.featured as Featured),
+    }));
 
 export type ProjectCollection = "work" | "featured" | "recent";
 
 /** Minimal, serializable shape passed from Server Components to the project browser. */
-export type BrowserProject = Omit<GalleryPiece, "tags" | "orientation" | "frameStyle">;
+export type BrowserProject = Omit<GalleryPiece, "tags">;
 
-const browserShape = ({ tags: _tags, orientation: _orientation, frameStyle: _frameStyle, ...project }: GalleryPiece) =>
-  project;
+const browserShape = ({ tags: _tags, ...project }: GalleryPiece) => project;
 
 /** Project sets used by the app-like portfolio browser. */
 export const collectionProjects = (collection: ProjectCollection): BrowserProject[] => {
@@ -1120,24 +1072,3 @@ export const collectionProjects = (collection: ProjectCollection): BrowserProjec
   if (collection === "recent") return all.slice(0, 6).map(browserShape);
   return all.map(browserShape);
 };
-
-/**
- * Filter keywords, computed from what is actually on the wall rather than
- * declared separately — which is why a filter can never appear with nothing
- * behind it, and why a new tag on a new project becomes a filter on its own.
- */
-export const galleryTags = (): string[] => {
-  const seen: string[] = [];
-  for (const piece of galleryProjects()) {
-    for (const tag of piece.tags) if (!seen.includes(tag)) seen.push(tag);
-  }
-  return seen;
-};
-
-/**
- * How busy the wall is. Drives frame size and spacing so a handful of pieces
- * hang large and deliberate while a full portfolio tightens into a salon wall —
- * without the layout ever being rewritten.
- */
-export const wallDensity = (count: number): WallDensity =>
-  count <= 4 ? "sparse" : count <= 9 ? "medium" : "dense";
