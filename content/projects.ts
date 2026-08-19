@@ -949,6 +949,24 @@ export const livePractices = (): Practice[] =>
     shortLabel: category.shortLabel,
   }));
 
+/**
+ * `/work/<category>` and `/work/<category>/<project>` -> the label the
+ * toolbar's breadcrumb shows for that level, for every live route at once.
+ *
+ * Flat rather than nested, because the toolbar only ever needs the one entry
+ * matching its current URL — a tree it would have to walk to get there is
+ * structure this has no use for.
+ */
+export const breadcrumbLabels = (): Record<string, string> =>
+  Object.fromEntries(
+    liveCategories().flatMap((category) => [
+      [`/work/${category.slug}`, titleCaseLabel(categoryLabel(category))],
+      ...category.projects.map(
+        (project) => [`/work/${category.slug}/${project.slug}`, project.name] as const,
+      ),
+    ]),
+  );
+
 /* ---------- lookups used by the route files ---------- */
 
 /**

@@ -26,14 +26,45 @@ function isPrimaryActive(href: string, pathname: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function labelFromPath(pathname: string) {
+/** href ("/work/brand-identity", "/work/brand-identity/blue-t-shirt") -> its label. */
+export type BreadcrumbLabels = Record<string, string>;
+
+/**
+ * Where you are, not what the page is titled. A category or case study route
+ * used to copy its own <h1> verbatim — reading the DOM after paint, no less —
+ * which meant the word sat twice within about 40px: once as this title, once
+ * again as the headline directly beneath it. The toolbar is the app's location
+ * bar; the page below it is the content. They only need to be the same string
+ * where there is nothing more specific to say, i.e. the four single-word
+ * collections.
+ *
+ * `labels` supplies the two levels a plain slug can't: a category's declared
+ * label ("brand-identity" -> "Brand Identity") and a project's actual name.
+ * Built once, server-side, in AppShell — see the note there on why this can't
+ * just import content/projects.ts itself. An href with no entry (nothing live
+ * at that slug) falls back to a titled version of the slug rather than
+ * disappearing, so a stale link still shows something legible.
+ */
+function breadcrumbTitle(pathname: string, labels: BreadcrumbLabels) {
   if (pathname === "/") return "WORK";
   if (pathname === "/featured") return "FEATURED";
   if (pathname === "/recent") return "LATEST";
   if (pathname === "/about") return "ABOUT";
   if (pathname === "/contact") return "CONTACT";
-  const last = pathname.split("/").filter(Boolean).at(-1) ?? "WORK";
-  return decodeURIComponent(last).replaceAll("-", " ").toUpperCase();
+
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments[0] !== "work") {
+    return decodeURIComponent(segments.at(-1) ?? "work").replaceAll("-", " ").toUpperCase();
+  }
+
+  const crumbs = ["WORK"];
+  let href = "/work";
+  for (const segment of segments.slice(1)) {
+    href += `/${segment}`;
+    const label = labels[href] ?? decodeURIComponent(segment).replaceAll("-", " ");
+    crumbs.push(label.toUpperCase());
+  }
+  return crumbs.join(" / ");
 }
 
 export function AppNavigation({ practices }: { practices: Practice[] }) {
@@ -105,26 +136,18 @@ export function AppNavigation({ practices }: { practices: Practice[] }) {
   );
 }
 
-export function WorkspaceToolbar() {
+export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: BreadcrumbLabels }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const [toolbarTitle, setToolbarTitle] = useState(() => labelFromPath(pathname));
+  const toolbarTitle = breadcrumbTitle(pathname, breadcrumbLabels);
   const [historyState, setHistoryState] = useState({ canGoBack: false, canGoForward: false });
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const isBrowser = browserRoutes.has(pathname) || /^\/work\/[^/]+$/.test(pathname);
   const view = searchParams.get("view") === "list" ? "list" : "grid";
 
   useEffect(() => () => clearTimeout(copyTimer.current), []);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      const heading = document.querySelector<HTMLElement>("#main h1");
-      setToolbarTitle(heading?.textContent?.trim() || labelFromPath(pathname));
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [pathname]);
 
   useEffect(() => {
     type NavigationHistory = EventTarget & {
