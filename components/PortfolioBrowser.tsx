@@ -27,15 +27,33 @@ const reducedMotion = () =>
  */
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
+/**
+ * "brand-identity" -> "BI". A filing code, not a label.
+ *
+ * The tab used to carry the project's full name, which at four columns was a
+ * title cut off mid-word — `02 CAN'T BUY RE…` — three centimetres above the
+ * same title set clean and complete under the card. It was the only broken
+ * typography left on the wall, and it bought nothing: the shorthand written
+ * across the paper already says which project this is. A two-letter code is
+ * what a real tab carries, it is in a different register from the readable
+ * category below, and it cannot truncate at any width.
+ */
+const practiceCode = (categorySlug: string) =>
+  categorySlug.split("-").map((word) => word[0] ?? "").join("").toUpperCase().slice(0, 3);
+
 type FolderTreatment = {
   accessory?: "pin" | "sticker";
   code?: string;
   /**
-   * What somebody actually wrote on the folder in marker — a studio shorthand,
-   * not the project's name. The name is already set twice on the card, once on
-   * the tab and once in the title beneath it; writing it a third time in the
-   * middle of the paper is a caption, not handwriting. Shorthand is what makes
-   * the object read as somebody's rather than as a template's.
+   * What somebody actually wrote on the folder in marker — how Tehron refers
+   * to the project, not its formal name. The formal name is set clean under
+   * the card; repeating it here would make the writing a caption rather than
+   * handwriting.
+   *
+   * Line breaks are authored, not left to wrapping. A hand breaks a two-word
+   * label after the first word whatever the folder is wide, and picking the
+   * break here is also what keeps the longest line off the pocket's edges.
+   * `222RINGS` is deliberately the one that stays on a single line.
    */
   label: string;
   /** Which of the four photographed folders this project is filed in. */
@@ -59,17 +77,17 @@ type FolderTreatment = {
  * three columns in any collection this site can show.
  */
 const folderTreatments: Record<string, FolderTreatment> = {
-  "blue-t-shirt": { label: "BLUE", template: 0 },
-  "cant-buy-respect": { label: "CBR", template: 1 },
-  "karl-kani": { accessory: "pin", code: "KK–93", label: "KANI", template: 2 },
-  "indivisual-threads": { label: "THREADS", template: 3 },
-  "westside-gunn-saucony": { label: "SAUCONY", template: 2 },
-  "amine-club-banana": { accessory: "sticker", code: "ACB", label: "BANANA", template: 0 },
-  "red-panda-academy": { label: "RED PANDA", template: 1 },
-  "tomorrow-is-yesterday": { label: "TIY", template: 2 },
-  "thank-you-dilla": { accessory: "sticker", code: "TYD", label: "DILLA", template: 1 },
-  "222-rings": { label: "222", template: 3 },
-  "apple-retail-merch": { label: "APPLE", template: 0 },
+  "blue-t-shirt": { label: "BLUE\nT-SHIRT", template: 0 },
+  "cant-buy-respect": { label: "CBR\nCLOTHING", template: 1 },
+  "karl-kani": { accessory: "pin", code: "KK–93", label: "KANI\nGRAPHICS", template: 2 },
+  "indivisual-threads": { label: "INDIVISUAL\nCLOTHING", template: 3 },
+  "westside-gunn-saucony": { label: "WESTSIDE\nGUNN SHOES", template: 2 },
+  "amine-club-banana": { accessory: "sticker", code: "ACB", label: "AMINE\nMERCH", template: 0 },
+  "red-panda-academy": { label: "RED\nPANDA", template: 1 },
+  "tomorrow-is-yesterday": { label: "TIY\nPRODUCTS", template: 2 },
+  "thank-you-dilla": { accessory: "sticker", code: "TYD", label: "DILLA\nMERCH", template: 1 },
+  "222-rings": { label: "222RINGS", template: 3 },
+  "apple-retail-merch": { label: "APPLE\nRETAIL", template: 0 },
 };
 
 /* A project published without a treatment still has to land on a folder, and
@@ -127,25 +145,25 @@ const folderTemplates: FolderTemplate[] = [
     src: "/work/folder-templates/folder-template-a.webp",
     imageInset: { top: 22.71, right: 12.5, bottom: 31.54, left: 11.66 },
     tab: { left: 4.66, right: 63.62, mid: 6.09 },
-    labelMid: 84.03,
+    labelMid: 85.42,
   },
   {
     src: "/work/folder-templates/folder-template-b.webp",
     imageInset: { top: 21.9, right: 12.41, bottom: 33.42, left: 12.03 },
     tab: { left: 4.48, right: 64.09, mid: 5.96 },
-    labelMid: 82.68,
+    labelMid: 84.11,
   },
   {
     src: "/work/folder-templates/folder-template-c.webp",
     imageInset: { top: 23.04, right: 14.27, bottom: 35.78, left: 11.85 },
     tab: { left: 4.38, right: 64.37, mid: 5.84 },
-    labelMid: 81.5,
+    labelMid: 83.17,
   },
   {
     src: "/work/folder-templates/folder-template-d.webp",
     imageInset: { top: 21, right: 11.75, bottom: 33.5, left: 11.38 },
     tab: { left: 3.45, right: 63.62, mid: 3.88 },
-    labelMid: 83.33,
+    labelMid: 84.89,
   },
 ];
 
@@ -322,7 +340,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
 
                     <span className="folder-tab-copy" aria-hidden="true">
                       <strong>{numberAt(position)}</strong>
-                      <span>{project.name}</span>
+                      <span>{practiceCode(project.categorySlug)}</span>
                     </span>
                     {/* Decorative: the tab above it and the heading below it
                         already carry this project's name to a screen reader. */}

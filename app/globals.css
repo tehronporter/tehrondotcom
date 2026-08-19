@@ -286,8 +286,8 @@ img { display: block; max-width: 100%; }
   transform: translateY(-50%) rotate(-.7deg);
   white-space: nowrap;
 }
-.folder-tab-copy strong { flex: none; font-size: 3.2cqw; letter-spacing: .02em; }
-.folder-tab-copy span { min-width: 0; overflow: hidden; font-size: 2.85cqw; text-overflow: ellipsis; }
+.folder-tab-copy strong { flex: none; font-size: 3.5cqw; letter-spacing: .02em; }
+.folder-tab-copy span { min-width: 0; overflow: hidden; font-size: 3cqw; letter-spacing: .09em; opacity: .82; text-overflow: ellipsis; }
 
 /* --------------------------------------------------------------------------
    What is written on the folder
@@ -314,14 +314,18 @@ img { display: block; max-width: 100%; }
   /* Container units, so the writing keeps its size relative to the paper it is
      on rather than to the window. On `vw` the label shrank as the folder grew:
      largest folder, smallest hand. */
-  font-size: 10.6cqw;
-  line-height: .96;
+  /* Two lines have to sit inside the shallowest of the four pockets, which is
+     27.9% of the canvas height — about 32% of its width. Two lines at 8.6cqw
+     come to 17.5cqw, a little over half of that, which leaves the writing
+     clear of both the fold above it and the folder's edge below. */
+  font-size: 8.6cqw;
+  line-height: 1.02;
   letter-spacing: .01em;
   text-align: center;
+  white-space: pre-line;
   /* Ink laid on paper rather than composited over it — a tight dark edge on
      the blue, no glow. */
   text-shadow: 0 .18cqw .18cqw rgba(9,18,98,.42);
-  text-wrap: balance;
   transform: translate(var(--folder-label-shift), -50%) rotate(var(--folder-label-tilt));
   pointer-events: none;
 }

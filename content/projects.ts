@@ -300,7 +300,7 @@ export const categories: Category[] = [
              legible until the frame is on a few pieces. This crop takes the
              colourway block: the orange KANI SPORT hood and the red and navy
              tracksuits. The sheets are shown entire on the case study. */
-          cover: { position: "22% 76%", scale: 2.1 },
+          cover: { position: "24% 74%", scale: 2.45 },
         },
         sections: [
           {
@@ -357,7 +357,7 @@ export const categories: Category[] = [
           /* Contained, the tee floated small inside its own white studio
              margin and the folder read as mostly empty. Cropped to the chest
              hit instead, the red fills the frame and the mark is the subject. */
-          cover: { position: "50% 38%", scale: 1.25 },
+          cover: { position: "50% 40%", scale: 1.5 },
           hoverPreview: { srcs: ["/work/brand-identity/indivisual-threads/02-red-tee-back.webp"] },
         },
         sections: [
@@ -928,8 +928,11 @@ export const categories: Category[] = [
           /* Contained, the shot's own white ground sat as a bright panel inside
              the folder's letterbox bars and the two whites did not match.
              Cropped to the body of the shirt instead — the colourway is the
-             proposal, so the colour should be what fills the folder. */
-          cover: { position: "50% 42%" },
+             proposal, so the colour should be what fills the folder. The scale
+             is what the photographed opening added: a portrait studio shot
+             cropped to a 1.45:1 window still left the shirt sitting in more
+             white than green. */
+          cover: { position: "50% 41%", scale: 1.4 },
           hoverPreview: { srcs: ["/work/product-development/apple-retail-merch/04-hat-black.webp"] },
         },
         sections: [
