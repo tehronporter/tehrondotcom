@@ -50,7 +50,14 @@ export type BrowserPresentation = {
     scale?: number;
     background?: string;
   };
-  /** Explicit opt-in. False or absent keeps the folder layers artwork-free. */
+  /**
+   * NOT CURRENTLY RENDERED. The folder used to be drawn in CSS, with loose
+   * sheets peeking out of it that swapped on hover; the folder is now a
+   * photograph of a real one and has no sheets to swap. Kept because these
+   * are hand-picked second images and the choice is worth more than the nine
+   * lines it costs — but nothing reads it, and it is no longer resolved into
+   * the payload the browser ships.
+   */
   hoverPreview?: false | { srcs: [string] | [string, string] };
   /** Defaults to the featured image. */
   listPreview?: string;
@@ -1109,7 +1116,6 @@ export type GalleryPiece = {
   featured: ResolvedFeatured;
   browser: {
     cover?: BrowserPresentation["cover"];
-    hoverPreview: ResolvedFeatured[];
     listPreview?: ResolvedFeatured;
   };
 };
@@ -1149,21 +1155,6 @@ export const galleryProjects = (): GalleryPiece[] =>
     )
     .map(({ category, project }) => {
       const featured = resolveFeatured(project.featured as Featured);
-      /* Every folder reveals a sheet on hover unless the project opts out.
-         This was opt-in per project, so a handful of cards did something on
-         hover and the rest did nothing, with no way to tell which from looking
-         at them. The default is the project's own first image that isn't
-         already the cover. */
-      const declared = project.browser?.hoverPreview;
-      const previewSources: string[] =
-        declared === false
-          ? []
-          : declared
-            ? [...declared.srcs]
-            : project.media
-                .filter((item) => item.src && item.src !== project.featured?.src)
-                .slice(0, 1)
-                .map((item) => item.src as string);
       return {
         slug: project.slug,
         name: project.name,
@@ -1176,7 +1167,6 @@ export const galleryProjects = (): GalleryPiece[] =>
         featured,
         browser: {
           cover: project.browser?.cover,
-          hoverPreview: previewSources.map((src) => resolveProjectImage(project, src)),
           listPreview: project.browser?.listPreview
             ? resolveProjectImage(project, project.browser.listPreview)
             : undefined,

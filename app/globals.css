@@ -14,6 +14,7 @@
   --rule-strong: #d2cfca;
   --font-display: var(--font-anton), Impact, sans-serif;
   --font-interface: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-marker-stack: var(--font-marker), "Marker Felt", "Segoe Print", "Bradley Hand", cursive;
   --radius-lg: 18px;
   --sidebar: 250px;
   --toolbar: 82px;
@@ -197,241 +198,160 @@ img { display: block; max-width: 100%; }
 .browser-count { color: var(--muted); font-size: 10px; font-weight: 650; letter-spacing: .08em; }
 .mobile-practice-filters { display: none; }
 
-.project-browser { display: grid; grid-template-columns: repeat(auto-fit,minmax(275px,1fr)); gap: 2.5rem 1.15rem; min-height: 12rem; }
+.project-browser { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 3.5rem 1rem; min-height: 12rem; }
 .project-card {
   min-width: 0;
   content-visibility: auto;
-  contain-intrinsic-size: auto 275px;
-  --photo-angle: -.55deg;
-  --photo-bottom: 14%;
-  --photo-left: 8%;
-  --photo-right: 8%;
-  --photo-top: 11%;
-  --photo-lift: 0px;
-  --tape-angle: -2deg;
-  --tape-h: 10%;
-  --tape-left: 36%;
-  --tape-top: 6.5%;
-  --tape-w: 25%;
+  /* The real painted height of a card at the four-column desktop width:
+     folder (width x 1.142) plus the title and category beneath it. An
+     underestimate here is a scrollbar that shortens as you scroll past
+     skipped cards. */
+  contain-intrinsic-size: auto 380px;
 }
-.project-card:nth-child(3n+2) { --photo-angle: .65deg; --photo-left: 9%; --photo-right: 7%; }
-.project-card:nth-child(3n) { --photo-angle: -.2deg; --photo-bottom: 13%; --photo-left: 7%; --photo-right: 9%; --photo-top: 12%; }
-.project-card-link { position: relative; display: block; }
-.project-card-link:focus-visible { outline: 0; }
+.project-card-link { position: relative; display: block; border-radius: 4px; }
+/* The link is the folder AND the title under it, so the ring goes round both.
+   Drawn on the folder alone it hung 20-some pixels clear of the paper at the
+   top and bottom — the distance from the artwork's box to the object inside
+   it — and cut the project's own name out of the thing being focused. */
+.project-card-link:focus-visible,
+.project-card.is-selected .project-card-link { outline: 3px solid var(--ink); outline-offset: 6px; }
 
 /* --------------------------------------------------------------------------
    The folder
 
-   The folder stays a consistent, landscape object at every breakpoint. The
-   project image is a separate full-colour print mounted to blue card stock;
-   it is never used as the folder face and never receives a colour treatment. */
+   The source image provides the complete physical object: fibres, wear, tape,
+   frame and paper thickness. The project art sits behind its measured alpha
+   opening; only live text and optional project accents sit above it.
+
+   Everything written on the folder is sized in `cqw` — percent of the folder's
+   own width — because ink on paper does not resize when the window does. On
+   `vw` the handwriting ran backwards: at 375px the folder is the largest it
+   ever gets (332px, one per row) and the tab label was at its 6.7px floor,
+   while the same label on a 255px folder at 1440px was 8.8px. */
 
 .folder-cover {
   position: relative;
-  aspect-ratio: 1.42 / 1;
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 1072 / 1224;
   isolation: isolate;
-  filter: drop-shadow(0 8px 7px rgba(25,22,18,.15));
+  filter: drop-shadow(0 13px 13px rgba(25,22,18,.09)) drop-shadow(0 2px 1px rgba(25,22,18,.1));
   transition: filter 240ms ease, transform 240ms var(--ease);
-}
-
-.folder-back {
-  position: absolute;
-  z-index: 0;
-  top: 9%;
-  right: .3%;
-  bottom: .5%;
-  left: .3%;
-  border-radius: 3px 3px 8px 8px;
-  background: var(--blue-dark);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12);
-}
-.folder-back::before {
-  position: absolute;
-  bottom: 99%;
-  left: 0;
-  width: 41%;
-  height: 11.5%;
-  border-radius: 7px 7px 0 0;
-  background: var(--blue-dark);
-  box-shadow: inset 1px 1px rgba(255,255,255,.11), inset -1px 0 rgba(5,13,86,.12);
-  content: "";
-}
-.folder-tab-middle .folder-back::before { left: 29.5%; }
-.folder-tab-right .folder-back::before { right: 0; left: auto; }
-
-.folder-layer {
-  position: absolute;
-  top: 9.7%;
-  bottom: 69%;
-  pointer-events: none;
-  border-radius: 2px 2px 0 0;
-  transition: transform 240ms var(--ease);
-}
-.folder-layer-back { z-index: 1; right: 7%; left: 28%; transform: rotate(.7deg); background: #d6d1c5; box-shadow: inset 0 0 0 1px rgba(17,17,17,.1); }
-.folder-layer-mid { z-index: 2; right: 12%; left: 24%; transform: rotate(-.5deg); background: #f7f4eb; box-shadow: inset 0 0 0 1px rgba(17,17,17,.09); }
-
-.folder-tab-copy {
-  position: absolute;
-  z-index: 3;
-  top: 1.5%;
-  left: 3.5%;
-  display: flex;
-  width: 34%;
-  align-items: baseline;
-  gap: .42rem;
-  overflow: hidden;
-  color: #fff;
-  font-family: "Marker Felt", "Segoe Print", "Bradley Hand", cursive;
-  line-height: 1;
-  transform: rotate(-1deg);
-  white-space: nowrap;
-}
-.folder-tab-copy strong { font-size: clamp(.68rem,1.1vw,.86rem); font-weight: 700; letter-spacing: .02em; }
-.folder-tab-copy span { overflow: hidden; font-size: clamp(.54rem,.84vw,.7rem); font-weight: 700; text-overflow: ellipsis; }
-.folder-tab-middle .folder-tab-copy { left: 32%; width: 35%; transform: rotate(.6deg); }
-.folder-tab-right .folder-tab-copy { right: 3.5%; left: auto; width: 35%; transform: rotate(-.4deg); }
-
-.folder-face {
-  position: absolute;
-  z-index: 4;
-  top: 11.5%;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-  clip-path: polygon(.2% .4%,99.7% 0,100% 97.8%,99.2% 100%,.5% 99.6%,0 97.2%);
-  border-radius: 3px 3px 8px 8px;
-  background: var(--blue);
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.16),
-    inset 1px 0 rgba(255,255,255,.07),
-    inset -1px -1px rgba(9,18,98,.26),
-    0 -2px 5px rgba(16,18,54,.14);
-  transition: box-shadow 180ms ease, transform 240ms var(--ease);
-}
-
-.folder-grain {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='140' viewBox='0 0 260 140'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .62' numOctaves='2' seed='8' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='.12'/%3E%3C/svg%3E");
-  background-size: 170px 170px, 260px 140px;
-  mix-blend-mode: soft-light;
-  opacity: .42;
-  pointer-events: none;
-}
-
-.folder-crease {
-  position: absolute;
-  z-index: 2;
-  right: 7%;
-  bottom: 6%;
-  width: 20%;
-  height: 1px;
-  background: rgba(255,255,255,.25);
-  box-shadow: 0 1px rgba(9,18,98,.2);
-  opacity: .45;
-  transform: rotate(-6deg);
 }
 
 .folder-art {
   position: absolute;
-  z-index: 4;
-  top: var(--photo-top);
-  right: var(--photo-right);
-  bottom: var(--photo-bottom);
-  left: var(--photo-left);
+  z-index: 1;
+  top: var(--folder-image-top);
+  right: var(--folder-image-right);
+  bottom: var(--folder-image-bottom);
+  left: var(--folder-image-left);
   overflow: hidden;
-  clip-path: polygon(.2% .3%,99.7% 0,100% 99.5%,.3% 100%,0 1.1%);
   background: #e8e5de;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,.3),
-    0 5px 11px rgba(8,14,67,.28);
-  transform: translateY(var(--photo-lift)) rotate(var(--photo-angle));
-  transition: box-shadow 180ms ease, transform 240ms var(--ease);
+  transform: translateY(0) scale(1.006);
+  transition: transform 240ms var(--ease);
 }
 .folder-art-inner { position: absolute; inset: 0; display: block; transform-origin: center; }
 .folder-image { width: 100%; height: 100%; }
 
-.folder-tape {
+.folder-template-image {
   position: absolute;
-  z-index: 6;
-  top: var(--tape-top);
-  left: var(--tape-left);
-  width: var(--tape-w);
-  height: var(--tape-h);
-  clip-path: polygon(0 7%,5% 0,12% 6%,20% 1%,29% 7%,39% 2%,48% 8%,58% 1%,68% 6%,78% 0,88% 7%,100% 2%,98% 94%,91% 100%,82% 94%,72% 100%,62% 93%,52% 99%,42% 94%,31% 100%,20% 93%,10% 100%,1% 94%);
-  opacity: .9;
-  transform: translateY(var(--photo-lift)) rotate(var(--tape-angle));
-  box-shadow: 0 2px 3px rgba(8,10,32,.2);
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   pointer-events: none;
-  transition: transform 240ms var(--ease);
 }
-.folder-tape-black { background: #191919; }
-.folder-tape-cream { background: rgba(225,211,174,.93); }
-.folder-tape-clear { background: rgba(239,232,213,.68); }
 
-.folder-hand-note,
-.folder-mark,
+/* Sat on the folder body rather than on the tab for template d, whose tab is
+   the highest of the four. Now hung off each template's own measured centre
+   line, so the label rides the tab it is written on. The extra inset either
+   side is the paper margin the writing leaves, in the same axis as the
+   measurement, so both resolve against the folder's width. */
+.folder-tab-copy {
+  position: absolute;
+  z-index: 3;
+  top: var(--folder-tab-mid);
+  right: calc(var(--folder-tab-right) + 3.4%);
+  left: calc(var(--folder-tab-left) + 2.4%);
+  display: flex;
+  align-items: baseline;
+  gap: 1.5cqw;
+  overflow: hidden;
+  color: #f6f2e7;
+  font-family: var(--font-marker-stack);
+  line-height: 1;
+  text-shadow: 0 1px rgba(11,24,132,.18);
+  transform: translateY(-50%) rotate(-.7deg);
+  white-space: nowrap;
+}
+.folder-tab-copy strong { flex: none; font-size: 3.2cqw; letter-spacing: .02em; }
+.folder-tab-copy span { min-width: 0; overflow: hidden; font-size: 2.85cqw; text-overflow: ellipsis; }
+
+/* --------------------------------------------------------------------------
+   What is written on the folder
+
+   Three levels, none of them repeating the other two: the tab carries the
+   archival number and full title small, the paper carries the studio shorthand
+   large, and the type under the card carries the formal title clean. The
+   shorthand used to be a 7px note tucked into the bottom-left corner, which
+   read as a second caption for the caption below it rather than as marker on
+   paper. */
+
+.folder-label {
+  position: absolute;
+  z-index: 3;
+  top: var(--folder-label-mid);
+  /* A real box across the paper rather than a point at 50% with a shrug back.
+     Anchored on `left: 50%` alone the label's available width is whatever is
+     left of the folder — half of it — so RED PANDA broke over two lines with
+     the other half of the paper empty beside it. */
+  right: 10%;
+  left: 10%;
+  color: #f6f2e7;
+  font-family: var(--font-marker-stack);
+  /* Container units, so the writing keeps its size relative to the paper it is
+     on rather than to the window. On `vw` the label shrank as the folder grew:
+     largest folder, smallest hand. */
+  font-size: 10.6cqw;
+  line-height: .96;
+  letter-spacing: .01em;
+  text-align: center;
+  /* Ink laid on paper rather than composited over it — a tight dark edge on
+     the blue, no glow. */
+  text-shadow: 0 .18cqw .18cqw rgba(9,18,98,.42);
+  text-wrap: balance;
+  transform: translate(var(--folder-label-shift), -50%) rotate(var(--folder-label-tilt));
+  pointer-events: none;
+}
+
 .folder-accessory {
   position: absolute;
-  z-index: 7;
+  z-index: 3;
+  right: 6.1%;
+  top: 70%;
+  font-size: 2.3cqw;
+  font-weight: 850;
+  letter-spacing: .075em;
+  line-height: 1;
   pointer-events: none;
-  transition: transform 240ms var(--ease), translate 240ms var(--ease);
 }
-.folder-hand-note { bottom: 2.6%; left: 8%; max-width: 58%; color: #fff; font-family: "Marker Felt", "Segoe Print", "Bradley Hand", cursive; font-size: clamp(.48rem,.78vw,.67rem); font-weight: 700; letter-spacing: .025em; line-height: 1.03; transform: rotate(-1.5deg); white-space: pre-line; }
-.folder-mark { right: 7%; bottom: 2.2%; color: #fff; font-family: "Marker Felt", "Segoe Print", "Bradley Hand", cursive; font-size: clamp(.8rem,1.5vw,1.25rem); line-height: 1; transform: rotate(-8deg); }
-.folder-accessory { right: 4.5%; top: 22%; font-size: clamp(.35rem,.5vw,.44rem); font-weight: 850; letter-spacing: .075em; line-height: 1; }
-.folder-accessory-stamp { border: 1px solid rgba(255,255,255,.86); padding: .2rem .28rem; color: #fff; transform: rotate(4deg); }
-.folder-accessory-label { border: 1px solid rgba(37,32,24,.14); padding: .25rem .34rem; background: #e7dcc0; color: #1b1a17; box-shadow: 0 2px 3px rgba(8,14,67,.16); transform: rotate(-2deg); }
-.folder-accessory-sticker { display: grid; width: clamp(1.7rem,3.2vw,2.15rem); aspect-ratio: 1; place-items: center; border: 1px solid rgba(32,28,22,.16); border-radius: 50%; background: #f2ead7; color: #191919; box-shadow: 0 2px 4px rgba(8,14,67,.18); font-family: "Marker Felt", "Segoe Print", cursive; font-size: clamp(.42rem,.65vw,.56rem); transform: rotate(7deg); }
-.folder-accessory-pin { border: 1px solid rgba(37,32,24,.12); padding: .26rem .34rem; background: #eee7d5; color: #1c1b18; box-shadow: 0 2px 4px rgba(8,14,67,.18); transform: rotate(2deg); }
-.folder-accessory-pin::before { position: absolute; top: -.32rem; left: 50%; width: .48rem; aspect-ratio: 1; border-radius: 50%; background: #1b1b1b; box-shadow: 0 2px 2px rgba(0,0,0,.28); content: ""; transform: translateX(-50%); }
+.folder-accessory-sticker { display: grid; width: 10.8cqw; aspect-ratio: 1; place-items: center; border: 1px solid rgba(32,28,22,.16); border-radius: 50%; background: #f2ead7; color: #191919; box-shadow: 0 2px 4px rgba(8,14,67,.18); font-family: var(--font-marker-stack); font-size: 2.8cqw; transform: rotate(7deg); }
+.folder-accessory-pin { border: 1px solid rgba(37,32,24,.12); padding: .8cqw 1.1cqw; background: #eee7d5; color: #1c1b18; box-shadow: 0 2px 4px rgba(8,14,67,.18); transform: rotate(2deg); }
+.folder-accessory-pin::before { position: absolute; top: -1cqw; left: 50%; width: 1.5cqw; aspect-ratio: 1; border-radius: 50%; background: #1b1b1b; box-shadow: 0 2px 2px rgba(0,0,0,.28); content: ""; transform: translateX(-50%); }
 
-/* The system stays consistent; the object assembly does not. */
-.folder-blue-t-shirt { --tape-angle: -2.5deg; --tape-left: 34%; --tape-w: 28%; }
-.folder-blue-t-shirt .folder-accessory { right: 4.5%; top: 2.2%; }
-.folder-cant-buy-respect { --tape-angle: 1deg; --tape-h: 34%; --tape-left: 5%; --tape-top: 28%; --tape-w: 7%; }
-.folder-cant-buy-respect .folder-accessory { right: 4%; top: 16%; }
-.folder-cant-buy-respect .folder-mark { right: 8%; bottom: 3.5%; transform: rotate(-4deg); }
-.folder-karl-kani { --tape-angle: 3deg; --tape-left: 65%; --tape-top: 7%; --tape-w: 22%; }
-.folder-karl-kani .folder-accessory { right: 4%; top: 57%; }
-.folder-karl-kani .folder-mark { right: 4.5%; bottom: 19%; transform: rotate(-18deg); }
-.folder-indivisual-threads { --tape-angle: -3deg; --tape-left: 68%; --tape-w: 19%; }
-.folder-indivisual-threads .folder-accessory { right: 5%; top: 74%; }
-.folder-westside-gunn-saucony { --tape-angle: 2deg; --tape-left: 18%; --tape-top: 8%; --tape-w: 26%; }
-.folder-westside-gunn-saucony .folder-accessory { right: 5%; top: 18%; }
-.folder-amine-club-banana { --tape-angle: -4deg; --tape-left: 57%; --tape-w: 24%; }
-.folder-amine-club-banana .folder-accessory { right: 5%; top: 69%; }
-.folder-red-panda-academy { --tape-angle: 3deg; --tape-left: 15%; --tape-w: 22%; }
-.folder-red-panda-academy .folder-accessory { right: 4.5%; top: 17%; }
-.folder-tomorrow-is-yesterday { --tape-angle: -1deg; --tape-left: 41%; --tape-w: 26%; }
-.folder-tomorrow-is-yesterday .folder-accessory { right: 4%; top: 64%; }
-.folder-thank-you-dilla { --tape-angle: 2deg; --tape-h: 26%; --tape-left: 89%; --tape-top: 35%; --tape-w: 7%; }
-.folder-thank-you-dilla .folder-accessory { right: 5%; top: 17%; }
-.folder-222-rings { --tape-angle: -3deg; --tape-left: 25%; --tape-w: 20%; }
-.folder-222-rings .folder-accessory { right: 4%; top: 68%; }
-.folder-apple-retail-merch { --tape-angle: 3deg; --tape-left: 66%; --tape-w: 22%; }
-.folder-apple-retail-merch .folder-accessory { right: 4%; top: 18%; }
-
+/* One object, one movement: the folder lifts and its shadow opens, and the
+   print settles a fraction deeper into its opening. The note and the sticker
+   used to travel a pixel of their own on hover, which is the amount that
+   reads as parts coming loose rather than as a card being picked up. */
 @media (hover: hover) {
-  .project-card-link:hover .folder-cover { --photo-lift: -5px; filter: drop-shadow(0 14px 10px rgba(25,22,18,.2)); transform: translateY(-4px); }
-  .project-card-link:hover .folder-layer-back { transform: translate(2px,-3px) rotate(1.2deg); }
-  .project-card-link:hover .folder-layer-mid { transform: translate(-2px,-5px) rotate(-1deg); }
-  .project-card-link:hover .folder-face { transform: translateY(1px); box-shadow: inset 0 1px rgba(255,255,255,.16), inset 1px 0 rgba(255,255,255,.07), inset -1px -1px rgba(9,18,98,.26), 0 -4px 8px rgba(16,18,54,.18); }
-  .project-card-link:hover .folder-art { box-shadow: 0 1px 0 rgba(255,255,255,.3), 0 10px 15px rgba(8,14,67,.32); }
-  .project-card-link:hover .folder-hand-note { transform: translate(1px,-1px) rotate(-1.5deg); }
-  .project-card-link:hover .folder-accessory { translate: 0 -1px; }
+  .project-card-link:hover .folder-cover { filter: drop-shadow(0 17px 15px rgba(25,22,18,.13)) drop-shadow(0 3px 2px rgba(25,22,18,.11)); transform: translateY(-4px); }
+  .project-card-link:hover .folder-art { transform: translateY(-1px) scale(1.016); }
 }
-
-.project-card-link:focus-visible .folder-cover,
-.project-card.is-selected .folder-cover { outline: 3px solid var(--ink); outline-offset: 4px; }
 
 .project-card-copy { position: relative; padding: .72rem .2rem 0 .08rem; }
 .project-card-title { display: flex; gap: .55rem; font-size: 13px; font-weight: 730; line-height: 1.35; transition: color var(--speed) ease; }
-.project-card-title span { flex: none; color: var(--muted); font-size: 8px; font-variant-numeric: tabular-nums; letter-spacing: .04em; opacity: .55; }
 .project-card-meta { display: -webkit-box; overflow: hidden; margin-top: .32rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: var(--faint); font-size: 9px; letter-spacing: .065em; line-height: 1.45; text-transform: uppercase; }
 .project-card-link:focus-visible .project-card-title,
 .project-card.is-selected .project-card-title { color: var(--blue); }
@@ -583,6 +503,7 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
 /* Responsive */
 @media (max-width: 1220px) {
   :root { --sidebar: 228px; }
+  .project-browser { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .profile-panel { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .signature-mark { grid-column: 1 / -1; min-height: 105px; border-top: 1px solid var(--rule); border-left: 0 !important; mask-size: 130px auto; }
 }

@@ -8,6 +8,17 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    /* Explicit, because this repo lives in iCloud Documents, which forks
+       node_modules/@types/react into "react 2" and so on. TypeScript loads
+       every directory under @types as an implicit type library, so one sync
+       conflict failed the build with "Cannot find type definition file for
+       'react 2'" — about a package nobody installed. Naming the three we
+       actually use means a forked copy is never looked at. */
+    "types": [
+      "node",
+      "react",
+      "react-dom"
+    ],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,

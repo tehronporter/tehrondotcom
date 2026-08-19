@@ -179,6 +179,26 @@
     "height": 1536,
     "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADwAwCdASoMABIAPt1cpkyopSOiMAgBEBuJYgCdMoACr+9OcfpVOasAAPpG4qnthrV4XULVO6x1Na+VRslAeRtm02SYjAzbP9obkdEVWB130gq142BoWgryalCtcEfoJynYYlTfXSWwjnSDMfqfgPuxQAA="
   },
+  "/work/folder-templates/folder-template-a.webp": {
+    "width": 1072,
+    "height": 1224,
+    "blurDataURL": "data:image/webp;base64,UklGRuoAAABXRUJQVlA4WAoAAAAQAAAACwAADQAAQUxQSF4AAAABBjfZti0VBahgDchBAZ+IQAHfWLkIYBsBuAihsxwNcFad0AjvFxETIJVIWWY9+gN1sioP/53l+NJFEojn4DeTxWzazaycdVHPCdtLbAAwAefdXP87z2urJz3oTssCVlA4IGYAAAAQAgCdASoMAA4AAwBSJbACdAYsZva2gkUAAP7kazh7h+lEdF/0ha9R9XP/MB5eVWNtAlPB0EdesL+aZnlE3IV/3xALjEPeVqePxJt64VYnn8TjacFkuryLPvpouUbGRWEFfRiFEAA="
+  },
+  "/work/folder-templates/folder-template-b.webp": {
+    "width": 1072,
+    "height": 1224,
+    "blurDataURL": "data:image/webp;base64,UklGRuwAAABXRUJQVlA4WAoAAAAQAAAACwAADQAAQUxQSFwAAAABcFPbthORkxc0IIUqVckEFnJOFUw/Av4TQLQwHma9jiQhIiZAHT+dQp0HiPjNTrUFbw77T+e5U385DOrSeWLemA/rln0VzAcp66Zt2276LwfefG9NAIAAAAEIAVZQOCBqAAAA8AEAnQEqDAAOAAMAUiWwAnQBCxyRgKwAAP7a1ukPl4X9BQ2Z+T2cdFJYAEtcE/qMxd68SyvJLdb9O9xXNjdokd0T88iSVhUGlnmGqnlAXzca58n4zx9YivlOv36Kdzo3YxrCBwDmHEAAAA=="
+  },
+  "/work/folder-templates/folder-template-c.webp": {
+    "width": 1072,
+    "height": 1224,
+    "blurDataURL": "data:image/webp;base64,UklGRvgAAABXRUJQVlA4WAoAAAAQAAAACwAADQAAQUxQSG4AAAANgFvb1rLovO/HHUIWdVikXRCRUQFNEFo30AAU4aFFPjPfHfupISImoDHUdXDn3763dO8CmMZdD80yIHOR2WItJDQa2vLA/5USzofgeNfJKcQMC6mmVkz6Zpjx6Y/EAwkJ752M8IB3g3kOCSF4AlZQOCBkAAAAMAIAnQEqDAAOAAMAUiWwAnQGKv5FHd914AAA/uRqVWnQaRNRpABWlYS3r+OpXpHuml8rcbtm1PEJ2Ol0+L2n84IPPfT/3lKB1ci+dJnAPzED3hizfBmpmskWtPiCJmJFYMAAAA=="
+  },
+  "/work/folder-templates/folder-template-d.webp": {
+    "width": 1072,
+    "height": 1224,
+    "blurDataURL": "data:image/webp;base64,UklGRugAAABXRUJQVlA4WAoAAAAQAAAACwAADQAAQUxQSFgAAAABcBPbtlM9ARhBDfQggo4OMVAnBThAAVXO/BxumFsRJUTEBDgIL11tZyLyatumqSv3LUtZbE75N9HUtkU/Q+3xsf8Bm+AQmnseY+oHmyEzycHrqAQARFrXVlA4IGoAAADwAQCdASoMAA4AAwBSJbACdAEOUfe5HQAA/s4FPUuOzxcegxs47pC48N6RXTmUS6j3FNKUvXMZmSBcMZEi7UmPyJwHCNK4XDu/5hqp5P7i8xNTn6Edjt4gnQdHmoS3yiE8oc0LE3TsHEAA"
+  },
   "/work/product-development/222-rings/01-222-rings-worn.webp": {
     "width": 2340,
     "height": 2474,

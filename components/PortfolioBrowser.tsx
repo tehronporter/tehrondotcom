@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, type CSSProperties, type MouseEvent } from "react";
 import type { BrowserProject } from "@/content/projects";
 import { isPractice, practiceFromPath, type Practice } from "@/content/practices";
-import { BROWSER_COVER_SIZES } from "@/lib/sizes";
+import { BROWSER_ART_SIZES, BROWSER_COVER_SIZES } from "@/lib/sizes";
 import { titleCase } from "@/lib/text";
 
 type ViewTransition = { finished: Promise<void>; ready: Promise<void>; updateCallbackDone: Promise<void> };
@@ -28,35 +28,155 @@ const reducedMotion = () =>
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
 type FolderTreatment = {
-  accessory: "label" | "pin" | "stamp" | "sticker";
-  code: string;
-  mark: string;
-  note: string;
-  tab: "left" | "middle" | "right";
-  tape: "black" | "clear" | "cream";
+  accessory?: "pin" | "sticker";
+  code?: string;
+  /**
+   * What somebody actually wrote on the folder in marker — a studio shorthand,
+   * not the project's name. The name is already set twice on the card, once on
+   * the tab and once in the title beneath it; writing it a third time in the
+   * middle of the paper is a caption, not handwriting. Shorthand is what makes
+   * the object read as somebody's rather than as a template's.
+   */
+  label: string;
+  /** Which of the four photographed folders this project is filed in. */
+  template: number;
 };
 
+/**
+ * A project keeps the same folder everywhere it appears.
+ *
+ * The assignment used to be `position % folderTemplates.length`, which with
+ * four templates and a four-column grid drew every column out of one template
+ * — a perfectly striped wall, in every collection, including the four-project
+ * category views where each column then held its own single folder. Pinning
+ * the folder to the project instead fixes both: the order changes between
+ * Work, Featured and a practice filter, so the templates fall differently in
+ * each, and a folder a visitor recognises on the home wall is still that
+ * project's folder on the way back to it.
+ *
+ * The template order below is chosen, not incidental: no two folders of the
+ * same template sit side by side or directly above one another at four or
+ * three columns in any collection this site can show.
+ */
 const folderTreatments: Record<string, FolderTreatment> = {
-  "blue-t-shirt": { accessory: "stamp", code: "BTS / ARCHIVE", mark: "◎", note: "ONE SHIRT.\nWHOLE WORLD.  →", tab: "left", tape: "cream" },
-  "cant-buy-respect": { accessory: "sticker", code: "CBR", mark: "＿＿", note: "NOT FOR SALE", tab: "middle", tape: "black" },
-  "karl-kani": { accessory: "pin", code: "KK–93 / SAMPLE", mark: "↗", note: "CHECK COLOR + CUT", tab: "right", tape: "cream" },
-  "indivisual-threads": { accessory: "stamp", code: "CAPSULE 01", mark: "✳", note: "SPRAY / PRINT / REPEAT", tab: "left", tape: "black" },
-  "westside-gunn-saucony": { accessory: "label", code: "FLYER SET / 05", mark: "★", note: "BATTLE CARD PROOF", tab: "middle", tape: "cream" },
-  "amine-club-banana": { accessory: "sticker", code: "ACB", mark: ":)", note: "PATTERN TEST — PASS", tab: "right", tape: "clear" },
-  "red-panda-academy": { accessory: "stamp", code: "MARK SYSTEM", mark: "◎", note: "CREST STUDY / FINAL", tab: "left", tape: "cream" },
-  "tomorrow-is-yesterday": { accessory: "label", code: "OBJECT FILE", mark: "☼", note: "SKETCH → PRODUCTION", tab: "middle", tape: "clear" },
-  "thank-you-dilla": { accessory: "sticker", code: "TYD", mark: "♡", note: "MADE, NOT SET", tab: "right", tape: "black" },
-  "222-rings": { accessory: "pin", code: "PROTO / 222", mark: "222", note: "FORM STUDY", tab: "left", tape: "cream" },
-  "apple-retail-merch": { accessory: "label", code: "COLOR FILE", mark: "✓", note: "PROPOSED → PRODUCED", tab: "middle", tape: "clear" },
+  "blue-t-shirt": { label: "BLUE", template: 0 },
+  "cant-buy-respect": { label: "CBR", template: 1 },
+  "karl-kani": { accessory: "pin", code: "KK–93", label: "KANI", template: 2 },
+  "indivisual-threads": { label: "THREADS", template: 3 },
+  "westside-gunn-saucony": { label: "SAUCONY", template: 2 },
+  "amine-club-banana": { accessory: "sticker", code: "ACB", label: "BANANA", template: 0 },
+  "red-panda-academy": { label: "RED PANDA", template: 1 },
+  "tomorrow-is-yesterday": { label: "TIY", template: 2 },
+  "thank-you-dilla": { accessory: "sticker", code: "TYD", label: "DILLA", template: 1 },
+  "222-rings": { label: "222", template: 3 },
+  "apple-retail-merch": { label: "APPLE", template: 0 },
 };
 
-const defaultTreatment: FolderTreatment = {
-  accessory: "stamp",
-  code: "TP / WORK FILE",
-  mark: "+",
-  note: "ARCHIVE COPY",
-  tab: "left",
-  tape: "cream",
+/* A project published without a treatment still has to land on a folder, and
+   on the same one every render — server and client included. */
+const hash = (slug: string) => {
+  let value = 0;
+  for (let i = 0; i < slug.length; i++) value = (value * 31 + slug.charCodeAt(i)) | 0;
+  return Math.abs(value);
+};
+
+const treatmentFor = (slug: string, name: string): FolderTreatment =>
+  folderTreatments[slug] ?? { label: name.toUpperCase(), template: hash(slug) % folderTemplates.length };
+
+/**
+ * Nobody writes on eleven folders at the same angle. The tilt and the nudge
+ * off centre come from the slug, so they are the same on the server, on the
+ * client and on every collection the project appears in — a `Math.random()`
+ * here would rewrite the wall on every navigation and mismatch hydration.
+ * Kept inside a couple of degrees: the folders are hand-labelled, the grid
+ * they sit in is not.
+ */
+const labelHand = (slug: string) => {
+  const seed = hash(`${slug}/hand`);
+  return {
+    rotate: ((seed % 33) / 10 - 1.6).toFixed(2),
+    shift: ((((seed >> 5) % 25) / 10 - 1.2)).toFixed(2),
+  };
+};
+
+type FolderTemplate = {
+  src: string;
+  /** The alpha opening the project art is mounted behind, in % of the canvas. */
+  imageInset: { top: number; right: number; bottom: number; left: number };
+  /** The tab: left and right as % insets, `mid` as the % down to its centre. */
+  tab: { left: number; right: number; mid: number };
+  /** The % down to the middle of the blue paper below the opening. */
+  labelMid: number;
+};
+
+/* ---------------------------------------------------------------------------
+   Generated by `node scripts/folder-templates.mjs` from the PNG masters in
+   assets/folder-templates/source. Every number is measured off the alpha
+   channel — do not hand-edit, re-run the script.
+
+   The tab is per template because the four masters genuinely disagree about
+   it: d's tab sits 2% of the canvas height above the other three, which one
+   shared value rendered as a label printed on the folder body instead of on
+   its own tab.
+   --------------------------------------------------------------------------- */
+
+const FOLDER_SIZE = { width: 1072, height: 1224 };
+
+const folderTemplates: FolderTemplate[] = [
+  {
+    src: "/work/folder-templates/folder-template-a.webp",
+    imageInset: { top: 22.71, right: 12.5, bottom: 31.54, left: 11.66 },
+    tab: { left: 4.66, right: 63.62, mid: 6.09 },
+    labelMid: 84.03,
+  },
+  {
+    src: "/work/folder-templates/folder-template-b.webp",
+    imageInset: { top: 21.9, right: 12.41, bottom: 33.42, left: 12.03 },
+    tab: { left: 4.48, right: 64.09, mid: 5.96 },
+    labelMid: 82.68,
+  },
+  {
+    src: "/work/folder-templates/folder-template-c.webp",
+    imageInset: { top: 23.04, right: 14.27, bottom: 35.78, left: 11.85 },
+    tab: { left: 4.38, right: 64.37, mid: 5.84 },
+    labelMid: 81.5,
+  },
+  {
+    src: "/work/folder-templates/folder-template-d.webp",
+    imageInset: { top: 21, right: 11.75, bottom: 33.5, left: 11.38 },
+    tab: { left: 3.45, right: 63.62, mid: 3.88 },
+    labelMid: 83.33,
+  },
+];
+
+type FolderStyle = CSSProperties & Record<
+  | "--folder-image-top"
+  | "--folder-image-right"
+  | "--folder-image-bottom"
+  | "--folder-image-left"
+  | "--folder-tab-left"
+  | "--folder-tab-right"
+  | "--folder-tab-mid"
+  | "--folder-label-mid"
+  | "--folder-label-tilt"
+  | "--folder-label-shift",
+  string
+>;
+
+const folderStyleFor = (template: FolderTemplate, slug: string): FolderStyle => {
+  const hand = labelHand(slug);
+  return {
+    "--folder-image-top": `${template.imageInset.top}%`,
+    "--folder-image-right": `${template.imageInset.right}%`,
+    "--folder-image-bottom": `${template.imageInset.bottom}%`,
+    "--folder-image-left": `${template.imageInset.left}%`,
+    "--folder-tab-left": `${template.tab.left}%`,
+    "--folder-tab-right": `${template.tab.right}%`,
+    "--folder-tab-mid": `${template.tab.mid}%`,
+    "--folder-label-mid": `${template.labelMid}%`,
+    "--folder-label-tilt": `${hand.rotate}deg`,
+    "--folder-label-shift": `${hand.shift}%`,
+  };
 };
 
 export function PortfolioBrowser({ projects, practices }: { projects: BrowserProject[]; practices: Practice[] }) {
@@ -135,7 +255,9 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
         <section className="project-browser is-grid" aria-label="Portfolio projects">
           {visibleProjects.map((project, position) => {
             const cover = project.browser.cover;
-            const treatment = folderTreatments[project.slug] ?? defaultTreatment;
+            const treatment = treatmentFor(project.slug, project.name);
+            const template = folderTemplates[treatment.template];
+            const folderStyle = folderStyleFor(template, project.slug);
             const artworkStyle = { background: cover?.background } satisfies CSSProperties;
             const artworkInnerStyle = {
               transform: cover?.scale ? `scale(${cover.scale})` : undefined,
@@ -157,57 +279,63 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                   className="project-card-link"
                   onClick={openProject(project.href)}
                 >
-                  <div className={`folder-cover folder-${project.slug} folder-tab-${treatment.tab}`}>
-                    <span className="folder-back" aria-hidden="true" />
-                    <span className="folder-layer folder-layer-back" aria-hidden="true" />
-                    <span className="folder-layer folder-layer-mid" aria-hidden="true" />
+                  <div className={`folder-cover folder-${project.slug}`} style={folderStyle}>
+                    <div className="folder-art" style={artworkStyle}>
+                      <span className="folder-art-inner" style={artworkInnerStyle}>
+                        <Image
+                          src={project.featured.src}
+                          alt={project.featured.alt}
+                          width={project.featured.width}
+                          height={project.featured.height}
+                          sizes={BROWSER_ART_SIZES}
+                          className="folder-image"
+                          style={{
+                            objectFit: cover?.fit ?? "cover",
+                            objectPosition: cover?.position ?? project.featured.focus,
+                          }}
+                          ref={(element) => {
+                            if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
+                          }}
+                          priority={position === 0}
+                          {...(project.featured.blurDataURL
+                            ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
+                            : {})}
+                        />
+                      </span>
+                    </div>
+
+                    {/* The folder is what paints first and largest, so the
+                        first one on the wall is the LCP element and is
+                        preloaded as such. The other ten are lazy and, being
+                        four files across eleven cards, mostly cache hits. */}
+                    <Image
+                      src={template.src}
+                      alt=""
+                      width={FOLDER_SIZE.width}
+                      height={FOLDER_SIZE.height}
+                      sizes={BROWSER_COVER_SIZES}
+                      className="folder-template-image"
+                      aria-hidden="true"
+                      priority={position === 0}
+                      loading={position === 0 ? undefined : "lazy"}
+                    />
+
                     <span className="folder-tab-copy" aria-hidden="true">
                       <strong>{numberAt(position)}</strong>
                       <span>{project.name}</span>
                     </span>
-
-                    <div className="folder-face">
-                      <span className="folder-grain" aria-hidden="true" />
-                      <span className="folder-crease" aria-hidden="true" />
-                      <span className="folder-hand-note" aria-hidden="true">{treatment.note}</span>
-                      <span className="folder-mark" aria-hidden="true">{treatment.mark}</span>
+                    {/* Decorative: the tab above it and the heading below it
+                        already carry this project's name to a screen reader. */}
+                    <span className="folder-label" aria-hidden="true">{treatment.label}</span>
+                    {treatment.accessory && treatment.code ? (
                       <span className={`folder-accessory folder-accessory-${treatment.accessory}`} aria-hidden="true">
                         {treatment.code}
                       </span>
-
-                      <div className="folder-art" style={artworkStyle}>
-                        <span className="folder-art-inner" style={artworkInnerStyle}>
-                          <Image
-                            src={project.featured.src}
-                            alt={project.featured.alt}
-                            width={project.featured.width}
-                            height={project.featured.height}
-                            sizes={BROWSER_COVER_SIZES}
-                            className="folder-image"
-                            style={{
-                              objectFit: cover?.fit ?? "cover",
-                              objectPosition: cover?.position ?? project.featured.focus,
-                            }}
-                            ref={(element) => {
-                              if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
-                            }}
-                            priority={position === 0}
-                            {...(project.featured.blurDataURL
-                              ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
-                              : {})}
-                          />
-                        </span>
-                      </div>
-
-                      <span className={`folder-tape folder-tape-${treatment.tape}`} aria-hidden="true" />
-                    </div>
+                    ) : null}
                   </div>
 
                   <div className="project-card-copy">
-                    <h2 className="project-card-title">
-                      <span>{numberAt(position)}</span>
-                      {titleCase(project.name)}
-                    </h2>
+                    <h2 className="project-card-title">{titleCase(project.name)}</h2>
                     <p className="project-card-meta">{project.meta}</p>
                     <span className="sr-only">Category: {project.categoryLabel}.</span>
                   </div>

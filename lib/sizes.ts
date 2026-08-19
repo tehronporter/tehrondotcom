@@ -56,10 +56,24 @@ export const MEDIA_SIZES = {
     ` ${Math.floor((CONTENT_MAX - 19.2) / 3)}px`,
 } as const;
 
-/** Folder artwork inside the app-shell project browser. */
+/** The folder template — a full-width card, since it is the card's whole face. */
 export const BROWSER_COVER_SIZES =
   "(max-width: 520px) calc(100vw - 3rem)," +
-  " (max-width: 760px) calc((100vw - 4rem) / 2)," +
-  " (max-width: 1100px) calc((100vw - 20rem) / 3)," +
-  " (max-width: 1500px) calc((100vw - 22rem) / 4)," +
-  " 210px";
+  " (max-width: 980px) calc((100vw - 4rem) / 2)," +
+  " (max-width: 1220px) calc((100vw - 20rem) / 3)," +
+  " (max-width: 1720px) calc((100vw - 22rem) / 4)," +
+  " 250px";
+
+/**
+ * The project art behind the folder's opening — the narrowest slot on the
+ * site, and the only one that is not its own box. The opening runs from
+ * ~11.5% to ~88% of the card across the four templates, so the art is painted
+ * at roughly 0.76 of the width of the folder around it. Handing it the card's
+ * own `sizes` asked for a candidate a third wider than the opening can show.
+ */
+export const BROWSER_ART_SIZES =
+  "(max-width: 520px) calc((100vw - 3rem) * .76)," +
+  " (max-width: 980px) calc((100vw - 4rem) / 2 * .76)," +
+  " (max-width: 1220px) calc((100vw - 20rem) / 3 * .76)," +
+  " (max-width: 1720px) calc((100vw - 22rem) / 4 * .76)," +
+  " 190px";
