@@ -17,7 +17,15 @@ type ViewTransitionDocument = Document & {
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const numberFor = (project: BrowserProject) => String(project.globalIndex + 1).padStart(2, "0");
+/**
+ * Position within the collection being shown, not within the whole archive.
+ *
+ * This used to read the project's global index, so Featured counted
+ * 01 02 05 06 08 10 and Recent — which is ordered by recency — counted
+ * backwards. A numbered list with holes in it reads as items that failed to
+ * load, not as a selection.
+ */
+const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
 export function PortfolioBrowser({ projects, practices }: { projects: BrowserProject[]; practices: Practice[] }) {
   const router = useRouter();
@@ -32,7 +40,13 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
   const view = searchParams.get("view") === "list" ? "list" : "grid";
   const visibleProjects = discipline ? projects.filter((project) => project.categorySlug === discipline) : projects;
   const activePractice = practices.find((practice) => practice.slug === discipline);
-  const activeListProject = visibleProjects.find((project) => project.href === listPreviewHref) ?? visibleProjects[0];
+  /* Index rather than the project itself, because the preview's caption
+     numbers it the same way the rows do — by position in this collection. */
+  const activeListIndex = Math.max(
+    0,
+    visibleProjects.findIndex((project) => project.href === listPreviewHref),
+  );
+  const activeListProject = visibleProjects[activeListIndex];
   const activeListImage = activeListProject
     ? activeListProject.browser.listPreview ?? activeListProject.featured
     : undefined;
@@ -94,6 +108,12 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
             const artworkStyle = { background: cover?.background } satisfies CSSProperties;
             const artworkInnerStyle = {
               transform: cover?.scale ? `scale(${cover.scale})` : undefined,
+              /* Zoom toward the same point the crop is already centred on.
+                 Scaling about the middle pulls away from the subject on any
+                 piece whose subject is not in the middle — which is most of
+                 the product renders, where the object sits low in a tall
+                 frame of empty studio sweep. */
+              transformOrigin: cover?.scale && cover?.position ? cover.position : undefined,
             } satisfies CSSProperties;
 
             return (
@@ -109,6 +129,9 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                   onMouseLeave={() => setHoveredHref(null)}
                 >
                   <div className="folder-cover">
+                    {/* Back panel and tab. Sits behind the artwork rather than
+                        being cut out of it — see the note in globals.css. */}
+                    <span className="folder-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-back" aria-hidden="true" />
                     <span className="folder-layer folder-layer-mid" aria-hidden="true" />
                     {revealPreview ? project.browser.hoverPreview.map((preview, previewIndex) => (
@@ -126,6 +149,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                         />
                       </span>
                     )) : null}
+                    {/* Front panel: the work, printed across the whole face. */}
                     <div className="folder-art" style={artworkStyle}>
                       <span className="folder-art-inner" style={artworkInnerStyle}>
                         <Image
@@ -153,7 +177,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
 
                   <div className="project-card-copy">
                     <h2 className="project-card-title">
-                      <span>{numberFor(project)}</span>
+                      <span>{numberAt(position)}</span>
                       {titleCase(project.name)}
                     </h2>
                     <p className="project-card-meta">{project.meta}</p>
@@ -169,21 +193,39 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
       {visibleProjects.length > 0 && view === "list" ? (
         <section className="project-index" aria-label="Portfolio project index">
           <div className="project-index-rows">
-            {visibleProjects.map((project) => (
-              <article className={selectedHref === project.href ? "index-row is-selected" : "index-row"} key={project.href}>
-                <Link
-                  href={project.href}
-                  className="index-row-link"
-                  onClick={openProject(project.href)}
-                  onMouseEnter={() => setListPreviewHref(project.href)}
-                  onFocus={() => setListPreviewHref(project.href)}
-                >
-                  <span className="index-number">{numberFor(project)}</span>
-                  <h2>{titleCase(project.name)}</h2>
-                  <p>{project.meta}</p>
-                </Link>
-              </article>
-            ))}
+            {visibleProjects.map((project, position) => {
+              const thumb = project.browser.listPreview ?? project.featured;
+              return (
+                <article className={selectedHref === project.href ? "index-row is-selected" : "index-row"} key={project.href}>
+                  <Link
+                    href={project.href}
+                    className="index-row-link"
+                    onClick={openProject(project.href)}
+                    onMouseEnter={() => setListPreviewHref(project.href)}
+                    onFocus={() => setListPreviewHref(project.href)}
+                  >
+                    <span className="index-number">{numberAt(position)}</span>
+                    {/* Carries the imagery at the widths where the sticky
+                        preview panel beside these rows is hidden. Decorative:
+                        the row's own heading is the accessible name. */}
+                    <span className="index-thumb" aria-hidden="true">
+                      <Image
+                        src={thumb.src}
+                        alt=""
+                        width={thumb.width}
+                        height={thumb.height}
+                        sizes="(max-width: 980px) 64px, 1px"
+                        {...(thumb.blurDataURL
+                          ? { placeholder: "blur" as const, blurDataURL: thumb.blurDataURL }
+                          : {})}
+                      />
+                    </span>
+                    <h2>{titleCase(project.name)}</h2>
+                    <p>{project.meta}</p>
+                  </Link>
+                </article>
+              );
+            })}
           </div>
 
           {activeListProject && activeListImage ? (
@@ -201,7 +243,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
                     : {})}
                 />
               </div>
-              <p>{numberFor(activeListProject)} / {titleCase(activeListProject.name)}</p>
+              <p>{numberAt(activeListIndex)} / {titleCase(activeListProject.name)}</p>
             </aside>
           ) : null}
         </section>

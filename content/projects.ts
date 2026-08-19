@@ -224,6 +224,10 @@ export const categories: Category[] = [
           alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
         },
         browser: {
+          /* The garment is the work, and it sits in the upper third of a
+             full-length backstage frame. Centred, the folder cropped to his
+             knees and the graphic never appeared at thumbnail size. */
+          cover: { position: "54% 30%", scale: 1.2 },
           hoverPreview: { srcs: ["/work/brand-identity/cant-buy-respect/04-lil-wayne-cant-buy-respect.webp"] },
         },
         sections: [
@@ -283,7 +287,14 @@ export const categories: Category[] = [
           src: "/work/brand-identity/karl-kani/01-design-sheet.webp",
           alt: "Karl Kani apparel design sheet, navy and red colorway",
         },
-        browser: { hoverPreview: false },
+        browser: {
+          /* A full technical flat sheet holds fifteen garments and their line
+             numbers. Whole, it is grey noise at folder size — nothing in it is
+             legible until the frame is on a few pieces. This crop takes the
+             colourway block: the orange KANI SPORT hood and the red and navy
+             tracksuits. The sheets are shown entire on the case study. */
+          cover: { position: "22% 76%", scale: 2.1 },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -336,7 +347,10 @@ export const categories: Category[] = [
           alt: "Indivisual Threads spray-can icon on a red tee",
         },
         browser: {
-          cover: { fit: "contain", background: "#f4f3f0" },
+          /* Contained, the tee floated small inside its own white studio
+             margin and the folder read as mostly empty. Cropped to the chest
+             hit instead, the red fills the frame and the mark is the subject. */
+          cover: { position: "50% 38%", scale: 1.25 },
           hoverPreview: { srcs: ["/work/brand-identity/indivisual-threads/02-red-tee-back.webp"] },
         },
         sections: [
@@ -543,7 +557,12 @@ export const categories: Category[] = [
           src: "/work/brand-identity/red-panda-academy/01-logo-mark.webp",
           alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
         },
-        browser: { hoverPreview: false },
+        browser: {
+          /* The lockup carries the wordmark under the mark, and the card's own
+             title already says the name — so the folder shows the mark alone,
+             at a size where the panda actually reads. */
+          cover: { position: "50% 36%", scale: 1.5 },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -677,6 +696,10 @@ export const categories: Category[] = [
           alt: "Sky and sunflower Tomorrow Is Yesterday umbrellas on a retail shop floor",
         },
         browser: {
+          /* The two canopies are the product; the top of the frame is the
+             shop's board wall and rails. Biased down so the umbrellas fill the
+             folder and the room stays context rather than subject. */
+          cover: { position: "50% 60%", scale: 1.35 },
           hoverPreview: { srcs: ["/work/product-development/tomorrow-is-yesterday/02-shades-render.webp"] },
         },
         sections: [
@@ -816,15 +839,19 @@ export const categories: Category[] = [
         tags: ["PRODUCT DESIGN", "CONCEPTS"],
         shortDescription:
           "A two-finger ring where the numerals themselves are the band — 222, printed in three colorways.",
-        /* The other square piece on the wall, Can't Buy Respect, holds the
-           default "wide"; Indivisual Threads already took "plain" — "ornate"
-           suits the jewelry scale better than either would. */
         featured: {
-          src: "/work/product-development/222-rings/01-222-rings-worn.webp",
-          alt: "222 rings in red, yellow, and blue worn across three fingers",
+          src: "/work/product-development/222-rings/06-222-ring-red-face.webp",
+          alt: "222 ring render in red, numeral face forward",
         },
         browser: {
-          hoverPreview: { srcs: ["/work/product-development/222-rings/04-222-ring-blue.webp"] },
+          /* The render sits low in a tall studio sweep — roughly the top third
+             of the file is empty ground. Origin and scale together crop to the
+             object rather than to the middle of the frame. The scale is capped
+             by the width: the piece is wider than it is tall, so zooming far
+             enough to fill the frame vertically starts cutting the outer two
+             numerals, and then the folder is a red shape rather than a 222. */
+          cover: { position: "50% 92%", scale: 1.2 },
+          hoverPreview: { srcs: ["/work/product-development/222-rings/07-222-ring-blue-face.webp"] },
         },
         sections: [
           {
@@ -837,11 +864,6 @@ export const categories: Category[] = [
         ],
         mediaLayout: "grid",
         media: [
-          {
-            src: "/work/product-development/222-rings/01-222-rings-worn.webp",
-            alt: "222 rings in red, yellow, and blue worn across three fingers",
-            caption: "Worn, three colorways",
-          },
           {
             src: "/work/product-development/222-rings/02-222-ring-yellow.webp",
             alt: "222 ring render, yellow colorway",
@@ -896,7 +918,11 @@ export const categories: Category[] = [
           alt: "Forest green Apple retail shirt, one of the two new colorways proposed to replace the old palette",
         },
         browser: {
-          cover: { fit: "contain", background: "#f4f3f0" },
+          /* Contained, the shot's own white ground sat as a bright panel inside
+             the folder's letterbox bars and the two whites did not match.
+             Cropped to the body of the shirt instead — the colourway is the
+             proposal, so the colour should be what fills the folder. */
+          cover: { position: "50% 42%" },
           hoverPreview: { srcs: ["/work/product-development/apple-retail-merch/04-hat-black.webp"] },
         },
         sections: [
@@ -1040,18 +1066,29 @@ const titleCaseLabel = (label: string) =>
  * A project and its neighbours, from the live set only — so `next` can never
  * hand a visitor to a placeholder, and an unpublished slug 404s rather than
  * rendering on demand.
+ *
+ * `next` walks the whole archive in order rather than cycling inside one
+ * category. It used to wrap on the category's own length, which meant reading
+ * straight through circled the seven Brand Identity projects for as long as
+ * you kept clicking: it never reached Product Development, and it never
+ * signalled that there was nothing left. Null at the last project is that
+ * signal — the case study turns the band into a way back out.
  */
 export const getProject = (categorySlug: string, projectSlug: string) => {
   const category = getCategory(categorySlug);
   if (!category) return undefined;
   const index = category.projects.findIndex((p) => p.slug === projectSlug);
   if (index === -1) return undefined;
-  return {
-    category,
-    project: category.projects[index],
-    index,
-    next: category.projects[(index + 1) % category.projects.length],
-  };
+
+  const ordered = liveCategories().flatMap((c) =>
+    c.projects.map((p) => ({ href: `/work/${c.slug}/${p.slug}`, name: p.name })),
+  );
+  const position = ordered.findIndex(
+    (entry) => entry.href === `/work/${categorySlug}/${projectSlug}`,
+  );
+  const next = position >= 0 && position < ordered.length - 1 ? ordered[position + 1] : null;
+
+  return { category, project: category.projects[index], index, next };
 };
 
 /** Zero-padded display number, e.g. 0 -> "01". */
@@ -1067,7 +1104,6 @@ export type GalleryPiece = {
   meta: string;
   categorySlug: string;
   categoryLabel: string;
-  globalIndex: number;
   featuredRank?: number;
   tags: string[];
   featured: ResolvedFeatured;
@@ -1111,11 +1147,23 @@ export const galleryProjects = (): GalleryPiece[] =>
         .filter((project) => project.published === true && project.featured?.src)
         .map((project) => ({ category, project })),
     )
-    .map(({ category, project }, globalIndex) => {
+    .map(({ category, project }) => {
       const featured = resolveFeatured(project.featured as Featured);
-      const previewSources = project.browser?.hoverPreview
-        ? project.browser.hoverPreview.srcs
-        : [];
+      /* Every folder reveals a sheet on hover unless the project opts out.
+         This was opt-in per project, so a handful of cards did something on
+         hover and the rest did nothing, with no way to tell which from looking
+         at them. The default is the project's own first image that isn't
+         already the cover. */
+      const declared = project.browser?.hoverPreview;
+      const previewSources: string[] =
+        declared === false
+          ? []
+          : declared
+            ? [...declared.srcs]
+            : project.media
+                .filter((item) => item.src && item.src !== project.featured?.src)
+                .slice(0, 1)
+                .map((item) => item.src as string);
       return {
         slug: project.slug,
         name: project.name,
@@ -1123,7 +1171,6 @@ export const galleryProjects = (): GalleryPiece[] =>
         meta: project.meta,
         categorySlug: category.slug,
         categoryLabel: categoryLabel(category),
-        globalIndex,
         featuredRank: project.featuredRank,
         tags: project.tags ?? [],
         featured,

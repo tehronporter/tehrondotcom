@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
 import { Lightbox, type LightboxItem } from "@/components/Lightbox";
 import { Icon } from "@/components/Icon";
 import { RecentProjectTracker } from "@/components/RecentProjectTracker";
-import { categoryLabel, getProject, liveCategories } from "@/content/projects";
+import { getProject, liveCategories } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
 import { imageProps } from "@/lib/images";
 import { pageMetadata } from "@/lib/meta";
@@ -102,15 +101,9 @@ export default async function ProjectPage({ params }: Params) {
   return (
     <div className="page">
       <RecentProjectTracker href={`/work/${category.slug}/${project.slug}`} />
-      <div className="page-head">
-        <Breadcrumbs
-          trail={[
-            { label: "HOME", href: "/" },
-            { label: categoryLabel(category), href: `/work/${category.slug}` },
-            { label: project.name },
-          ]}
-        />
-      </div>
+      {/* No breadcrumb row here: the toolbar's own path is the breadcrumb, and
+          it is a few pixels above this. The two used to disagree about the
+          root's name — WORK up there, HOME down here, same destination. */}
 
       <div className="case-head">
         <h1 className="display case-title">{project.name}</h1>
@@ -196,15 +189,15 @@ export default async function ProjectPage({ params }: Params) {
           real images. */}
       <Lightbox items={lightboxItems} />
 
-      {next.slug !== project.slug && (
-        <Link href={`/work/${category.slug}/${next.slug}`} className="next-project">
-          <span>
-            <span className="label">NEXT PROJECT</span>
-            <span className="name">{next.name}</span>
-          </span>
-          <Icon name="arrow-right" size={20} />
-        </Link>
-      )}
+      {/* The archive ends rather than looping. On the last project this is the
+          way back out instead of a link round to the first one again. */}
+      <Link href={next ? next.href : "/"} className="next-project">
+        <span>
+          <span className="label">{next ? "NEXT PROJECT" : "END OF THE ARCHIVE"}</span>
+          <span className="name">{next ? next.name : "BACK TO ALL WORK"}</span>
+        </span>
+        <Icon name={next ? "arrow-right" : "arrow-left"} size={20} />
+      </Link>
     </div>
   );
 }

@@ -7,7 +7,9 @@
   --surface-muted: #f1efec;
   --ink: #111111;
   --muted: #66645f;
-  --faint: #97948e;
+  /* Reading text, not decoration: this carries every project's category line.
+     The old #97948e computed to 2.9:1 on --surface, well under AA. */
+  --faint: #74716a;
   --rule: #dfddd8;
   --rule-strong: #d2cfca;
   --font-display: var(--font-anton), Impact, sans-serif;
@@ -155,7 +157,21 @@ img { display: block; max-width: 100%; }
   }
   [data-tooltip]:hover::after, [data-tooltip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
 }
-.toolbar-title { overflow: hidden; font-size: 13px; font-weight: 750; letter-spacing: .02em; text-overflow: ellipsis; white-space: nowrap; }
+/* The location bar is the breadcrumb. The case study used to carry a second,
+   separate breadcrumb row of its own a few pixels below this one, and the two
+   disagreed about what the root was called — this said WORK, that said HOME.
+   One row, clickable, is both of their jobs. */
+.toolbar-title { display: flex; min-width: 0; align-items: center; overflow: hidden; }
+.toolbar-crumbs { display: flex; min-width: 0; align-items: center; list-style: none; font-size: 13px; font-weight: 750; letter-spacing: .02em; white-space: nowrap; }
+.toolbar-crumbs li { display: flex; min-width: 0; align-items: center; }
+.toolbar-crumbs li:not(:first-child)::before { content: "/"; margin: 0 .45rem; color: var(--rule-strong); font-weight: 600; }
+/* Only the last crumb — the page you are on — is allowed to truncate. The
+   ancestors are short and are the ones you might want to click. */
+.toolbar-crumbs li:last-child { overflow: hidden; text-overflow: ellipsis; }
+.toolbar-crumbs li:last-child > * { overflow: hidden; text-overflow: ellipsis; }
+.toolbar-crumbs a { color: var(--muted); transition: color var(--speed) ease; }
+.toolbar-crumbs a:hover { color: var(--blue); }
+.toolbar-crumbs [aria-current] { color: var(--ink); }
 .toolbar-actions { gap: .65rem; }
 .view-controls { gap: .2rem; border-radius: 12px; padding: 3px; background: #f4f2ef; }
 .view-controls button.is-active { background: #fff; color: var(--blue); box-shadow: 0 1px 4px rgba(25,22,17,.12); }
@@ -182,36 +198,106 @@ img { display: block; max-width: 100%; }
 .mobile-practice-filters { display: none; }
 
 .project-browser { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 2.25rem 1.4rem; min-height: 12rem; }
-.project-card { min-width: 0; content-visibility: auto; contain-intrinsic-size: auto 270px; }
+.project-card { min-width: 0; content-visibility: auto; contain-intrinsic-size: auto 290px; }
 .project-card-link { position: relative; display: block; }
 .project-card-link:focus-visible { outline: 0; }
 
-.folder-cover { position: relative; aspect-ratio: 1.17 / 1; isolation: isolate; transition: transform 240ms var(--ease); }
-.folder-layer, .folder-art {
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(0 10%,29% 10%,38% 23%,95% 23%,100% 28%,100% 100%,0 100%);
-  border-radius: 9px;
+/* --------------------------------------------------------------------------
+   The folder
+
+   A folder is one sheet folded once: a back panel, a front panel, and a tab
+   that is part of the back. So the tab belongs *behind* the artwork, not cut
+   out of it. This used to clip the photograph itself to a tabbed silhouette,
+   which is why it never read as a folder — a real one has nothing bitten out
+   of its front, and a notch in the corner of a picture just looks like a
+   notch in the corner of a picture.
+
+   Three layers, back to front: the back panel carrying the tab, the paper
+   between them, then the front panel — which is the artwork, printed edge to
+   edge across the whole face. Everything that says "folder" happens in the
+   strip above the front panel's top edge. */
+
+.folder-cover {
+  position: relative;
+  aspect-ratio: 1.05 / 1;
+  isolation: isolate;
+  border-radius: 12px;
+  transition: transform 240ms var(--ease);
 }
-.folder-layer { pointer-events: none; transition: transform 240ms var(--ease); }
-.folder-layer-back { z-index: 0; transform: translate(2px,-5px) scale(.97); background: #e1dfda; box-shadow: inset 0 0 0 1px rgba(17,17,17,.08); }
-.folder-layer-mid { z-index: 1; transform: translate(4px,-1px) scale(.985); background: #f0eeea; box-shadow: inset 0 0 0 1px rgba(17,17,17,.07); }
-.folder-preview { position: absolute; z-index: 2; top: 8%; right: 7%; left: 9%; height: 76%; overflow: hidden; border: 1px solid rgba(17,17,17,.12); border-radius: 6px; background: var(--surface); box-shadow: 0 5px 12px rgba(24,22,17,.08); animation: folder-preview-in 240ms var(--ease) both; pointer-events: none; }
-.folder-preview-2 { right: 12%; left: 5%; animation-delay: 20ms; }
-@keyframes folder-preview-in { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: translateY(-7px); } }
+
+/* The back panel. Its top edge runs the full width at 6%, and the tab is the
+   part of that edge cut higher — which is exactly how the real object is made,
+   and why the tab needs no notch anywhere else to be legible. Card stock: a
+   step darker than both the paper and the workspace behind it. */
+.folder-back {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  clip-path: polygon(0 0,28% 0,34% 6%,100% 6%,100% 100%,0 100%);
+  border-radius: 9px;
+  background: linear-gradient(#e6e2d9,#dcd7cd);
+  box-shadow: inset 0 0 0 1px rgba(17,17,17,.13);
+}
+
+/* Paper between the panels, sitting to the right of the tab so the two never
+   merge into one pale block along the top. */
+.folder-layer {
+  position: absolute;
+  bottom: 42%;
+  pointer-events: none;
+  border-radius: 2px 2px 0 0;
+  transition: transform 240ms var(--ease);
+}
+.folder-layer-back { z-index: 1; top: 3.5%; right: 10%; left: 40%; transform: rotate(.7deg); background: #f2f0ea; box-shadow: inset 0 0 0 1px rgba(17,17,17,.1); }
+.folder-layer-mid { z-index: 2; top: 2%; right: 15%; left: 36%; transform: rotate(-.6deg); background: #fdfcfa; box-shadow: inset 0 0 0 1px rgba(17,17,17,.1); }
+
+/* Slides up out of the folder on hover, in the same slot the sheets occupy. */
+.folder-preview { position: absolute; z-index: 3; top: 2%; right: 11%; left: 34%; height: 46%; overflow: hidden; border: 1px solid rgba(17,17,17,.13); border-radius: 2px 2px 0 0; background: var(--surface); box-shadow: 0 3px 9px rgba(24,22,17,.16); animation: folder-preview-in 260ms var(--ease) both; pointer-events: none; }
+.folder-preview-2 { right: 17%; left: 29%; animation-delay: 25ms; }
+@keyframes folder-preview-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(-12px); } }
 .folder-preview-image { width: 100%; height: 100%; object-fit: cover; }
-.folder-art { z-index: 3; overflow: hidden; background: #dedbd5; box-shadow: inset 0 0 0 1px rgba(17,17,17,.1),0 7px 15px rgba(24,22,17,.08); transition: box-shadow 180ms ease,transform 240ms var(--ease); }
+
+/* The front panel: the artwork, printed across the whole face. The upward
+   shadow is what sets it in front of the back panel rather than flush with it. */
+.folder-art {
+  position: absolute;
+  z-index: 4;
+  top: 11%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: 4px 4px 9px 9px;
+  background: #dedbd5;
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,.12),
+    0 -3px 7px rgba(24,22,17,.11),
+    0 7px 15px rgba(24,22,17,.1);
+  transition: box-shadow 180ms ease, transform 240ms var(--ease);
+}
 .folder-art-inner { position: absolute; inset: 0; display: block; transform-origin: center; }
 .folder-image { width: 100%; height: 100%; transition: filter 220ms ease; }
 
 @media (hover: hover) {
   .project-card-link:hover .folder-cover { transform: translateY(-3px); }
-  .project-card-link:hover .folder-layer-back { transform: translate(1px,-8px) scale(.97); }
-  .project-card-link:hover .folder-layer-mid { transform: translate(5px,-3px) scale(.985); }
+  .project-card-link:hover .folder-layer-back { transform: translate(3px,-7px) rotate(1.6deg); }
+  .project-card-link:hover .folder-layer-mid { transform: translate(-3px,-11px) rotate(-1.4deg); }
+  /* The front panel eases open as the contents rise behind it. */
+  .project-card-link:hover .folder-art {
+    transform: translateY(2px);
+    box-shadow:
+      inset 0 0 0 1px rgba(17,17,17,.12),
+      0 -4px 10px rgba(24,22,17,.14),
+      0 12px 22px rgba(24,22,17,.13);
+  }
   .project-card-link:hover .folder-image { filter: saturate(1.025); }
 }
-.project-card-link:focus-visible .folder-art,
-.project-card.is-selected .folder-art { box-shadow: inset 0 0 0 2px var(--blue),0 7px 15px rgba(24,22,17,.08); }
+
+/* Ringed on the cover rather than on the artwork: the folder's own material is
+   a known tone, so the ring's contrast is the same on every card. Inset into
+   the photograph it was only as visible as that photograph let it be. */
+.project-card-link:focus-visible .folder-cover,
+.project-card.is-selected .folder-cover { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 .project-card-copy { position: relative; padding: .72rem .2rem 0 .08rem; }
 .project-card-title { display: flex; gap: .55rem; font-size: 13px; font-weight: 730; line-height: 1.35; transition: color var(--speed) ease; }
@@ -226,6 +312,9 @@ img { display: block; max-width: 100%; }
 .index-row-link { display: grid; grid-template-columns: 42px minmax(180px,1fr) minmax(180px,.8fr); align-items: center; gap: clamp(.8rem,2vw,1.8rem); min-height: clamp(88px,8vw,124px); padding: .8rem .65rem .8rem .2rem; transition: background var(--speed) ease; }
 .index-row-link:focus-visible { outline: 0; }
 .index-number { align-self: start; padding-top: .3rem; color: var(--muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+/* Shown only where the sticky preview panel is not — see the 980px block. */
+.index-thumb { display: none; overflow: hidden; width: 100%; aspect-ratio: 1; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface-muted); }
+.index-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .index-row h2 { font-size: clamp(1.1rem,1.65vw,1.55rem); font-weight: 680; line-height: 1.15; transition: color var(--speed) ease; }
 .index-row p { color: var(--faint); font-size: 9px; letter-spacing: .07em; line-height: 1.5; text-transform: uppercase; }
 @media (hover: hover) {
@@ -267,16 +356,9 @@ img { display: block; max-width: 100%; }
 .signature-mark { min-height: 130px; background: var(--blue); mask: url("/brand/signature-white.png") center / 68% auto no-repeat; }
 
 /* Case studies */
-.page-head, .cat-head, .case-head, .case-hero, .case-body, .facts, .media, .prose, .contact-links { margin-inline: var(--page-pad); }
-.page-head { padding-top: 1.5rem; }
-.crumb-list { display: flex; flex-wrap: wrap; align-items: center; list-style: none; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .055em; }
-.crumb-list li { display: flex; align-items: center; }
-.crumb-list li:not(:first-child)::before { content: "/"; margin: 0 .55rem; color: var(--rule-strong); }
-.crumb-list a { display: inline-flex; align-items: center; gap: .45rem; }
-.crumb-list a:hover { color: var(--blue); }
-.crumb-current { color: var(--faint); }
+.cat-head, .case-head, .case-hero, .case-body, .facts, .media, .prose, .contact-links { margin-inline: var(--page-pad); }
 
-.case-head { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); align-items: end; gap: 3rem; padding-block: 2rem 2.4rem; }
+.case-head { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); align-items: end; gap: 3rem; padding-block: 2.4rem 2.4rem; }
 .case-title, .cat-title { font-size: clamp(3.3rem,7vw,6.6rem); }
 .case-intro { color: #33322f; font-size: clamp(15px,1.45vw,19px); line-height: 1.65; }
 .case-live { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .05em; }
@@ -308,7 +390,10 @@ img { display: block; max-width: 100%; }
 .media.media-grid .frame { aspect-ratio: 1; }
 .media.media-grid .frame img { width: 100%; height: 100%; object-fit: contain; }
 
-.facts { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--rule); border-radius: 12px; background: var(--rule); }
+/* Sized to the facts that exist, not to the three there might be. Only one
+   project carries a CLIENT, so a fixed third column left a bare, bordered box
+   on the first screen of every other case study. */
+.facts { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(200px,100%),1fr)); gap: 1px; overflow: hidden; border: 1px solid var(--rule); border-radius: 12px; background: var(--rule); }
 .fact { min-height: 120px; padding: 1.35rem; background: var(--surface); }
 .fact dt, .case-section h2, .prose h2 { margin-bottom: .7rem; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .08em; }
 .fact dd { font-size: 11px; line-height: 1.75; }
@@ -336,6 +421,11 @@ img { display: block; max-width: 100%; }
 .cat-summary { max-width: 520px; font-size: 14px; line-height: 1.65; }
 .prose { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; margin-bottom: 2rem; padding-bottom: 0; overflow: hidden; border: 1px solid var(--rule); border-radius: 10px; background: var(--rule); }
 .prose > div { border: 0; border-radius: 0; padding: clamp(1.4rem,3vw,2.2rem); background: var(--surface); }
+/* An odd number of blocks in a two-column grid leaves the final cell empty,
+   and an empty cell here shows the container's rule colour as a grey panel.
+   Contact has a single intro block; About has four. Both are handled by
+   letting a lone last block take the whole row. */
+.prose > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .prose p { color: #34332f; font-size: 14px; line-height: 1.75; }
 .prose p + p { margin-top: 1rem; }
 .capabilities { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5rem; }
@@ -346,6 +436,9 @@ img { display: block; max-width: 100%; }
 .list-row .k { color: var(--muted); }
 .contact-links { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1px; margin-bottom: 2.5rem; padding-bottom: 0; overflow: hidden; border: 1px solid var(--rule); border-radius: 10px; background: var(--rule); }
 .contact-link { display: flex; min-height: 92px; align-items: center; justify-content: space-between; gap: 1rem; border: 0; border-radius: 0; padding: 1.2rem 1.35rem; background: var(--surface); transition: color var(--speed) ease, background var(--speed) ease; }
+/* Same reason as .prose above — a lone trailing row must not leave a grey cell
+   beside it on the page whose whole job is being easy to act on. */
+.contact-links > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 .contact-link .k { color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
 .contact-link .v { display: inline-flex; align-items: center; gap: .55rem; font-size: 12px; }
 a.contact-link:hover { background: #f6f6f3; color: var(--blue); }
@@ -377,7 +470,22 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
   .project-browser { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .project-index { grid-template-columns: 1fr; }
   .index-preview { display: none; }
+  /* The sticky preview panel is gone below this width, so each row carries its
+     own thumbnail instead. List view without any imagery at all is the wrong
+     trade on the device most of this gets browsed on. */
+  .index-thumb { display: block; grid-row: 1 / span 2; }
+  .index-row-link { grid-template-columns: 42px 64px minmax(0,1fr); }
+  .index-number { grid-row: 1 / span 2; }
+  .index-row h2, .index-row p { grid-column: 3; }
   .case-head { grid-template-columns: 1fr; gap: 1.4rem; }
+
+  /* Practice filtering used to appear only below 760px while the sidebar that
+     carries it on desktop already went away at 980 — every width in between,
+     which is every tablet in portrait, had no filter at all. */
+  .mobile-practice-filters { display: flex; gap: .45rem; overflow-x: auto; padding: 2px .15rem 5px; scrollbar-width: none; }
+  .mobile-practice-filters::-webkit-scrollbar { display: none; }
+  .mobile-practice-filters a { display: inline-flex; min-height: 44px; flex: none; align-items: center; gap: .45rem; border: 1px solid var(--rule); border-radius: 999px; padding: 0 .9rem; color: var(--muted); font-size: 11px; font-weight: 650; }
+  .mobile-practice-filters a.is-active { border-color: #c7ceff; background: #edf0ff; color: var(--blue); }
 }
 
 @media (max-width: 760px) {
@@ -390,15 +498,13 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
   .browser-description { margin-top: 1rem; }
   .browser-controls { display: block; margin: 0 0 1rem; }
   .browser-count { margin-left: .15rem; }
-  .mobile-practice-filters { display: flex; gap: .45rem; margin-top: .9rem; overflow-x: auto; padding: 2px .15rem 5px; scrollbar-width: none; }
-  .mobile-practice-filters::-webkit-scrollbar { display: none; }
-  .mobile-practice-filters a { display: inline-flex; min-height: 44px; flex: none; align-items: center; gap: .45rem; border: 1px solid var(--rule); border-radius: 999px; padding: 0 .9rem; color: var(--muted); font-size: 11px; font-weight: 650; }
-  .mobile-practice-filters a.is-active { border-color: #c7ceff; background: #edf0ff; color: var(--blue); }
+  .mobile-practice-filters { margin-top: .9rem; }
   .project-browser { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.8rem 1rem; }
-  .index-row-link { grid-template-columns: 34px minmax(0,1fr); gap: .65rem; min-height: 92px; padding: .9rem .2rem; }
+  .index-row-link { grid-template-columns: 34px 56px minmax(0,1fr); gap: .65rem; min-height: 92px; padding: .9rem .2rem; }
   .index-number { grid-row: 1 / span 2; }
+  .index-thumb { grid-row: 1 / span 2; }
   .index-row h2 { font-size: 1.05rem; }
-  .index-row p { grid-column: 2; }
+  .index-row p { grid-column: 3; }
   .profile-panel, .facts, .case-body, .prose, .contact-links { grid-template-columns: 1fr; }
   .profile-panel-head { grid-column: auto; }
   .profile-name + .profile-summary, .profile-summary + .profile-connect, .profile-connect + .signature-mark { border-top: 1px solid var(--rule); border-left: 0; }
@@ -411,13 +517,16 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
 }
 
 @media (max-width: 520px) {
-  .toolbar-title { max-width: 112px; font-size: 11px; }
+  .toolbar-crumbs { font-size: 11px; }
   .project-browser { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.8rem .8rem; }
-  .folder-cover { aspect-ratio: 1.17 / 1; }
   .project-card-copy { padding-right: .7rem; }
   .project-card-title { gap: .35rem; font-size: 12px; }
   .project-card-meta { font-size: 9px; }
-  .media, .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: 1fr; }
+  /* The editorial layout drops to one column; the uniform gallery feed keeps
+     two. Collapsing that one as well turned a ten-image case study into ten
+     screen-heights of scrolling before the outcome copy came into view. */
+  .media { grid-template-columns: 1fr; }
+  .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .media figure.full { grid-column: auto; }
   .contact-link { align-items: flex-start; flex-direction: column; justify-content: center; }
   .contact-link .v { overflow-wrap: anywhere; }
@@ -426,7 +535,7 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
 
 @media (max-width: 340px) {
   .project-browser { grid-template-columns: 1fr; gap: 2rem; }
-  .toolbar-title { max-width: 82px; }
+  .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: 1fr; }
 }
 
 /* --------------------------------------------------------------------------
@@ -500,7 +609,9 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
   text-transform: uppercase;
 }
 
-.lightbox-count { color: var(--faint); }
+/* Not --faint: that token is tuned for dark text on the light workspace, and
+   this is the one place it would be asked to sit on the dialog's black. */
+.lightbox-count { color: rgba(251,250,248,.62); }
 
 .lightbox-close, .lightbox-nav {
   position: fixed;

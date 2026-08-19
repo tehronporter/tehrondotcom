@@ -29,6 +29,8 @@ function isPrimaryActive(href: string, pathname: string) {
 /** href ("/work/brand-identity", "/work/brand-identity/blue-t-shirt") -> its label. */
 export type BreadcrumbLabels = Record<string, string>;
 
+type Crumb = { label: string; href?: string };
+
 /**
  * Where you are, not what the page is titled. A category or case study route
  * used to copy its own <h1> verbatim — reading the DOM after paint, no less —
@@ -38,33 +40,40 @@ export type BreadcrumbLabels = Record<string, string>;
  * where there is nothing more specific to say, i.e. the four single-word
  * collections.
  *
+ * This is now the site's only breadcrumb. The case study used to render a
+ * second one of its own a few pixels below this, and the two disagreed about
+ * what the root was called — this said WORK, that said HOME, for the same
+ * destination. Making these crumbs links is what let the other row go.
+ *
  * `labels` supplies the two levels a plain slug can't: a category's declared
  * label ("brand-identity" -> "Brand Identity") and a project's actual name.
  * Built once, server-side, in AppShell — see the note there on why this can't
- * just import content/projects.ts itself. An href with no entry (nothing live
- * at that slug) falls back to a titled version of the slug rather than
- * disappearing, so a stale link still shows something legible.
+ * just import content/projects.ts itself. It holds an entry for every live
+ * route, so a `/work/...` href missing from it is a URL that 404s below —
+ * which is why that case reports NOT FOUND rather than title-casing the slug
+ * into a confident-looking location for a page that does not exist.
  */
-function breadcrumbTitle(pathname: string, labels: BreadcrumbLabels) {
-  if (pathname === "/") return "WORK";
-  if (pathname === "/featured") return "FEATURED";
-  if (pathname === "/recent") return "RECENT";
-  if (pathname === "/about") return "ABOUT";
-  if (pathname === "/contact") return "CONTACT";
+function breadcrumbTrail(pathname: string, labels: BreadcrumbLabels): Crumb[] {
+  if (pathname === "/") return [{ label: "WORK" }];
+  if (pathname === "/featured") return [{ label: "FEATURED" }];
+  if (pathname === "/recent") return [{ label: "RECENT" }];
+  if (pathname === "/about") return [{ label: "ABOUT" }];
+  if (pathname === "/contact") return [{ label: "CONTACT" }];
 
   const segments = pathname.split("/").filter(Boolean);
-  if (segments[0] !== "work") {
-    return decodeURIComponent(segments.at(-1) ?? "work").replaceAll("-", " ").toUpperCase();
-  }
+  if (segments[0] !== "work" || segments.length < 2) return [{ label: "NOT FOUND" }];
 
-  const crumbs = ["WORK"];
+  const trail: Crumb[] = [{ label: "WORK", href: "/" }];
   let href = "/work";
   for (const segment of segments.slice(1)) {
     href += `/${segment}`;
-    const label = labels[href] ?? decodeURIComponent(segment).replaceAll("-", " ");
-    crumbs.push(label.toUpperCase());
+    const label = labels[href];
+    if (!label) return [{ label: "NOT FOUND" }];
+    trail.push({ label: label.toUpperCase(), href });
   }
-  return crumbs.join(" / ");
+
+  /* The page you are on is a location, not a destination. */
+  return trail.map((crumb, i) => (i === trail.length - 1 ? { label: crumb.label } : crumb));
 }
 
 export function AppNavigation({ practices }: { practices: Practice[] }) {
@@ -138,10 +147,13 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
   const router = useRouter();
   const searchParams = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const toolbarTitle = breadcrumbTitle(pathname, breadcrumbLabels);
+  const trail = breadcrumbTrail(pathname, breadcrumbLabels);
   const [historyState, setHistoryState] = useState({ canGoBack: false, canGoForward: false });
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const isBrowser = browserRoutes.has(pathname) || /^\/work\/[^/]+$/.test(pathname);
+  /* A collection route, or a category that actually resolves. `/work/<slug>`
+     alone was enough to render the grid/list switch over the 404 page. */
+  const isBrowser =
+    browserRoutes.has(pathname) || (/^\/work\/[^/]+$/.test(pathname) && pathname in breadcrumbLabels);
   const view = searchParams.get("view") === "list" ? "list" : "grid";
 
   useEffect(() => () => clearTimeout(copyTimer.current), []);
@@ -154,14 +166,27 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
       forward: () => { finished: Promise<unknown> };
     };
     const navigation = (window as Window & { navigation?: NavigationHistory }).navigation;
-    const update = () => setHistoryState({
+    let frame = 0;
+    const read = () => setHistoryState({
       canGoBack: navigation?.canGoBack ?? window.history.length > 1,
       canGoForward: navigation?.canGoForward ?? false,
     });
-    update();
+    /* Deferred a frame rather than run inline. `currententrychange` fires
+       synchronously inside the navigation's own commit, and when that commit
+       is the one React is driving from `startViewTransition` — i.e. every
+       click on a folder — setting state from it lands during an insertion
+       effect, which React rejects outright ("useInsertionEffect must not
+       schedule updates"). A frame later the commit has finished and the same
+       read is just an ordinary update. */
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(read);
+    };
+    read();
     navigation?.addEventListener("currententrychange", update);
     window.addEventListener("popstate", update);
     return () => {
+      cancelAnimationFrame(frame);
       navigation?.removeEventListener("currententrychange", update);
       window.removeEventListener("popstate", update);
     };
@@ -187,8 +212,11 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   };
 
+  const [shareFailed, setShareFailed] = useState(false);
+
   const share = async () => {
     const payload = { title: document.title, url: window.location.href };
+    setShareFailed(false);
     try {
       if (navigator.share) await navigator.share(payload);
       else {
@@ -197,8 +225,15 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
         clearTimeout(copyTimer.current);
         copyTimer.current = setTimeout(() => setCopied(false), 1800);
       }
-    } catch {
-      // Cancelling a native share sheet should leave the interface unchanged.
+    } catch (error) {
+      /* Cancelling a native share sheet should leave the interface unchanged —
+         that arrives as an AbortError and is not a failure. Anything else is:
+         a clipboard write blocked by permissions or by an insecure context
+         used to look exactly like a successful copy, silently. */
+      if ((error as DOMException)?.name === "AbortError") return;
+      setShareFailed(true);
+      clearTimeout(copyTimer.current);
+      copyTimer.current = setTimeout(() => setShareFailed(false), 2600);
     }
   };
 
@@ -213,7 +248,19 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
             <Icon name="chevron-right" size={21} />
           </button>
         </div>
-        <p className="toolbar-title">{toolbarTitle}</p>
+        <nav className="toolbar-title" aria-label="Breadcrumb">
+          <ol className="toolbar-crumbs">
+            {trail.map((crumb) => (
+              <li key={crumb.href ?? crumb.label}>
+                {crumb.href ? (
+                  <Link href={crumb.href}>{crumb.label}</Link>
+                ) : (
+                  <span aria-current="page">{crumb.label}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
       </div>
 
       <div className="toolbar-actions">
@@ -246,7 +293,9 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
 
         <button type="button" className="toolbar-button" onClick={share} aria-label="Share this page" title="Share this page" data-tooltip="Share">
           <Icon name={copied ? "check" : "share"} size={19} />
-          <span className="toolbar-feedback" role="status">{copied ? "COPIED" : ""}</span>
+          <span className="toolbar-feedback" role="status">
+            {copied ? "COPIED" : shareFailed ? "COPY FAILED" : ""}
+          </span>
         </button>
 
       </div>

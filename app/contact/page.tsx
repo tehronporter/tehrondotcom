@@ -63,14 +63,12 @@ export default function ContactPage() {
           </span>
         </a>
 
+        {/* Availability is not repeated here — it is already the line directly
+            under the headline above, and as a seventh row it also left an odd
+            item in a two-column grid, i.e. an empty grey cell beside it. */}
         <div className="contact-link">
           <span className="k">BASED</span>
           <span className="v">{site.location}</span>
-        </div>
-
-        <div className="contact-link">
-          <span className="k">AVAILABILITY</span>
-          <span className="v">{contact.availability}</span>
         </div>
       </section>
     </div>

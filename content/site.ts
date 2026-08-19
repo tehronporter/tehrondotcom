@@ -49,11 +49,9 @@ export const site = {
     { label: "X", handle: "@tehronporter", href: "https://x.com/tehronporter" },
   ],
 
-  /* HOME is gone: the wordmark in the header is the way back, and on the home
-     page itself the name is already the masthead. */
-  nav: [
-    { label: "WORK", href: "/work" },
-    { label: "ABOUT", href: "/about" },
-    { label: "CONTACT", href: "/contact" },
-  ],
+  /* No `nav` here. The primary navigation is declared in components/AppChrome
+     alongside the icon each item carries, and it is shared by the sidebar and
+     the mobile tab bar. A second copy lived here for a header component that
+     no route imported, and had already drifted — it was missing both Featured
+     and Recent. */
 } as const;
