@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { PortfolioPage } from "@/components/PortfolioPage";
+import { RecentPortfolio } from "@/components/RecentPortfolio";
+import { collectionProjects, livePractices } from "@/content/projects";
 import { pageMetadata } from "@/lib/meta";
 
 export const metadata: Metadata = pageMetadata({
   path: "/recent",
-  title: "Latest Work",
-  description: "A selection of the latest published projects from Tehron Porter.",
+  title: "Recent Work",
+  description: "Projects viewed during the current browsing session.",
 });
 
 export default function RecentPage() {
-  return (
-    <PortfolioPage
-      collection="recent"
-      title="LATEST"
-      description="The latest six projects in the maintained portfolio order."
-    />
-  );
+  return <RecentPortfolio projects={collectionProjects("recent")} practices={livePractices()} />;
 }

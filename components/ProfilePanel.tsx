@@ -5,6 +5,10 @@ import { site } from "@/content/site";
 export function ProfilePanel() {
   return (
     <section className="profile-panel" aria-label="Tehron Porter profile">
+      <div className="profile-panel-head">
+        <p>ABOUT THIS ARCHIVE</p>
+        <span>PORTFOLIO INFORMATION</span>
+      </div>
       <div className="profile-name display">TEHRON<br />PORTER</div>
       <div className="profile-summary">
         <p className="profile-kicker">{site.role}</p>

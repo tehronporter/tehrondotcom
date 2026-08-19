@@ -44,9 +44,16 @@ prev/next links all generate from that. Nothing else to update.
 
 Set `published: true` and add a `featured` image to place a project in the Work
 browser. Add `featuredRank: 1` (or another unique rank) to include it in the
-curated Featured collection. Recent is always the first six published projects
-in file order. Folder covers use the existing featured image and optional
-`featured.focus`; source artwork is never reshaped or overwritten.
+curated Featured collection. Recent is private session history: the six most
+recently opened published projects, stored only in the current browser tab.
+
+Folder covers use the existing featured image and optional `featured.focus`;
+source artwork is never reshaped or overwritten. Add an optional `browser`
+object for homepage-only art direction: `cover` controls fit, position, scale,
+and background; `hoverPreview` is either `false` or an explicit one- or
+two-image list; and `listPreview` can override the featured image used by the
+editorial list view. Hover previews are opt-in and are never inferred from the
+rest of a project's media.
 
 ## Adding images
 

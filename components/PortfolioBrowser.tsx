@@ -3,8 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { MouseEvent } from "react";
-import { Icon } from "@/components/Icon";
+import { useState, type CSSProperties, type MouseEvent } from "react";
 import type { BrowserProject } from "@/content/projects";
 import { isPractice, practiceFromPath, type Practice } from "@/content/practices";
 import { BROWSER_COVER_SIZES } from "@/lib/sizes";
@@ -18,16 +17,25 @@ type ViewTransitionDocument = Document & {
 const reducedMotion = () =>
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const numberFor = (project: BrowserProject) => String(project.globalIndex + 1).padStart(2, "0");
+
 export function PortfolioBrowser({ projects, practices }: { projects: BrowserProject[]; practices: Practice[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const [selectedHref, setSelectedHref] = useState<string | null>(null);
+  const [listPreviewHref, setListPreviewHref] = useState<string | null>(null);
   const requestedDiscipline = searchParams.get("discipline");
   const routeDiscipline = practiceFromPath(pathname, practices);
   const discipline = routeDiscipline ?? (isPractice(requestedDiscipline, practices) ? requestedDiscipline : null);
   const view = searchParams.get("view") === "list" ? "list" : "grid";
   const visibleProjects = discipline ? projects.filter((project) => project.categorySlug === discipline) : projects;
   const activePractice = practices.find((practice) => practice.slug === discipline);
+  const activeListProject = visibleProjects.find((project) => project.href === listPreviewHref) ?? visibleProjects[0];
+  const activeListImage = activeListProject
+    ? activeListProject.browser.listPreview ?? activeListProject.featured
+    : undefined;
   const collectionBase = pathname === "/" || pathname === "/featured" || pathname === "/recent" ? pathname : "/";
   const filterHref = (slug?: string) => {
     const params = new URLSearchParams();
@@ -42,6 +50,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
 
   const openProject = (href: string) => (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    setSelectedHref(href);
     const doc = document as ViewTransitionDocument;
     if (!doc.startViewTransition || reducedMotion()) return;
     event.preventDefault();
@@ -71,56 +80,130 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
               className={discipline === practice.slug ? "is-active" : undefined}
               aria-current={discipline === practice.slug ? "true" : undefined}
             >
-              <span className="discipline-dot" data-discipline={practice.slug} aria-hidden="true" />
               {practice.shortLabel}
             </Link>
           ))}
         </nav>
       </div>
 
-      {visibleProjects.length > 0 ? (
-        <section className={`project-browser is-${view}`} aria-label="Portfolio projects">
-          {visibleProjects.map((project, position) => (
-            <article className="project-card" key={project.href} data-discipline={project.categorySlug}>
-              <Link href={project.href} className="project-card-link" onClick={openProject(project.href)}>
-                <div className="folder-cover">
-                  <span className="folder-layer folder-layer-back" aria-hidden="true" />
-                  <span className="folder-layer folder-layer-mid" aria-hidden="true" />
-                  <div className="folder-art">
-                    <Image
-                      src={project.featured.src}
-                      alt={project.featured.alt}
-                      width={project.featured.width}
-                      height={project.featured.height}
-                      sizes={BROWSER_COVER_SIZES}
-                      className="folder-image"
-                      style={project.featured.focus ? { objectPosition: project.featured.focus } : undefined}
-                      ref={(element) => {
-                        if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
-                      }}
-                      priority={position === 0}
-                      {...(project.featured.blurDataURL
-                        ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
-                        : {})}
-                    />
-                    <span className="folder-sheen" aria-hidden="true" />
-                  </div>
-                </div>
+      {visibleProjects.length > 0 && view === "grid" ? (
+        <section className="project-browser is-grid" aria-label="Portfolio projects">
+          {visibleProjects.map((project, position) => {
+            const cover = project.browser.cover;
+            const revealPreview = hoveredHref === project.href && project.browser.hoverPreview.length > 0;
+            const artworkStyle = { background: cover?.background } satisfies CSSProperties;
+            const artworkInnerStyle = {
+              transform: cover?.scale ? `scale(${cover.scale})` : undefined,
+            } satisfies CSSProperties;
 
-                <div className="project-card-copy">
-                  <h2 className="project-card-title">
-                    <span>{String(project.globalIndex + 1).padStart(2, "0")}</span>
-                    {titleCase(project.name)}
-                  </h2>
-                  <p className="project-card-meta">{project.meta}</p>
-                  <p className="project-card-description">{project.shortDescription}</p>
-                  <span className="sr-only">Category: {project.categoryLabel}.</span>
-                  <span className="project-card-dot" aria-hidden="true" />
-                </div>
-                <span className="project-list-arrow" aria-hidden="true"><Icon name="arrow-right" size={17} /></span>
-              </Link>
-            </article>
-          ))}
+            return (
+              <article
+                className={selectedHref === project.href ? "project-card is-selected" : "project-card"}
+                key={project.href}
+              >
+                <Link
+                  href={project.href}
+                  className="project-card-link"
+                  onClick={openProject(project.href)}
+                  onMouseEnter={() => setHoveredHref(project.href)}
+                  onMouseLeave={() => setHoveredHref(null)}
+                >
+                  <div className="folder-cover">
+                    <span className="folder-layer folder-layer-back" aria-hidden="true" />
+                    <span className="folder-layer folder-layer-mid" aria-hidden="true" />
+                    {revealPreview ? project.browser.hoverPreview.map((preview, previewIndex) => (
+                      <span className={`folder-preview folder-preview-${previewIndex + 1}`} key={preview.src} aria-hidden="true">
+                        <Image
+                          src={preview.src}
+                          alt=""
+                          width={preview.width}
+                          height={preview.height}
+                          sizes={BROWSER_COVER_SIZES}
+                          className="folder-preview-image"
+                          {...(preview.blurDataURL
+                            ? { placeholder: "blur" as const, blurDataURL: preview.blurDataURL }
+                            : {})}
+                        />
+                      </span>
+                    )) : null}
+                    <div className="folder-art" style={artworkStyle}>
+                      <span className="folder-art-inner" style={artworkInnerStyle}>
+                        <Image
+                          src={project.featured.src}
+                          alt={project.featured.alt}
+                          width={project.featured.width}
+                          height={project.featured.height}
+                          sizes={BROWSER_COVER_SIZES}
+                          className="folder-image"
+                          style={{
+                            objectFit: cover?.fit ?? "cover",
+                            objectPosition: cover?.position ?? project.featured.focus,
+                          }}
+                          ref={(element) => {
+                            if (element) element.style.viewTransitionName = `piece-hero-${project.slug}`;
+                          }}
+                          priority={position === 0}
+                          {...(project.featured.blurDataURL
+                            ? { placeholder: "blur" as const, blurDataURL: project.featured.blurDataURL }
+                            : {})}
+                        />
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="project-card-copy">
+                    <h2 className="project-card-title">
+                      <span>{numberFor(project)}</span>
+                      {titleCase(project.name)}
+                    </h2>
+                    <p className="project-card-meta">{project.meta}</p>
+                    <span className="sr-only">Category: {project.categoryLabel}.</span>
+                  </div>
+                </Link>
+              </article>
+            );
+          })}
+        </section>
+      ) : null}
+
+      {visibleProjects.length > 0 && view === "list" ? (
+        <section className="project-index" aria-label="Portfolio project index">
+          <div className="project-index-rows">
+            {visibleProjects.map((project) => (
+              <article className={selectedHref === project.href ? "index-row is-selected" : "index-row"} key={project.href}>
+                <Link
+                  href={project.href}
+                  className="index-row-link"
+                  onClick={openProject(project.href)}
+                  onMouseEnter={() => setListPreviewHref(project.href)}
+                  onFocus={() => setListPreviewHref(project.href)}
+                >
+                  <span className="index-number">{numberFor(project)}</span>
+                  <h2>{titleCase(project.name)}</h2>
+                  <p>{project.meta}</p>
+                </Link>
+              </article>
+            ))}
+          </div>
+
+          {activeListProject && activeListImage ? (
+            <aside className="index-preview" aria-hidden="true">
+              <div className="index-preview-frame" key={activeListProject.href}>
+                <Image
+                  src={activeListImage.src}
+                  alt=""
+                  width={activeListImage.width}
+                  height={activeListImage.height}
+                  sizes="(max-width: 980px) 1px, 34vw"
+                  className="index-preview-image"
+                  {...(activeListImage.blurDataURL
+                    ? { placeholder: "blur" as const, blurDataURL: activeListImage.blurDataURL }
+                    : {})}
+                />
+              </div>
+              <p>{numberFor(activeListProject)} / {titleCase(activeListProject.name)}</p>
+            </aside>
+          ) : null}
         </section>
       ) : null}
 

@@ -15,6 +15,7 @@ export default function AboutPage() {
   return (
     <div className="page">
       <div className="cat-head top">
+        <p className="document-kicker">PROFILE / ABOUT</p>
         <h1 className="display cat-title">
           <Lines lines={about.titleLines} />
         </h1>

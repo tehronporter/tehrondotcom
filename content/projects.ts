@@ -43,6 +43,19 @@ export type ResolvedFeatured = Omit<Featured, "width" | "height"> & {
   blurDataURL?: string;
 };
 
+export type BrowserPresentation = {
+  cover?: {
+    fit?: "cover" | "contain";
+    position?: string;
+    scale?: number;
+    background?: string;
+  };
+  /** Explicit opt-in. False or absent keeps the folder layers artwork-free. */
+  hoverPreview?: false | { srcs: [string] | [string, string] };
+  /** Defaults to the featured image. */
+  listPreview?: string;
+};
+
 export type Media = {
   /** Path under /public, e.g. "/work/brand-identity/blue-t-shirt/01.webp". Omit for an empty frame. */
   src?: string;
@@ -86,6 +99,8 @@ export type Project = {
   published?: boolean;
   /** Curated order for the Featured collection. Absent keeps it out. */
   featuredRank?: number;
+  /** Optional, homepage-only art direction. All project content remains above. */
+  browser?: BrowserPresentation;
 };
 
 export type Category = {
@@ -128,6 +143,9 @@ export const categories: Category[] = [
         featured: {
           src: "/work/brand-identity/blue-t-shirt/05-campaign-mural.webp",
           alt: "Campaign photo in front of a hand-painted BLUE mural",
+        },
+        browser: {
+          hoverPreview: { srcs: ["/work/brand-identity/blue-t-shirt/06-campaign-portrait.webp"] },
         },
         sections: [
           {
@@ -205,6 +223,9 @@ export const categories: Category[] = [
           src: "/work/brand-identity/cant-buy-respect/02-kendrick-not-for-sale.webp",
           alt: "Kendrick Lamar wearing the Not For Sale tee backstage",
         },
+        browser: {
+          hoverPreview: { srcs: ["/work/brand-identity/cant-buy-respect/04-lil-wayne-cant-buy-respect.webp"] },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -262,6 +283,7 @@ export const categories: Category[] = [
           src: "/work/brand-identity/karl-kani/01-design-sheet.webp",
           alt: "Karl Kani apparel design sheet, navy and red colorway",
         },
+        browser: { hoverPreview: false },
         sections: [
           {
             heading: "APPROACH",
@@ -312,6 +334,10 @@ export const categories: Category[] = [
         featured: {
           src: "/work/brand-identity/indivisual-threads/01-red-tee-front.webp",
           alt: "Indivisual Threads spray-can icon on a red tee",
+        },
+        browser: {
+          cover: { fit: "contain", background: "#f4f3f0" },
+          hoverPreview: { srcs: ["/work/brand-identity/indivisual-threads/02-red-tee-back.webp"] },
         },
         sections: [
           {
@@ -398,6 +424,7 @@ export const categories: Category[] = [
           src: "/work/brand-identity/westside-gunn-saucony/01-super-flygod.webp",
           alt: "Super Flygod lucha libre flyer for the Griselda x Saucony collab",
         },
+        browser: { hoverPreview: false },
         sections: [
           {
             heading: "APPROACH",
@@ -459,6 +486,10 @@ export const categories: Category[] = [
           src: "/work/brand-identity/amine-club-banana/01-black-colorway.webp",
           alt: "Amine Club banana-print apparel capsule, black colorway",
         },
+        browser: {
+          cover: { position: "50% 32%" },
+          hoverPreview: { srcs: ["/work/brand-identity/amine-club-banana/02-pink-colorway.webp"] },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -512,6 +543,7 @@ export const categories: Category[] = [
           src: "/work/brand-identity/red-panda-academy/01-logo-mark.webp",
           alt: "Red Panda Stock Club geometric logo mark with a stock chart worked into the collar",
         },
+        browser: { hoverPreview: false },
         sections: [
           {
             heading: "APPROACH",
@@ -644,6 +676,9 @@ export const categories: Category[] = [
           src: "/work/product-development/tomorrow-is-yesterday/05-umbrellas-instore.webp",
           alt: "Sky and sunflower Tomorrow Is Yesterday umbrellas on a retail shop floor",
         },
+        browser: {
+          hoverPreview: { srcs: ["/work/product-development/tomorrow-is-yesterday/02-shades-render.webp"] },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -732,6 +767,9 @@ export const categories: Category[] = [
           src: "/work/product-development/thank-you-dilla/02-donut-typography.webp",
           alt: "THANK YOU DILLA! spelled out in glazed donuts",
         },
+        browser: {
+          hoverPreview: { srcs: ["/work/product-development/thank-you-dilla/01-thank-you-dilla-lifestyle.webp"] },
+        },
         sections: [
           {
             heading: "APPROACH",
@@ -784,6 +822,9 @@ export const categories: Category[] = [
         featured: {
           src: "/work/product-development/222-rings/01-222-rings-worn.webp",
           alt: "222 rings in red, yellow, and blue worn across three fingers",
+        },
+        browser: {
+          hoverPreview: { srcs: ["/work/product-development/222-rings/04-222-ring-blue.webp"] },
         },
         sections: [
           {
@@ -853,6 +894,10 @@ export const categories: Category[] = [
         featured: {
           src: "/work/product-development/apple-retail-merch/01-shirt-forest-green.webp",
           alt: "Forest green Apple retail shirt, one of the two new colorways proposed to replace the old palette",
+        },
+        browser: {
+          cover: { fit: "contain", background: "#f4f3f0" },
+          hoverPreview: { srcs: ["/work/product-development/apple-retail-merch/04-hat-black.webp"] },
         },
         sections: [
           {
@@ -1025,8 +1070,12 @@ export type GalleryPiece = {
   globalIndex: number;
   featuredRank?: number;
   tags: string[];
-  shortDescription: string;
   featured: ResolvedFeatured;
+  browser: {
+    cover?: BrowserPresentation["cover"];
+    hoverPreview: ResolvedFeatured[];
+    listPreview?: ResolvedFeatured;
+  };
 };
 
 /**
@@ -1045,6 +1094,11 @@ const resolveFeatured = (featured: Featured): ResolvedFeatured => {
   };
 };
 
+const resolveProjectImage = (project: Project, src: string): ResolvedFeatured => {
+  const media = project.media.find((item) => item.src === src);
+  return resolveFeatured({ src, alt: media?.alt ?? project.name });
+};
+
 /**
  * Every published, featured project, in the order it appears in this file.
  * The two gates are independent on purpose: `published` is your decision that
@@ -1057,26 +1111,38 @@ export const galleryProjects = (): GalleryPiece[] =>
         .filter((project) => project.published === true && project.featured?.src)
         .map((project) => ({ category, project })),
     )
-    .map(({ category, project }, globalIndex) => ({
-      slug: project.slug,
-      name: project.name,
-      href: `/work/${category.slug}/${project.slug}`,
-      meta: project.meta,
-      categorySlug: category.slug,
-      categoryLabel: categoryLabel(category),
-      globalIndex,
-      featuredRank: project.featuredRank,
-      tags: project.tags ?? [],
-      shortDescription: project.shortDescription ?? project.intro,
-      featured: resolveFeatured(project.featured as Featured),
-    }));
+    .map(({ category, project }, globalIndex) => {
+      const featured = resolveFeatured(project.featured as Featured);
+      const previewSources = project.browser?.hoverPreview
+        ? project.browser.hoverPreview.srcs
+        : [];
+      return {
+        slug: project.slug,
+        name: project.name,
+        href: `/work/${category.slug}/${project.slug}`,
+        meta: project.meta,
+        categorySlug: category.slug,
+        categoryLabel: categoryLabel(category),
+        globalIndex,
+        featuredRank: project.featuredRank,
+        tags: project.tags ?? [],
+        featured,
+        browser: {
+          cover: project.browser?.cover,
+          hoverPreview: previewSources.map((src) => resolveProjectImage(project, src)),
+          listPreview: project.browser?.listPreview
+            ? resolveProjectImage(project, project.browser.listPreview)
+            : undefined,
+        },
+      };
+    });
 
 export type ProjectCollection = "work" | "featured" | "recent";
 
 /** Minimal, serializable shape passed from Server Components to the project browser. */
-export type BrowserProject = Omit<GalleryPiece, "tags">;
+export type BrowserProject = Omit<GalleryPiece, "tags" | "featuredRank">;
 
-const browserShape = ({ tags: _tags, ...project }: GalleryPiece) => project;
+const browserShape = ({ tags: _tags, featuredRank: _featuredRank, ...project }: GalleryPiece) => project;
 
 /** Project sets used by the app-like portfolio browser. */
 export const collectionProjects = (collection: ProjectCollection): BrowserProject[] => {
@@ -1087,6 +1153,6 @@ export const collectionProjects = (collection: ProjectCollection): BrowserProjec
       .sort((a, b) => (a.featuredRank ?? 0) - (b.featuredRank ?? 0))
       .map(browserShape);
   }
-  if (collection === "recent") return all.slice(0, 6).map(browserShape);
+  if (collection === "recent") return all.map(browserShape);
   return all.map(browserShape);
 };

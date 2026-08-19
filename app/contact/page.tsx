@@ -17,6 +17,7 @@ export default function ContactPage() {
   return (
     <div className="page">
       <div className="cat-head top">
+        <p className="document-kicker">CONTACT DETAILS</p>
         <h1 className="display cat-title">
           <Lines lines={contact.titleLines} />
         </h1>

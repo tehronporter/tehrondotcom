@@ -10,7 +10,7 @@ import { site } from "@/content/site";
 const primaryNavigation: Array<{ label: string; href: string; icon: IconName }> = [
   { label: "Work", href: "/", icon: "folder" },
   { label: "Featured", href: "/featured", icon: "star" },
-  { label: "Latest", href: "/recent", icon: "clock" },
+  { label: "Recent", href: "/recent", icon: "clock" },
   { label: "About", href: "/about", icon: "user" },
   { label: "Contact", href: "/contact", icon: "send" },
 ];
@@ -48,7 +48,7 @@ export type BreadcrumbLabels = Record<string, string>;
 function breadcrumbTitle(pathname: string, labels: BreadcrumbLabels) {
   if (pathname === "/") return "WORK";
   if (pathname === "/featured") return "FEATURED";
-  if (pathname === "/recent") return "LATEST";
+  if (pathname === "/recent") return "RECENT";
   if (pathname === "/about") return "ABOUT";
   if (pathname === "/contact") return "CONTACT";
 
@@ -111,7 +111,6 @@ export function AppNavigation({ practices }: { practices: Practice[] }) {
       <div className="discipline-nav">
         <p className="sidebar-label">PRACTICES</p>
         <Link className={!activeDiscipline ? "discipline-link is-active" : "discipline-link"} href={disciplineHref()}>
-          <span className="discipline-dot all" />
           All work
         </Link>
         {practices.map((discipline) => (
@@ -120,7 +119,6 @@ export function AppNavigation({ practices }: { practices: Practice[] }) {
             href={disciplineHref(discipline.slug)}
             className={activeDiscipline === discipline.slug ? "discipline-link is-active" : "discipline-link"}
           >
-            <span className="discipline-dot" data-discipline={discipline.slug} />
             {discipline.label}
           </Link>
         ))}
@@ -130,7 +128,6 @@ export function AppNavigation({ practices }: { practices: Practice[] }) {
         <p>© {site.name}</p>
         <p>{site.location}</p>
         <p>AVAILABLE WORLDWIDE</p>
-        <span className="status-track" aria-hidden="true"><span /></span>
       </div>
     </aside>
   );
@@ -252,17 +249,6 @@ export function WorkspaceToolbar({ breadcrumbLabels }: { breadcrumbLabels: Bread
           <span className="toolbar-feedback" role="status">{copied ? "COPIED" : ""}</span>
         </button>
 
-        <details className="toolbar-menu">
-          <summary aria-label="More contact options" title="More contact options" data-tooltip="More"><Icon name="more" size={22} /></summary>
-          <div className="toolbar-popover">
-            <a href={`mailto:${site.email}`}>Email</a>
-            {site.socials.map((social) => (
-              <a key={social.label} href={social.href} target="_blank" rel="noreferrer noopener">
-                {social.label}
-              </a>
-            ))}
-          </div>
-        </details>
       </div>
     </header>
   );

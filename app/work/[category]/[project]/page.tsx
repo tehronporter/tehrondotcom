@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
 import { Lightbox, type LightboxItem } from "@/components/Lightbox";
 import { Icon } from "@/components/Icon";
+import { RecentProjectTracker } from "@/components/RecentProjectTracker";
 import { categoryLabel, getProject, liveCategories } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
 import { imageProps } from "@/lib/images";
@@ -100,6 +101,7 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <div className="page">
+      <RecentProjectTracker href={`/work/${category.slug}/${project.slug}`} />
       <div className="page-head">
         <Breadcrumbs
           trail={[
