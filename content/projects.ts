@@ -961,9 +961,37 @@ export const categories: Category[] = [
               "My goal was really simple:",
               { quote: "Make something I had never seen before." },
               "The biggest inspiration came from classic hip-hop jewelry: those big rings with words stretched across multiple fingers, the kind of jewelry that feels loud before you even know what it says. I kept thinking about the rings from Do the Right Thing. Big letters. Big personality. Something that becomes part jewelry, part typography, part sculpture.",
+              {
+                reference: {
+                  src: "/references/product-development/222-rings/do-the-right-thing-love-hate.webp",
+                  alt: "Radio Raheem's LOVE and HATE brass knuckle rings in Do the Right Thing",
+                  caption: "Do the Right Thing (1989), the rings that started the idea.",
+                },
+              },
               "So I started asking myself: what would that look like with numbers instead of words? That became the 222 ring. Three numbers across the front. Two fingers underneath. One continuous object.",
               "I designed the entire thing from scratch in Blender, which was another challenge, because now I wasn't just designing something that needed to look good. It had to actually work. Your fingers have to fit through it. The numbers have to connect. The curves have to feel right. It has to be strong enough to exist in the real world.",
+              {
+                reference: {
+                  src: "/references/product-development/222-rings/blender-viewport.webp",
+                  alt: "Blender viewport showing the raw 3D model of the 222 ring, the numerals interlocked into one continuous band",
+                  caption: "Modeling it in Blender, before it was ever a real object.",
+                },
+              },
               "And once you start designing something for 3D printing, you realize very quickly that there's a huge difference between \"that looks cool on my screen\" and \"that can actually be manufactured.\" So I kept adjusting it. Printing. Testing. Changing proportions. Trying different colors. Trying it on. Going back into Blender. Eventually, we got it right.",
+              {
+                reference: {
+                  src: "/references/product-development/222-rings/market-ref-polished-brass.webp",
+                  alt: "A polished brass 222 double-finger ring, used as a manufacturing reference",
+                  caption: "One of the reference pieces I looked at for construction.",
+                },
+              },
+              {
+                reference: {
+                  src: "/references/product-development/222-rings/market-ref-dimensions.webp",
+                  alt: "Dimensioned reference diagram of a 222 double ring: 4.5cm long, 2cm wide, 2.5cm tall, 36.5 grams",
+                  caption: "Real-world dimensions I used as a sanity check.",
+                },
+              },
             ],
           },
           {

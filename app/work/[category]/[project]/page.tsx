@@ -68,7 +68,7 @@ function CaseSections({ sections, className = "" }: { sections: Project["section
                   <Image
                     src={reference.src}
                     alt={reference.alt}
-                    {...imageProps(reference.src, { width: 1740, height: 904 })}
+                    {...imageProps(reference.src, { width: 1200, height: 1500 })}
                     sizes="(min-width: 760px) 340px, 60vw"
                   />
                 </div>
