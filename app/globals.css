@@ -410,17 +410,12 @@ img { display: block; max-width: 100%; }
 .signature-mark { min-height: 130px; background: var(--blue); mask: url("/brand/signature-white.png") center / 68% auto no-repeat; }
 
 /* Case studies */
-.cat-head, .case-head, .case-hero, .case-body, .facts, .media, .prose, .contact-links { margin-inline: var(--page-pad); }
+.cat-head, .case-head, .case-body, .facts, .media, .prose, .contact-links { margin-inline: var(--page-pad); }
 
 .case-head { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(280px,.8fr); align-items: end; gap: 3rem; padding-block: 2.4rem 2.4rem; }
 .case-title, .cat-title { font-size: clamp(3.3rem,7vw,6.6rem); }
 .case-intro { color: #33322f; font-size: clamp(15px,1.45vw,19px); line-height: 1.65; }
 .case-live { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1rem; color: var(--blue); font-size: 10px; font-weight: 750; letter-spacing: .05em; }
-
-.case-hero { margin-bottom: 1rem; }
-.case-hero .frame { height: clamp(320px,54vw,720px); }
-.case-hero .frame img { width: 100%; height: 100%; object-fit: contain; }
-.case-hero figcaption { margin: .55rem .15rem 0; color: var(--muted); font-size: 10px; letter-spacing: .04em; }
 
 .media { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; margin-bottom: 2rem; }
 .media figure { min-width: 0; }
@@ -451,10 +446,11 @@ img { display: block; max-width: 100%; }
 .fact { min-height: 120px; padding: 1.35rem; background: var(--surface); }
 .fact dt, .case-section h2, .prose h2 { margin-bottom: .7rem; color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: .08em; }
 .fact dd { font-size: 11px; line-height: 1.75; }
+/* Sections stack in one column and one flow now that the gallery moved
+   above all of them — nothing splits APPROACH from OUTCOME any more, so
+   there is only one shape for this block, not two. */
 .case-body { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.2rem; padding-block: 1.2rem 2rem; }
-.case-body-lead { grid-template-columns: minmax(0,1fr); padding-bottom: 1.2rem; }
-.case-body-outcome { grid-template-columns: minmax(0,1fr); padding-top: 0; }
-.supporting-media { margin-top: 0; }
+.case-body-stacked { grid-template-columns: minmax(0,1fr); }
 
 /* Prose, not a data card. The boxed .facts treatment reads fine for a
    caption-length blurb but fights a real story, so this runs unboxed at
@@ -602,13 +598,14 @@ a.contact-primary:hover { background: var(--blue-dark); color: #fff; }
   .project-card-meta { font-size: 9px; }
   /* The editorial layout drops to one column; the uniform gallery feed keeps
      two. Collapsing that one as well turned a ten-image case study into ten
-     screen-heights of scrolling before the outcome copy came into view. */
+     screen-heights of scrolling before any of the copy came into view — the
+     whole gallery now sits above all of it, so this matters even more than
+     it used to. */
   .media { grid-template-columns: 1fr; }
   .media.media-grid, .media.media-grid.media-grid-3 { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .media figure.full { grid-column: auto; }
   .contact-link { align-items: flex-start; flex-direction: column; justify-content: center; }
   .contact-link .v { overflow-wrap: anywhere; }
-  .case-hero .frame { height: min(78vw,520px); min-height: 260px; }
 }
 
 @media (max-width: 340px) {

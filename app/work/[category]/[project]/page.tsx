@@ -93,19 +93,17 @@ export default async function ProjectPage({ params }: Params) {
   if (!found) notFound();
 
   const { category, project, next } = found;
-  const featuredIndex = project.media.findIndex((item) => item.src && item.src === project.featured?.src);
-  const firstImageIndex = project.media.findIndex((item) => item.src);
-  const heroIndex = featuredIndex >= 0 ? featuredIndex : Math.max(0, firstImageIndex);
-  const hero = project.media[heroIndex];
-  const supportingMedia = project.media.filter((_, index) => index !== heroIndex);
-  const [leadSection, ...remainingSections] = project.sections;
+  /* The image that gets the view-transition morph from the folder card and
+     the priority/eager load — still worth marking even though it now sits in
+     the gallery at its natural position instead of a standalone hero block. */
+  const heroSrc = project.featured?.src;
 
-  /* One flat list for the whole page, in the order the images are painted —
-     hero first, then the gallery — so the lightbox's arrow keys walk the case
-     study the way the page reads. Entries with no `src` are placeholders with
-     nothing to enlarge, so they are left out, which is why the index a figure
-     is given is looked up here rather than taken from `project.media`. */
-  const lightboxItems: LightboxItem[] = [hero, ...supportingMedia]
+  /* One flat list for the whole page, in gallery order, so the lightbox's
+     arrow keys walk the case study the way the page reads. Entries with no
+     `src` are placeholders with nothing to enlarge, so they are left out,
+     which is why the index a figure is given is looked up here rather than
+     taken from `project.media`. */
+  const lightboxItems: LightboxItem[] = project.media
     .filter((item): item is Media => Boolean(item?.src))
     .map((item) => {
       const source = item.src as string;
@@ -147,15 +145,27 @@ export default async function ProjectPage({ params }: Params) {
         )}
       </div>
 
-      {hero ? (
-        <section className="case-hero" aria-label="Project hero">
-          <CaseStudyMedia
-            item={hero}
-            sizes={MEDIA_SIZES.full}
-            priority
-            heroName={hero.src && hero.src === project.featured?.src ? `piece-hero-${project.slug}` : undefined}
-            lightboxIndex={at(hero.src)}
-          />
+      {project.media.length > 0 ? (
+        <section
+          className={[
+            "media",
+            project.mediaLayout === "grid" && "media-grid",
+            project.mediaLayout === "grid" && project.mediaColumns === 3 && "media-grid-3",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          aria-label="Project gallery"
+        >
+          {project.media.map((item, index) => (
+            <CaseStudyMedia
+              key={`${item.src ?? item.alt}-${index}`}
+              item={item}
+              sizes={sizesFor(project, item)}
+              priority={Boolean(item.src) && item.src === heroSrc}
+              heroName={item.src && item.src === heroSrc ? `piece-hero-${project.slug}` : undefined}
+              lightboxIndex={at(item.src)}
+            />
+          ))}
         </section>
       ) : null}
 
@@ -184,32 +194,7 @@ export default async function ProjectPage({ params }: Params) {
         </div>
       </dl>
 
-      <CaseSections sections={leadSection ? [leadSection] : []} className="case-body-lead" />
-
-      {supportingMedia.length > 0 ? (
-        <section
-          className={[
-            "media",
-            "supporting-media",
-            project.mediaLayout === "grid" && "media-grid",
-            project.mediaLayout === "grid" && project.mediaColumns === 3 && "media-grid-3",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-          aria-label="Project gallery"
-        >
-          {supportingMedia.map((item, index) => (
-            <CaseStudyMedia
-              key={`${item.src ?? item.alt}-${index}`}
-              item={item}
-              sizes={sizesFor(project, item)}
-              lightboxIndex={at(item.src)}
-            />
-          ))}
-        </section>
-      ) : null}
-
-      <CaseSections sections={remainingSections} className="case-body-outcome" />
+      <CaseSections sections={project.sections} className="case-body-stacked" />
 
       {/* One dialog for the page, opened by delegation off the `data-lightbox`
           attribute each figure renders. Renders nothing when the project has no
