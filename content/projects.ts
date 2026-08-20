@@ -139,7 +139,7 @@ export const categories: Category[] = [
         name: "BLUE T-SHIRT",
         meta: "Brand Identity / Creative Direction",
         intro:
-          "A full identity system for an apparel label built around a single garment. The mark, the type, and the packaging all had to survive being screen-printed, folded, shipped, and photographed on a phone.",
+          "G. Perico had the name — Blue T-Shirt — and no idea what it should look like. After months of chasing his ideas, I gave him the simplest one in the room: a Crip legend's clothing line, printed all red, named Blue T-Shirt.",
         role: ["Creative Direction", "Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Packaging", "Campaign Imagery"],
         published: true,
@@ -158,14 +158,21 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The brief was one product and no budget for spectacle, so the identity had to do the work. Everything routes back to one geometric wordmark and a strict two-weight type system.",
-              "No gradients, no illustration, no seasonal reinvention. The system is deliberately narrow so that it reads the same on a hangtag as it does on a billboard.",
+              "I was introduced to G. Perico through a mutual associate in LA. He told me G. Perico had just signed to Roc Nation and needed someone to help with his branding and design work — he was prepping his new album and needed to build momentum. When we started working together, he'd just left his old group, So Way Out. He was on a new label, looking for a fresh start.",
+              "I made his song cover artwork, tour flyers, even helped redesign a store he owned in South Central. One of the most pivotal moments of running his brand was the drop of Blue T-Shirt, the clothing line.",
+              "G. Perico and I went back and forth for months on designs. He had the \"Blue T-Shirt\" name but he wasn't sure how it would, could, or should look, lol. I tried everything — he had me making blue bird logos, different fonts, try this idea, try that icon. We tried what felt like everything under the sun. Finally, after weeks of trying his ideas, I decided to take matters into my own hands….",
+              "My favorite thing to do with design is to SIMPLIFY. What is the simplest version of what we're working on? What does it look like if I strip EVERYTHING? So I did that. The epiphany moment for me came from one of my favorite movies, Liar Liar — as a kid, I always thought the scene with the blue pen was hilarious. He can't tell a lie…. He's holding a blue pen…. Trying his hardest to say it was a RED PEN. Super silly scene, Jim Carrey at his finest. (If you haven't seen it, look it up.)",
+              "So ya, that was it. THE COLOR OF THIS PEN IS……BLUE.",
+              "That's what inspired me to just type \"THIS IS A BLUE T-SHIRT\" in the simplest font I could imagine. The true genius was in understanding G. Perico's background — he was a Crip gang member, infamous in LA. Blue, Blue, Blue. Everything.",
+              "And I love contrast. Opposites. Shock value. What's more shocking than a Crip gang member starting an all-red clothing line, but the name of the clothing line is Blue T-Shirt? GENIUS.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "A brand kit that a two-person team can run without a designer in the room — templates, rules, and a short set of decisions already made.",
+              "I pitched him the idea and he loved it, we got some samples printed up. Streets of LA went crazy. Internet went wild for it. Instantly viral.",
+              "So viral in fact, Coach decided to steal my design. (I'm not going to get into it, just do your own research.)",
+              "And that's the story behind the Blue T-Shirt brand design.",
             ],
           },
         ],
@@ -280,7 +287,7 @@ export const categories: Category[] = [
         name: "KARL KANI",
         meta: "Apparel Design / Graphic Design",
         intro:
-          "Apparel and graphic design for Karl Kani, working inside a brand with decades of history already on the label.",
+          "I spent time in Karl Kani's studio working as a design assistant — tech packs, color variations, product mockups, at the speed of a machine. One line from Kani has stuck with me ever since: don't make the simple, complicated.",
         role: ["Apparel Design", "Graphic Design"],
         deliverables: ["Apparel Design", "Graphic Design", "Print Graphics"],
         published: true,
@@ -306,12 +313,21 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "Working inside an established label means the identity is already set. The job was applying it well: graphics that hold up printed on fabric, layouts that read at hangtag size and at poster size.",
+              "Working with Karl Kani was a great experience. I was brought into his studio in LA to work basically as a fashion design assistant — one of my first real chances to see the inside of a fashion brand operating at that scale. I learned A LOT in that studio, and I still think about that experience almost every week when I'm working with design clients now.",
+              "There was a lot of pressure to turn around ideas, graphics, and fashion tech packs with extreme speed. Working inside that studio, I learned that done is always better than perfect. Communicate often. Move fast. And of course, one of the greatest quotes I got directly from Karl Kani: DON'T MAKE THE SIMPLE, COMPLICATED. Once I really understood that, things started flowing — I was producing tech packs and color palette variations faster than ever before.",
+              "I learned that when you're working directly with a CEO, you have to move extremely fast. It's usually better to just get the idea down on paper and get a draft back in front of them as quickly as possible. Let them react. Let them make changes. Let the project keep moving. Waiting around trying to make something \"perfect\" before anybody sees it can actually slow the whole machine down.",
+              "And that was probably one of my biggest lessons from working there: it really was a machine. I got to see how project management, communication, timelines, and budgets become some of the biggest factors when you're operating a fashion company at that scale. Designing cool clothes was obviously important, but there was so much more happening behind the scenes. You're not operating a little mom-and-pop shop — you're operating a design machine. The briefs had to be organized and detailed because your work might get passed down the assembly line to the next three employees after you. Everybody needed to understand what was happening.",
+              "I also learned something important about confidence. As a designer, you have to have confidence in what you know and what you do. But you also need enough self-awareness to know what you DON'T know, and when to lean on the expertise of the people around you to get the best result.",
+              "I spent some of my time in Kani's studio producing video content for social media. But the bulk of my time? I was basically a graphic design MACHINE. Logos. Color variations. Tech packs. Product mockups. Material testing. Be ready to get a text in the middle of the night with a new idea, then show up the next day with that idea visualized and ready to present to the team. And be ready to adjust at a moment's notice — maybe you made the dark colorway, but now the team wants to see it light. Cool.",
+              "Eventually I learned to anticipate moments like that. Instead of bringing one version, I started thinking ahead about the questions I might get, the changes they might ask for, and the obstacles that could come up. I wanted to show up already prepared.",
             ],
           },
           {
             heading: "OUTCOME",
-            body: ["A body of apparel and graphic work that fits the brand's history instead of just repeating it."],
+            body: [
+              "Working in fashion at Karl Kani took my design work to another level — a much more professional level. It taught me how to move faster, communicate better, think beyond the individual design, and understand how creative work actually moves through a large company.",
+              "And years later, I still hear Karl's voice in my head sometimes: DON'T MAKE THE SIMPLE, COMPLICATED.",
+            ],
           },
         ],
         mediaLayout: "grid",
