@@ -21,7 +21,7 @@ export const site = {
    * domain, before the real domain is pointed at the project).
    */
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://tehron.com",
-  title: "Tehron Porter — Designer & Creative Technologist",
+  title: "Tehron Porter, Designer & Creative Technologist",
   description:
     "Design, technology, and culture. Brands, products, and digital experiences. Las Vegas / Remote.",
 

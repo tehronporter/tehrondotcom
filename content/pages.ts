@@ -39,7 +39,7 @@ export const about = {
 export const contact = {
   titleLines: ["TELL ME WHAT", "YOU'RE BUILDING."],
   intro: [
-    "Open to new projects, collaborations, and the occasional strange idea. The fastest way to reach me is email — tell me what you're building and when you need it.",
+    "Open to new projects, collaborations, and the occasional strange idea. The fastest way to reach me is email. Tell me what you're building and when you need it.",
   ],
   availability: "Currently taking on select projects.",
 };
