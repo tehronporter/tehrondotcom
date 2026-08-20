@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
@@ -52,35 +51,15 @@ function CaseSections({ sections, className = "" }: { sections: Project["section
       {sections.map((section) => (
         <div className="case-section" key={section.heading}>
           <h2>{section.heading}</h2>
-          {section.body.map((paragraph, index) => {
-            if (typeof paragraph === "string") return <p key={index}>{paragraph}</p>;
-            if ("quote" in paragraph)
-              return (
-                <p key={index} className="case-quote">
-                  {paragraph.quote}
-                </p>
-              );
-            const { reference } = paragraph;
-            if (!reference.src) return null;
-            return (
-              <figure key={index} className="case-reference">
-                <div className="case-reference-frame">
-                  <Image
-                    src={reference.src}
-                    alt={reference.alt}
-                    {...imageProps(reference.src, { width: 1200, height: 1500 })}
-                    sizes="(min-width: 760px) 340px, 60vw"
-                  />
-                </div>
-                {reference.caption && (
-                  <figcaption>
-                    <span className="reference-kicker">Reference</span>
-                    {reference.caption}
-                  </figcaption>
-                )}
-              </figure>
-            );
-          })}
+          {section.body.map((paragraph, index) =>
+            typeof paragraph === "string" ? (
+              <p key={index}>{paragraph}</p>
+            ) : (
+              <p key={index} className="case-quote">
+                {paragraph.quote}
+              </p>
+            )
+          )}
         </div>
       ))}
     </section>
