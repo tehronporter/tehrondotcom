@@ -84,8 +84,12 @@ export type Project = {
   deliverables: string[];
   /** A body entry is normally a paragraph. `{ quote: "…" }` sets an isolated
       line — one already standing on its own in the writing — in larger
-      display type instead of shrinking it to paragraph size. */
-  sections: { heading: string; body: (string | { quote: string })[] }[];
+      display type instead of shrinking it to paragraph size. `{ reference }`
+      drops in a small citation photo (a movie still, a source image) inline
+      with the paragraph it illustrates. It is not the work, so it never lives
+      in `public/work` or the project's own `media` gallery — see
+      `public/references/<category>/<project>/`. */
+  sections: { heading: string; body: (string | { quote: string } | { reference: Media })[] }[];
   media: Media[];
   /** "grid" renders media as a small uniform feed instead of the full/half editorial layout. */
   mediaLayout?: "grid";
@@ -165,6 +169,13 @@ export const categories: Category[] = [
               "I made his song cover artwork, tour flyers, even helped redesign a store he owned in South Central. One of the most pivotal moments of running his brand was the drop of Blue T-Shirt, the clothing line.",
               "G. Perico and I went back and forth for months on designs. He had the \"Blue T-Shirt\" name but he wasn't sure how it would, could, or should look, lol. I tried everything. He had me making blue bird logos, different fonts, try this idea, try that icon. We tried what felt like everything under the sun. Finally, after weeks of trying his ideas, I decided to take matters into my own hands….",
               "My favorite thing to do with design is to SIMPLIFY. What is the simplest version of what we're working on? What does it look like if I strip EVERYTHING? So I did that. The epiphany moment for me came from one of my favorite movies, Liar Liar. As a kid, I always thought the scene with the blue pen was hilarious. He can't tell a lie…. He's holding a blue pen…. Trying his hardest to say it was a RED PEN. Super silly scene, Jim Carrey at his finest. (If you haven't seen it, look it up.)",
+              {
+                reference: {
+                  src: "/references/brand-identity/blue-t-shirt/liar-liar-jim-carrey.webp",
+                  alt: "Jim Carrey's character covered in the word BLUE, unable to say the pen in his hand is red, in Liar Liar",
+                  caption: "Liar Liar (1997), the scene that started it.",
+                },
+              },
               { quote: "So ya, that was it. THE COLOR OF THIS PEN IS……BLUE." },
               "That's what inspired me to just type \"THIS IS A BLUE T-SHIRT\" in the simplest font I could imagine. The true genius was in understanding G. Perico's background: he was a Crip gang member, infamous in LA. Blue, Blue, Blue. Everything.",
               "And I love contrast. Opposites. Shock value. What's more shocking than a Crip gang member starting an all-red clothing line, but the name of the clothing line is Blue T-Shirt? GENIUS.",
