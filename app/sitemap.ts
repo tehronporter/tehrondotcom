@@ -56,7 +56,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: Array<{ path: string; lastModified: Date }> = [
     { path: "/", lastModified: freshest(CONTENT, "app/page.tsx", "components/PortfolioBrowser.tsx") },
     { path: "/featured", lastModified: freshest(CONTENT, "app/featured/page.tsx") },
-    { path: "/recent", lastModified: freshest(CONTENT, "app/recent/page.tsx") },
     { path: "/about", lastModified: freshest("content/pages.ts", "app/about/page.tsx") },
     { path: "/contact", lastModified: freshest("content/pages.ts", "app/contact/page.tsx") },
     ...live.map((c) => ({

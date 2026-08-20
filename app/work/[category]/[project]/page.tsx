@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { CaseStudyMedia } from "@/components/CaseStudyMedia";
 import { Lightbox, type LightboxItem } from "@/components/Lightbox";
 import { Icon } from "@/components/Icon";
-import { RecentProjectTracker } from "@/components/RecentProjectTracker";
 import { getProject, liveCategories } from "@/content/projects";
 import type { Media, Project } from "@/content/projects";
 import { imageProps } from "@/lib/images";
@@ -104,7 +103,6 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <div className="page">
-      <RecentProjectTracker href={`/work/${category.slug}/${project.slug}`} />
       {/* No breadcrumb row here: the toolbar's own path is the breadcrumb, and
           it is a few pixels above this. The two used to disagree about the
           root's name — WORK up there, HOME down here, same destination. */}

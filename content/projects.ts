@@ -1311,7 +1311,7 @@ export const galleryProjects = (): GalleryPiece[] =>
       };
     });
 
-export type ProjectCollection = "work" | "featured" | "recent";
+export type ProjectCollection = "work" | "featured";
 
 /** Minimal, serializable shape passed from Server Components to the project browser. */
 export type BrowserProject = Omit<GalleryPiece, "tags" | "featuredRank">;
@@ -1327,6 +1327,5 @@ export const collectionProjects = (collection: ProjectCollection): BrowserProjec
       .sort((a, b) => (a.featuredRank ?? 0) - (b.featuredRank ?? 0))
       .map(browserShape);
   }
-  if (collection === "recent") return all.map(browserShape);
   return all.map(browserShape);
 };

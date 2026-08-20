@@ -21,9 +21,8 @@ const reducedMotion = () =>
  * Position within the collection being shown, not within the whole archive.
  *
  * This used to read the project's global index, so Featured counted
- * 01 02 05 06 08 10 and Recent — which is ordered by recency — counted
- * backwards. A numbered list with holes in it reads as items that failed to
- * load, not as a selection.
+ * 01 02 05 06 08 10. A numbered list with holes in it reads as items that
+ * failed to load, not as a selection.
  */
 const numberAt = (position: number) => String(position + 1).padStart(2, "0");
 
@@ -211,7 +210,7 @@ export function PortfolioBrowser({ projects, practices }: { projects: BrowserPro
   const activeListImage = activeListProject
     ? activeListProject.browser.listPreview ?? activeListProject.featured
     : undefined;
-  const collectionBase = pathname === "/" || pathname === "/featured" || pathname === "/recent" ? pathname : "/";
+  const collectionBase = pathname === "/" || pathname === "/featured" ? pathname : "/";
   const filterHref = (slug?: string) => {
     const params = new URLSearchParams();
     if (view === "list") params.set("view", "list");

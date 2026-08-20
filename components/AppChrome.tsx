@@ -10,12 +10,11 @@ import { site } from "@/content/site";
 const primaryNavigation: Array<{ label: string; href: string; icon: IconName }> = [
   { label: "Work", href: "/", icon: "folder" },
   { label: "Featured", href: "/featured", icon: "star" },
-  { label: "Recent", href: "/recent", icon: "clock" },
   { label: "About", href: "/about", icon: "user" },
   { label: "Contact", href: "/contact", icon: "send" },
 ];
 
-const browserRoutes = new Set(["/", "/featured", "/recent"]);
+const browserRoutes = new Set(["/", "/featured"]);
 
 function collectionBase(pathname: string) {
   return browserRoutes.has(pathname) ? pathname : "/";
@@ -56,7 +55,6 @@ type Crumb = { label: string; href?: string };
 function breadcrumbTrail(pathname: string, labels: BreadcrumbLabels): Crumb[] {
   if (pathname === "/") return [{ label: "WORK" }];
   if (pathname === "/featured") return [{ label: "FEATURED" }];
-  if (pathname === "/recent") return [{ label: "RECENT" }];
   if (pathname === "/about") return [{ label: "ABOUT" }];
   if (pathname === "/contact") return [{ label: "CONTACT" }];
 
