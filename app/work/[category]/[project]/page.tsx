@@ -51,9 +51,15 @@ function CaseSections({ sections, className = "" }: { sections: Project["section
       {sections.map((section) => (
         <div className="case-section" key={section.heading}>
           <h2>{section.heading}</h2>
-          {section.body.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          {section.body.map((paragraph, index) =>
+            typeof paragraph === "string" ? (
+              <p key={index}>{paragraph}</p>
+            ) : (
+              <p key={index} className="case-quote">
+                {paragraph.quote}
+              </p>
+            )
+          )}
         </div>
       ))}
     </section>

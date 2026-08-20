@@ -82,7 +82,10 @@ export type Project = {
   client?: string;
   role: string[];
   deliverables: string[];
-  sections: { heading: string; body: string[] }[];
+  /** A body entry is normally a paragraph. `{ quote: "…" }` sets an isolated
+      line — one already standing on its own in the writing — in larger
+      display type instead of shrinking it to paragraph size. */
+  sections: { heading: string; body: (string | { quote: string })[] }[];
   media: Media[];
   /** "grid" renders media as a small uniform feed instead of the full/half editorial layout. */
   mediaLayout?: "grid";
@@ -162,7 +165,7 @@ export const categories: Category[] = [
               "I made his song cover artwork, tour flyers, even helped redesign a store he owned in South Central. One of the most pivotal moments of running his brand was the drop of Blue T-Shirt, the clothing line.",
               "G. Perico and I went back and forth for months on designs. He had the \"Blue T-Shirt\" name but he wasn't sure how it would, could, or should look, lol. I tried everything — he had me making blue bird logos, different fonts, try this idea, try that icon. We tried what felt like everything under the sun. Finally, after weeks of trying his ideas, I decided to take matters into my own hands….",
               "My favorite thing to do with design is to SIMPLIFY. What is the simplest version of what we're working on? What does it look like if I strip EVERYTHING? So I did that. The epiphany moment for me came from one of my favorite movies, Liar Liar — as a kid, I always thought the scene with the blue pen was hilarious. He can't tell a lie…. He's holding a blue pen…. Trying his hardest to say it was a RED PEN. Super silly scene, Jim Carrey at his finest. (If you haven't seen it, look it up.)",
-              "So ya, that was it. THE COLOR OF THIS PEN IS……BLUE.",
+              { quote: "So ya, that was it. THE COLOR OF THIS PEN IS……BLUE." },
               "That's what inspired me to just type \"THIS IS A BLUE T-SHIRT\" in the simplest font I could imagine. The true genius was in understanding G. Perico's background — he was a Crip gang member, infamous in LA. Blue, Blue, Blue. Everything.",
               "And I love contrast. Opposites. Shock value. What's more shocking than a Crip gang member starting an all-red clothing line, but the name of the clothing line is Blue T-Shirt? GENIUS.",
             ],
@@ -225,7 +228,7 @@ export const categories: Category[] = [
         name: "CAN'T BUY RESPECT",
         meta: "Brand Identity / Apparel",
         intro:
-          "Can't Buy Respect is a small apparel line built on one line of type per piece. Its first viral product, a tee that just says Not For Sale, moved before any campaign pushed it.",
+          "Chase N. Cashe believed in me as a designer before I had the portfolio to prove it. Can't Buy Respect became the place I learned to actually run a clothing brand — and the Not For Sale tee ended up on Lil Wayne, Kendrick Lamar, and Jermaine Dupri.",
         role: ["Identity Design", "Art Direction"],
         deliverables: ["Wordmark", "Type System", "Capsule Apparel"],
         published: true,
@@ -248,13 +251,23 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The hoodie says the brand name straight. The tee took the other route: instead of the full phrase, it just says Not For Sale, a slogan sharp enough to travel on its own. Neither piece needed more than one line of type.",
+              "Can't Buy Respect is a clothing line by Grammy Award-winning producer Chase N. Cashe. Chase was one of the first people to really believe in me as a designer. He trusted me early — before I had a huge portfolio, before I had all the experience, before I had proof that I could do this at a high level. He just believed in the work. And that meant everything to me.",
+              "One of the staple pieces I designed for the brand was the NOT FOR SALE T-shirt. Simple message. Simple type. Strong color. That was it. And honestly, that was the whole point.",
+              "I've always believed people severely overthink merch. Sometimes the best thing you can do is ask:",
+              { quote: "What are we actually trying to say?" },
+              "Then say it as clearly as possible. Don't bury the message under a bunch of graphics. Don't clutter it. Don't try to prove how \"creative\" you are. Just make the statement hit. That was the design philosophy behind a lot of the work we did for Can't Buy Respect. Simple. Bold. Less is more.",
+              "Then something crazy started happening. I started seeing the clothes everywhere — on celebrities, on TV, backstage, online. Lil Wayne. Kendrick Lamar. Jermaine Dupri. Huge artists were wearing something I designed.",
+              "That was one of the first times in my career where I really got to see the reach of design. You can sit at a computer making something that feels small…. then suddenly Kendrick Lamar is wearing it. That changes the way you think about the work.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "The tee found its way onto real people, Kendrick Lamar backstage among them, before any campaign pushed it. That is the only proof a slogan like that needs.",
+              "But this project was bigger than the shirts. Chase became an amazing mentor to me. Through working with him, I learned the ins and outs of actually manufacturing a clothing brand. I learned about production, sourcing, making samples, getting pieces into the right hands, and understanding how important relationships are.",
+              "I learned that a great product is only part of the equation. You also have to know how to move it. How to network. How to create moments. How to get people talking. How to put the product in places where culture can actually touch it. A lot of what I know about fashion, branding, and moving through creative spaces came from that period of my life.",
+              "I owe so much of my career to Chase. He gave me an opportunity to showcase my talent before a lot of people knew who I was. He believed in me early. He trusted my ideas. And he gave me room to grow. He'll forever be my brother, and I'll forever be grateful for that.",
+              "Sometimes a project gives you a portfolio piece. Sometimes it gives you a career.",
+              { quote: "This one gave me both." },
             ],
           },
         ],
@@ -314,7 +327,9 @@ export const categories: Category[] = [
             heading: "APPROACH",
             body: [
               "Working with Karl Kani was a great experience. I was brought into his studio in LA to work basically as a fashion design assistant — one of my first real chances to see the inside of a fashion brand operating at that scale. I learned A LOT in that studio, and I still think about that experience almost every week when I'm working with design clients now.",
-              "There was a lot of pressure to turn around ideas, graphics, and fashion tech packs with extreme speed. Working inside that studio, I learned that done is always better than perfect. Communicate often. Move fast. And of course, one of the greatest quotes I got directly from Karl Kani: DON'T MAKE THE SIMPLE, COMPLICATED. Once I really understood that, things started flowing — I was producing tech packs and color palette variations faster than ever before.",
+              "There was a lot of pressure to turn around ideas, graphics, and fashion tech packs with extreme speed. Working inside that studio, I learned that done is always better than perfect. Communicate often. Move fast. And of course, one of the greatest quotes I got directly from Karl Kani:",
+              { quote: "DON'T MAKE THE SIMPLE, COMPLICATED." },
+              "Once I really understood that, things started flowing — I was producing tech packs and color palette variations faster than ever before.",
               "I learned that when you're working directly with a CEO, you have to move extremely fast. It's usually better to just get the idea down on paper and get a draft back in front of them as quickly as possible. Let them react. Let them make changes. Let the project keep moving. Waiting around trying to make something \"perfect\" before anybody sees it can actually slow the whole machine down.",
               "And that was probably one of my biggest lessons from working there: it really was a machine. I got to see how project management, communication, timelines, and budgets become some of the biggest factors when you're operating a fashion company at that scale. Designing cool clothes was obviously important, but there was so much more happening behind the scenes. You're not operating a little mom-and-pop shop — you're operating a design machine. The briefs had to be organized and detailed because your work might get passed down the assembly line to the next three employees after you. Everybody needed to understand what was happening.",
               "I also learned something important about confidence. As a designer, you have to have confidence in what you know and what you do. But you also need enough self-awareness to know what you DON'T know, and when to lean on the expertise of the people around you to get the best result.",
@@ -326,7 +341,8 @@ export const categories: Category[] = [
             heading: "OUTCOME",
             body: [
               "Working in fashion at Karl Kani took my design work to another level — a much more professional level. It taught me how to move faster, communicate better, think beyond the individual design, and understand how creative work actually moves through a large company.",
-              "And years later, I still hear Karl's voice in my head sometimes: DON'T MAKE THE SIMPLE, COMPLICATED.",
+              "And years later, I still hear Karl's voice in my head sometimes:",
+              { quote: "DON'T MAKE THE SIMPLE, COMPLICATED." },
             ],
           },
         ],
@@ -355,7 +371,7 @@ export const categories: Category[] = [
         name: "INDIVISUAL THREADS",
         meta: "Brand Identity / Apparel",
         intro:
-          "A full apparel identity for Indivisual Threads, designed from scratch for a client: a spray-can icon and a graffiti-bubble wordmark built to run across a five-colorway capsule of tees, hoodies, and shorts.",
+          "This clothing brand was designed for an entrepreneur in Texas who wanted something original — graffiti, hand-drawn illustration, that bad-kid troublemaker energy. Once we found the personality, less was more: one wordmark, one icon, a few loud colors.",
         role: ["Creative Direction", "Identity Design", "Apparel Design"],
         deliverables: ["Wordmark", "Icon Mark", "Type System", "Apparel Mockups"],
         published: true,
@@ -380,14 +396,20 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The brief was a streetwear label that needed to look handmade and mass-producible at once. The spray-can icon carries the brand on its own — small enough for a chest hit, bold enough to read from across a room — while the bubble-letter wordmark does the heavy lifting on back prints.",
-              "Everything was built to survive a real production run: one mark, one wordmark, and a system for dropping both onto tees, hoodies, and shorts across five colorways without redesigning a thing each time.",
+              "This clothing brand was designed for an entrepreneur in Texas who wanted something original. The direction was pretty loose in the beginning, but we knew we wanted to lean into graffiti, hand-drawn illustration, and that \"bad kid / troublemaker\" energy. Not polished. Not corporate. Not too clean.",
+              "We went back and forth for a while on the logo, characters, colors, and overall personality until we finally landed on something that felt right. And like usual….",
+              { quote: "Less was more." },
+              "The final identity came down to a really simple hand-drawn wordmark, a spray-can icon, a few bold colorways, and some character illustrations that felt like they belonged in the same world. Red. Blue. Black. White. Yellow. Simple colors, but enough contrast to make everything hit.",
+              "I wanted the graphics to feel like somebody could have drawn them in a notebook, on a wall, or on the back of a school desk. A little messy. A little rebellious. A little immature in the best way.",
+              "Once the visual language was established, it became really easy to spread across the collection. T-shirts, hoodies, shorts, logos, mascots. Everything felt connected without needing to overdesign every single piece.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "A capsule the client could put into production immediately — consistent across every garment and colorway, with room to keep adding pieces without touching the identity.",
+              "This was a pretty quick project, but I loved how it turned out.",
+              "Sometimes a project doesn't need some huge complicated strategy.",
+              { quote: "You just find the personality. Make a few strong decisions. And let the design do the rest." },
             ],
           },
         ],
@@ -446,7 +468,7 @@ export const categories: Category[] = [
         name: "WESTSIDE GUNN X SAUCONY",
         meta: "Art Direction / Flyer Design",
         intro:
-          "A concept flyer series pairing Westside Gunn's Griselda with a Saucony sneaker collab, styled after vintage lucha libre posters and lotería ephemera.",
+          "I was living in Guadalajara when Westside Gunn was gearing up for his first Saucony collab, and I'd just been to my first Lucha Libre show. Instead of a clean sneaker campaign, I built a fake championship universe around the shoe — bootleg posters and all.",
         role: ["Art Direction", "Graphic Design"],
         deliverables: ["Campaign Flyers", "Poster Series"],
         published: true,
@@ -466,13 +488,23 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "Griselda's whole visual world already runs on grime and grit, so the flyers lean into it: sun-faded stock, halftone shading, and the ornate type of a wrestling poster tacked up outside an arena for weeks. Each piece pairs the sneaker with a different piece of lucha libre iconography — the champion's ring walk, the title belt, the final battle.",
+              "I was living in Guadalajara, Mexico when I worked on this project. Westside Gunn was preparing for his first sneaker collaboration with Saucony.",
+              "If you know anything about Westside Gunn, you know wrestling has always been a HUGE part of his world — not just something he references here and there. The characters, the drama, the old wrestling posters, the typography, the championship belts, all of it has been woven into the Griselda aesthetic for years.",
+              "And weirdly enough, at the exact same time, I had just gone to my first Lucha Libre show in Guadalajara. Perfect timing.",
+              "I remember sitting there looking around at all the masks, ridiculous costumes, hand-painted signs, bright colors, cheap printed posters…. Everything felt loud. Everything felt slightly bootleg. Everything felt AMAZING. And because I was actually living in Mexico, I was seeing a version of wrestling culture that felt completely different from American WWE nostalgia.",
+              "That became the idea. Instead of designing another clean sneaker campaign, I wanted to make the Saucony shoe feel like it had entered the world of Mexican wrestling. Like Westside Gunn had his own luchador. And the sneaker was the championship belt.",
+              "So I started looking at old Lucha Libre posters, Mexican boxing flyers, lottery cards, hand-painted signage, and cheap event advertisements — stuff that wasn't necessarily \"good graphic design\" in the traditional sense. Sometimes the type was way too big. Sometimes there were 14 things fighting for your attention. Sometimes the colors made absolutely no sense. But somehow…. IT WORKED.",
+              { quote: "That chaos was the language." },
+              "So I leaned into it. I created this imaginary wrestling universe around the shoe: LUCHA LIBRE. CAMPEÓN. BATALLA FINAL. EL RITUAL DEL CAMPEÓN. Every poster became a different piece of this fake championship story. One showed the wrestler. One made the sneaker itself the champion. One became the big final battle. It almost felt like I was advertising matches that never actually happened. And that was probably my favorite part.",
+              "I wasn't trying to make a sneaker ad that looked like a sneaker ad. I wanted somebody walking past one of these posters to look twice and think: Wait…. is this a real lucha libre event? Then realize they're looking at a Saucony.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "A poster series that could hang on a wall or run as a drop announcement without losing the bootleg-poster energy that makes it feel real.",
+              "That project reminded me how much my environment affects my design work. I was in Guadalajara. I had just experienced lucha libre in person. Westside Gunn already had this deep connection to professional wrestling. And somehow all three things met in the middle.",
+              "That's usually where my favorite ideas come from anyway — not sitting at a desk searching Pinterest for \"cool poster inspiration.\" Just living somewhere. Seeing something. Then realizing….",
+              { quote: "These two worlds belong together." },
             ],
           },
         ],
@@ -508,10 +540,10 @@ export const categories: Category[] = [
       },
       {
         slug: "amine-club-banana",
-        name: "AMINE CLUB BANANA",
+        name: "AMINÉ / CLUB BANANA",
         meta: "Graphic Design / Apparel",
         intro:
-          "An all-over banana print and a companion smiley-mascot graphic, built out across a five-piece apparel capsule in three colorways.",
+          "I met Aminé at a sneaker pop-up in Portland, told him I was a designer, and asked if I could send him some ideas for Club Banana. He said sure — that was enough for me. I built a full clothing capsule around one pattern and one face.",
         role: ["Graphic Design", "Apparel Design"],
         deliverables: ["Pattern Design", "Mascot Graphic", "Apparel Mockups", "Colorway System"],
         published: true,
@@ -531,13 +563,21 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "One repeat pattern and one mascot mark had to carry a full capsule — beanie, crewneck, tie, track jacket, slides — without the print reading as noise at any of those scales, and the smiley banana graphic doing the job a wordmark usually would.",
+              "I met Aminé at a sneaker pop-up he hosted in Portland, Oregon. We talked for a little bit, I told him I was a designer, and eventually I asked if I could send him some ideas for Club Banana, his clothing brand.",
+              "He basically said:",
+              { quote: "Sure. Send me some mockups." },
+              "That was enough for me.",
+              "Club Banana already had such a strong visual language — bright colors, bananas, humor, fashion, and this playful personality that feels very connected to Aminé himself. The banana isn't just some random graphic either. It has followed him since the early days of his career and eventually became one of the most recognizable symbols around his brand.",
+              "So I didn't want to overthink it. I made a simple repeating banana pattern, then created a smiley face where the banana became the mouth. That was basically the whole idea. Simple. Bold. Different. Just my style.",
+              "From there I built it into a small clothing system with sweaters, beanies, pants, and accessories in a few different colorways — black and yellow, blue and yellow, pink and yellow.",
+              "The goal wasn't to reinvent Club Banana. It was more like: how far can I take one really simple idea? One banana pattern. One face. A few colors. And suddenly it starts to feel like a full little collection.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "The same system holds up across three colorways, pink, blue, and black, so the capsule reads as one drop instead of three unrelated ones.",
+              "Sometimes that's my favorite kind of design anyway.",
+              { quote: "You don't need 100 ideas. You just need one good one that can stretch." },
             ],
           },
         ],
@@ -566,7 +606,7 @@ export const categories: Category[] = [
         name: "RED PANDA ACADEMY",
         meta: "Brand Identity / Mascot Design",
         intro:
-          "A mascot and mark system for Red Panda Academy — a red panda in a suit, worked into a crest, a wordmark lockup, and a standalone geometric logo, built to cover a stock-club sub-brand without losing the parent identity.",
+          "I created these logo concepts for Red Panda Academy, Ian Dunlap's investing education platform under Earn Your Leisure. The name already had personality — I just had to find out how much of it a red panda in a suit could carry.",
         role: ["Brand Identity", "Mascot Design", "Logo Design"],
         deliverables: ["Mascot Illustration", "Brand Seal", "Wordmark Lockup", "Logo System"],
         published: true,
@@ -590,8 +630,11 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The mascot had to hold two registers at once — approachable enough for an academy, sharp enough for a stock club sitting under it. The same panda in a suit carries both: a dapper, walking figure for the parent brand, a seated one holding a money bag for the finance-focused wing.",
-              "The geometric mark strips it down further, folding a stock chart into the shape of the panda's own collar so the finance angle still reads at icon size, with no suit or money bag left to do the work.",
+              "I created these logo concepts for Red Panda Academy, the investing and stock market education platform built by Ian Dunlap and closely tied to the Earn Your Leisure community. The brand already had a strong name and personality, so I wanted to explore what it could look like if the visual identity leaned harder into that.",
+              "The obvious place to start was the panda. But I didn't want it to feel like a cute tech startup mascot. The audience was learning about investing, building wealth, and taking the stock market seriously, so the character needed to feel confident, sharp, and a little aggressive.",
+              "I explored a few different directions. One was a clean geometric red panda mark that could work almost anywhere. The others leaned more into an old-school finance club / collegiate mascot feeling. Suit. Money bag. Big personality. Almost like the mascot for a fictional Wall Street university.",
+              "The goal was really just to take the name Red Panda Academy and see how much personality I could pull out of it without overcomplicating the idea.",
+              { quote: "Sometimes the name already gives you everything you need." },
             ],
           },
         ],
@@ -703,7 +746,7 @@ export const categories: Category[] = [
         name: "TOMORROW IS YESTERDAY",
         meta: "Product Design / Concept Development",
         intro:
-          "A product concept built around one idea — that tomorrow is yesterday — carried across two objects: a sun-and-moon pair of shades and a set of sky-and-flower umbrellas, taken from sketch to a real production run.",
+          "Tomorrow Is Yesterday started as a personal design exercise in Long Beach — my son helped name it, then spent the whole summer with me building it. We designed, produced, and sold everything ourselves, and it all sold out.",
         role: ["Concept Development", "Product Design", "3D Design"],
         deliverables: ["Sunglasses Design", "Umbrella Print Design", "Production Run"],
         published: true,
@@ -729,14 +772,22 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The idea is the duality: a sun lens and a moon lens on one frame, a sky print and a flower print across a pair of umbrellas — the same day looked at from both ends. The umbrella canopy carries it literally, with TOMORROW spelled across its own panels.",
-              "Each object had to work on its own and as half of the pair, which is what kept the sketch, the render, and the finished print all pointing at the same shape.",
+              "Tomorrow Is Yesterday started as a personal design exercise while I was living in Long Beach, California. The name actually came from my son. We were throwing ideas around together, playing with words and opposites, and somehow landed on Tomorrow Is Yesterday.",
+              "It felt weird. A little confusing. A little impossible. Which is exactly why I liked it.",
+              "A lot of my ideas come from contrast. Opposites attract. Things that should not really go together, but somehow do. That became the whole energy behind the brand.",
+              "My son ended up being part of the entire process that summer. He was there while I was designing, figuring out production, packaging things, and even selling. That part probably means more to me now than the actual products. I got to spend the whole summer with him while building something from scratch.",
+              "And of course, like always, my goal was to make things I hadn't really seen before.",
+              "The two products I had the most fun with were the umbrellas and sunglasses. For the umbrellas, I played with a sun on one side and a moon on the other, then took that same idea into different prints and patterns. The sunglasses followed the same logic. Sun. Moon. Day. Night. Tomorrow. Yesterday. Everything was playing against itself.",
+              "I also designed a full run of T-shirts, hoodies, sweatpants, and other pieces around the brand. I designed everything. Produced everything. Sold everything myself.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "The umbrellas went further than a concept — a full production run, photographed on the shop floor next to the rest of the line. The shades are the same idea one step behind them.",
+              "And somehow…. everything sold out. Both the umbrellas and sunglasses sold out, along with the clothing I produced around the project. What started as another random design exercise turned into a real little brand.",
+              "But my favorite part wasn't even selling it.",
+              { quote: "It was getting to build the whole thing with my son right there beside me." },
+              "Another idea. Another experiment. Another experience in the books.",
             ],
           },
         ],
@@ -799,7 +850,7 @@ export const categories: Category[] = [
         name: "THANK YOU DILLA!",
         meta: "Apparel Design / Tribute",
         intro:
-          "A tribute to J Dilla built the same way he worked — start with what's in front of you. Thank You Dilla began as a phrase spelled out in real glazed donuts, a nod to Donuts, before it ever became a graphic.",
+          "I produce hip-hop music and I've been a J Dilla fan since middle school. Right before his birthday one year, I started with one question — what do you even say to a legendary creative like that besides thank you — and ended up spelling it out in actual donuts.",
         role: ["Concept Development", "Graphic Design", "Apparel Design"],
         deliverables: ["Typography System", "Installation", "Apparel Design"],
         published: true,
@@ -820,8 +871,23 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The type had to be made, not set — every letter is a donut, arranged and shot before it ever became a file. That physical first draft is what gives the final graphic its texture; nothing about it reads as a font.",
-              "From there it dropped straight onto apparel in both colorways, on white and on black, with the same donut-built lettering doing all the work.",
+              "I produce hip-hop music, and I've been a fan of J Dilla since I was in middle school. So every year when his birthday comes around, it means something to me. This project came right before his birthday, and the whole idea started with a really simple question:",
+              { quote: "What do you even say to a legendary creative like J Dilla besides thank you?" },
+              "That was the premise. Just THANK YOU. Simple. Direct. Real.",
+              "Dilla has inspired so many people, and I knew I didn't want to make some regular tribute tee with a photo slapped on it or some generic graphic. I wanted to make something that felt fresh. Something personal. Something that had NEVER been seen before.",
+              "And of course, if you know Dilla, you know Donuts is a huge part of his legacy. That album is legendary. The donut theme is already deeply connected to him, so I started thinking about how I could use that world without it feeling obvious or lazy.",
+              "That's when the idea hit me: what if the actual words THANK YOU DILLA! were made out of real donuts? Not illustrated donuts. Not donut-inspired lettering. Real donuts.",
+              "So I ordered custom letter donuts from a donut company in California. They looked amazing — pink icing, sprinkles, the whole thing. Honestly they looked delicious too…. but I didn't eat them, lol. I used the donuts as the actual typography for the design and turned them into the merch graphic.",
+              "That's what made the project feel special to me. It started with a genuine feeling, then became a concept, then became a real object. And that's always my favorite kind of design process. Take a simple idea. Push it one step farther. Make it real.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "The final merch was loved by J Dilla fans everywhere, which meant a lot to me because this was never just another design exercise. This one was personal. It was my way of showing love to somebody whose art had such a real impact on me.",
+              "Sometimes that's all you really have to say:",
+              { quote: "THANK YOU." },
+              "RIP J Dilla.",
             ],
           },
         ],
@@ -854,7 +920,7 @@ export const categories: Category[] = [
         name: "222 RINGS",
         meta: "Product Design / 3D Design",
         intro:
-          "A two-finger ring where the numerals are the band — 222, the angel number, printed as three linked rings that read as the digits themselves rather than a design stamped onto them.",
+          "I'd never designed jewelry before, so I decided to make a ring where the numbers themselves were the object — not stamped on, not printed on top, the actual structure. I taught myself just enough 3D modeling to make it real, and it sold out.",
         role: ["Product Design", "3D Design"],
         deliverables: ["3D Model", "Prototype", "Colorway System"],
         published: true,
@@ -880,8 +946,23 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The number had to be the structure, not a stamp on top of one — each ‘2’ is its own ring, fused to the next, so the piece only reads correctly worn across three fingers at once.",
-              "Modeled and printed across three colorways to test how the form held up in each: whether the curves stayed legible at ring scale once the render became something you could actually put on.",
+              "I had never designed jewelry before, so naturally I decided I wanted to make a ring. This started as a personal project during a time when I was learning a lot about angel numbers, numerology, and the meaning people attach to repeating numbers — 111, 222, 333. I kept seeing them everywhere, and I became obsessed with the idea of turning one of those numbers into an actual object. Not just engraving 222 onto a ring or printing it on top. I wanted the number itself to BE the ring.",
+              "My goal was really simple:",
+              { quote: "Make something I had never seen before." },
+              "The biggest inspiration came from classic hip-hop jewelry — those big rings with words stretched across multiple fingers, the kind of jewelry that feels loud before you even know what it says. I kept thinking about the rings from Do the Right Thing. Big letters. Big personality. Something that becomes part jewelry, part typography, part sculpture.",
+              "So I started asking myself: what would that look like with numbers instead of words? That became the 222 ring. Three numbers across the front. Two fingers underneath. One continuous object.",
+              "I designed the entire thing from scratch in Blender, which was another challenge, because now I wasn't just designing something that needed to look good — it had to actually work. Your fingers have to fit through it. The numbers have to connect. The curves have to feel right. It has to be strong enough to exist in the real world.",
+              "And once you start designing something for 3D printing, you realize very quickly that there's a huge difference between \"that looks cool on my screen\" and \"that can actually be manufactured.\" So I kept adjusting it. Printing. Testing. Changing proportions. Trying different colors. Trying it on. Going back into Blender. Eventually, we got it right.",
+            ],
+          },
+          {
+            heading: "OUTCOME",
+            body: [
+              "The final rings turned out AMAZING. They looked almost exactly how I imagined them — bright, chunky, a little ridiculous, very hip-hop. And most importantly, I hadn't seen anything else like them.",
+              "I made a small run and put them up for sale. They sold out immediately.",
+              "That was probably the coolest part of the whole experiment. I started with zero experience designing jewelry, just an idea. I taught myself enough to model it, figured out how to make it physical, got it manufactured, and put it out into the world. And people actually wanted it.",
+              "That project became a really good reminder for me that sometimes the best reason to make something is simply:",
+              { quote: "I wonder if I can make this real." },
             ],
           },
         ],
@@ -925,7 +1006,7 @@ export const categories: Category[] = [
         meta: "Product Design / Employee-Led Redesign",
         client: "Apple Inc.",
         intro:
-          "While working at Apple as a Technical Expert, a color complaint turned into a proposal that shipped. The store shirts ran what staff called skittle green and Christmas red — an internal post pitched two calmer replacements, and Apple produced and shipped exactly what got posted.",
+          "While I was working at Apple, I started paying attention to something small nobody else seemed to notice: the shirts. No brief, no permission — I mocked up new colorways on my own time, and Apple actually put them on employees.",
         role: ["Concept Development", "Color & Product Design"],
         deliverables: ["Colorway Proposal", "Product Mockups", "Company-Wide Production"],
         published: true,
@@ -955,13 +1036,22 @@ export const categories: Category[] = [
           {
             heading: "APPROACH",
             body: [
-              "The existing shirts ran a green and a red loud enough that staff had nicknamed them skittle green and Christmas red. The proposal was two calmer replacements — a forest green and a maroon — mocked up next to the navy everyone already liked, and posted to Apple's internal system the same way any employee's idea gets posted: no design team, no review cycle, just the case for it.",
+              "While I was working at Apple, I started paying attention to something small that most people probably didn't think twice about: the shirts. At the time, store employees were wearing a green shirt that everyone called \"skittle green.\" Then around the holidays, we'd switch over to a bright red Christmas shirt. It worked. It was Apple. But I kept thinking…. why only those colors?",
+              "That question turned into a little side project. No design brief. No big presentation. Nobody asked me to do it. I just started thinking about what Apple retail merch could look like if the colors felt a little more intentional, a little more wearable, and a little more connected to the kind of clothes people would actually want to keep wearing outside of work.",
+              "So I started making color variations — forest green, maroon, navy. Simple colors, nothing crazy. Because again, one of my favorite things to do with design is simplify. The Apple logo was already doing all the work. I didn't need to redesign the shirt. I didn't need some giant graphic on the back. I definitely didn't need to make it \"cooler.\" I just thought:",
+              { quote: "What if we kept the exact same idea and made better color choices?" },
+              "That was really the whole concept. Then I started thinking beyond the shirts. Apple has one of the most recognizable logos in the world, but I've always loved the old rainbow Apple mark, so I mocked up some really simple hats using that version of the logo — black, navy, white. Again…. nothing complicated. Just stuff I genuinely thought would look good.",
+              "I put the whole thing together as a small internal proposal. A few shirt colorways. A few hats. Basically: here's what I think Apple retail merch could look like.",
             ],
           },
           {
             heading: "OUTCOME",
             body: [
-              "The post went viral inside the company, and Apple produced the colorways as designed — shipped to stores and worn by the people who'd been asking for the change. One of the few projects here where the client is the company you clocked into.",
+              "And then something pretty cool happened. The proposal started moving around internally. Eventually, Apple actually produced and shipped the shirt colorways I had mocked up to stores. That was a really strange moment for me — because this wasn't some giant campaign where a creative director handed me a brief and said, \"Go design this.\" I was working inside the company, noticed something I thought could be better, designed a solution, and put it in front of the right people.",
+              "Then one day the thing that had been sitting on my computer screen…. was being worn by Apple employees.",
+              "That project taught me a lesson I still use all the time:",
+              { quote: "You don't always need permission to have an idea." },
+              "Sometimes you just notice something. Make it better. Show somebody. And see what happens.",
             ],
           },
         ],
