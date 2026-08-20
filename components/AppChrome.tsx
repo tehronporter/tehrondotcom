@@ -119,9 +119,14 @@ export function AppNavigation({ practices }: { practices: Practice[] }) {
 
       <div className="discipline-nav">
         <p className="sidebar-label">PRACTICES</p>
-        <Link className={!activeDiscipline ? "discipline-link is-active" : "discipline-link"} href={disciplineHref()}>
-          All work
-        </Link>
+        {/* Only shown once a filter is on — otherwise this sat next to "Work"
+           in the primary nav above, both pointing at "/" and both marked
+           active, saying "you are here" twice for the same place. */}
+        {activeDiscipline && (
+          <Link className="discipline-link" href={disciplineHref()}>
+            Clear filter
+          </Link>
+        )}
         {practices.map((discipline) => (
           <Link
             key={discipline.slug}
